@@ -55,6 +55,106 @@
             height: 100%;
         }
         
+        /* UNIQUE POLYTOPAL THEME BACKGROUNDS */
+        #polytop-0 { /* Holographic Genesis - Magenta */
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 170, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(13, 40, 24, 0.8) 0%, rgba(40, 0, 40, 0.8) 100%);
+            animation: magentaPulse 6s ease-in-out infinite;
+        }
+        
+        #polytop-1 { /* Plasma Emergence - Cyan */
+            background: 
+                radial-gradient(circle at 60% 40%, rgba(0, 255, 255, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 30% 70%, rgba(255, 0, 77, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(0, 40, 40, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: cyanPulse 7s ease-in-out infinite;
+        }
+        
+        #polytop-2 { /* Neural Awakening - Yellow */
+            background: 
+                radial-gradient(circle at 40% 30%, rgba(255, 255, 0, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 70% 80%, rgba(0, 128, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(225deg, rgba(40, 40, 0, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: yellowPulse 8s ease-in-out infinite;
+        }
+        
+        #polytop-3 { /* Crystal Resonance - Green */
+            background: 
+                radial-gradient(circle at 50% 60%, rgba(0, 255, 0, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 90% 10%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(315deg, rgba(0, 40, 0, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: greenPulse 9s ease-in-out infinite;
+        }
+        
+        #polytop-4 { /* Quantum Chaos - Orange */
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 128, 0, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 80% 90%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(40, 20, 0, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: orangePulse 5s ease-in-out infinite;
+        }
+        
+        #polytop-5 { /* Fractal Storm - Purple */
+            background: 
+                radial-gradient(circle at 70% 30%, rgba(128, 0, 255, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 20% 90%, rgba(255, 255, 0, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(20, 0, 40, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: purplePulse 10s ease-in-out infinite;
+        }
+        
+        #polytop-6 { /* Dimensional Collapse - Red */
+            background: 
+                radial-gradient(circle at 90% 70%, rgba(255, 0, 0, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 10% 30%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+                linear-gradient(225deg, rgba(40, 0, 0, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: redPulse 4s ease-in-out infinite;
+        }
+        
+        /* CSS-Only 4D Effect Animations */
+        @keyframes magentaPulse {
+            0% { background-position: 0% 0%, 100% 100%; filter: hue-rotate(0deg) brightness(0.8); }
+            50% { background-position: 100% 50%, 0% 50%; filter: hue-rotate(30deg) brightness(1.1); }
+            100% { background-position: 0% 0%, 100% 100%; filter: hue-rotate(0deg) brightness(0.8); }
+        }
+        
+        @keyframes cyanPulse {
+            0% { background-position: 50% 0%, 50% 100%; filter: hue-rotate(0deg) brightness(0.9); }
+            50% { background-position: 0% 50%, 100% 50%; filter: hue-rotate(60deg) brightness(1.2); }
+            100% { background-position: 50% 0%, 50% 100%; filter: hue-rotate(0deg) brightness(0.9); }
+        }
+        
+        @keyframes yellowPulse {
+            0% { background-position: 25% 25%, 75% 75%; filter: hue-rotate(0deg) brightness(0.8); }
+            50% { background-position: 75% 25%, 25% 75%; filter: hue-rotate(45deg) brightness(1.0); }
+            100% { background-position: 25% 25%, 75% 75%; filter: hue-rotate(0deg) brightness(0.8); }
+        }
+        
+        @keyframes greenPulse {
+            0% { background-position: 60% 40%, 40% 60%; filter: hue-rotate(0deg) brightness(0.9); }
+            50% { background-position: 40% 60%, 60% 40%; filter: hue-rotate(120deg) brightness(1.1); }
+            100% { background-position: 60% 40%, 40% 60%; filter: hue-rotate(0deg) brightness(0.9); }
+        }
+        
+        @keyframes orangePulse {
+            0% { background-position: 80% 20%, 20% 80%; filter: hue-rotate(0deg) brightness(0.8) contrast(1.1); }
+            50% { background-position: 20% 20%, 80% 80%; filter: hue-rotate(15deg) brightness(1.3) contrast(1.2); }
+            100% { background-position: 80% 20%, 20% 80%; filter: hue-rotate(0deg) brightness(0.8) contrast(1.1); }
+        }
+        
+        @keyframes purplePulse {
+            0% { background-position: 10% 90%, 90% 10%; filter: hue-rotate(0deg) brightness(0.7) saturate(1.2); }
+            50% { background-position: 90% 90%, 10% 10%; filter: hue-rotate(270deg) brightness(1.0) saturate(1.5); }
+            100% { background-position: 10% 90%, 90% 10%; filter: hue-rotate(0deg) brightness(0.7) saturate(1.2); }
+        }
+        
+        @keyframes redPulse {
+            0% { background-position: 100% 0%, 0% 100%; filter: hue-rotate(0deg) brightness(0.9) contrast(1.3); }
+            50% { background-position: 0% 0%, 100% 100%; filter: hue-rotate(10deg) brightness(1.4) contrast(1.5); }
+            100% { background-position: 100% 0%, 0% 100%; filter: hue-rotate(0deg) brightness(0.9) contrast(1.3); }
+        }
+        
         /* COLLAPSIBLE NAVIGATION */
         .nav-container {
             position: fixed;
@@ -1274,35 +1374,56 @@
             createPolytopBackgrounds() {
                 const container = document.getElementById('polytopBackgrounds');
                 
+                // Test WebGL availability once
+                const testCanvas = document.createElement('canvas');
+                const testGL = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+                const webglAvailable = !!testGL;
+                
+                if (!webglAvailable) {
+                    console.log('🎨 WebGL not available - using stunning CSS-only 4D polytopal backgrounds');
+                }
+                
                 polytopThemes.forEach((theme, index) => {
                     const backgroundDiv = document.createElement('div');
                     backgroundDiv.className = 'polytopal-background';
                     backgroundDiv.id = `polytop-${index}`;
                     
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'polytopal-canvas';
-                    canvas.id = `polytop-canvas-${index}`;
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    backgroundDiv.appendChild(canvas);
+                    if (webglAvailable) {
+                        // Try WebGL first
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'polytopal-canvas';
+                        canvas.id = `polytop-canvas-${index}`;
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        backgroundDiv.appendChild(canvas);
+                        
+                        // Initialize visualizer array slot
+                        this.polytopVisualizers[index] = null;
+                        
+                        // Create polytopal visualizer after canvas is ready
+                        setTimeout(() => {
+                            try {
+                                const visualizer = new PolytopBackgroundVisualizer(canvas, theme, index);
+                                this.polytopVisualizers[index] = visualizer;
+                                console.log(`✅ WebGL Visualizer ${index}: ${theme.name}`);
+                            } catch (error) {
+                                console.log(`🎨 WebGL failed for ${index}, using CSS fallback: ${theme.name}`);
+                                this.polytopVisualizers[index] = null;
+                            }
+                        }, index * 100);
+                    } else {
+                        // Use CSS-only mode
+                        this.polytopVisualizers[index] = null;
+                        console.log(`🎨 CSS-Only Background ${index}: ${theme.name}`);
+                    }
                     
                     container.appendChild(backgroundDiv);
-                    
-                    // Initialize visualizer array slot
-                    this.polytopVisualizers[index] = null;
-                    
-                    // Create polytopal visualizer after canvas is ready
-                    setTimeout(() => {
-                        try {
-                            const visualizer = new PolytopBackgroundVisualizer(canvas, theme, index);
-                            this.polytopVisualizers[index] = visualizer;
-                            console.log(`✅ Visualizer ${index} created: ${theme.name}`);
-                        } catch (error) {
-                            console.error(`❌ Visualizer ${index} failed:`, error);
-                            this.polytopVisualizers[index] = null;
-                        }
-                    }, index * 100);
                 });
+                
+                // Activate first background immediately
+                setTimeout(() => {
+                    this.updatePolytopVisibility();
+                }, 500);
             }
             
             createNavigation() {
