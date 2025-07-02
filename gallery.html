@@ -1032,53 +1032,164 @@
         
         renderGallery();
         
-        // Lazy loading for iframes
-        const lazyLoadObserver = new IntersectionObserver((entries) => {
+        // WebGL Context Pool Manager
+        class WebGLContextPool {
+            constructor(maxContexts = 6) {
+                this.maxContexts = maxContexts;
+                this.activeContexts = new Map(); // cardElement -> iframe
+                this.loadQueue = [];
+                this.isProcessing = false;
+                
+                console.log(`🎯 WebGL Context Pool initialized: Max ${maxContexts} contexts`);
+            }
+            
+            addToQueue(cardElement, src) {
+                if (this.activeContexts.has(cardElement)) {
+                    console.log('⚠️ Context already active for card');
+                    return;
+                }
+                
+                this.loadQueue.push({ cardElement, src });
+                console.log(`📋 Added to queue: ${this.loadQueue.length} pending, ${this.activeContexts.size} active`);
+                this.processQueue();
+            }
+            
+            processQueue() {
+                if (this.isProcessing || this.loadQueue.length === 0) return;
+                if (this.activeContexts.size >= this.maxContexts) {
+                    console.log(`🚫 Context limit reached (${this.maxContexts}), waiting for cleanup`);
+                    return;
+                }
+                
+                this.isProcessing = true;
+                const { cardElement, src } = this.loadQueue.shift();
+                
+                console.log(`🚀 Loading context ${this.activeContexts.size + 1}/${this.maxContexts}`);
+                this.loadIframe(cardElement, src);
+                
+                setTimeout(() => {
+                    this.isProcessing = false;
+                    this.processQueue(); // Process next in queue
+                }, 500); // Small delay between loads
+            }
+            
+            loadIframe(cardElement, src) {
+                const lazyIframe = cardElement.querySelector('.lazy-iframe');
+                if (!lazyIframe) return;
+                
+                const iframe = document.createElement('iframe');
+                iframe.src = src;
+                iframe.style.cssText = 'width: 100%; height: 100%; border: none; background: #000;';
+                iframe.sandbox = 'allow-scripts allow-same-origin';
+                
+                lazyIframe.style.background = '#000';
+                lazyIframe.innerHTML = `
+                    <div style="color: #00ffff; text-align: center; padding: 20px; font-family: monospace;">
+                        <div style="font-size: 1.5rem; margin-bottom: 1rem;">⚡</div>
+                        <div>Loading WebGL Context ${this.activeContexts.size + 1}/${this.maxContexts}...</div>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Queue: ${this.loadQueue.length} waiting</div>
+                    </div>
+                `;
+                
+                iframe.onload = () => {
+                    lazyIframe.innerHTML = '';
+                    lazyIframe.appendChild(iframe);
+                    this.activeContexts.set(cardElement, iframe);
+                    console.log(`✅ Context loaded successfully: ${this.activeContexts.size}/${this.maxContexts} active`);
+                };
+                
+                iframe.onerror = () => {
+                    lazyIframe.innerHTML = `
+                        <div style="color: #ff0080; text-align: center; padding: 20px; font-family: monospace;">
+                            <div style="font-size: 1.5rem; margin-bottom: 1rem;">⚠️</div>
+                            <div>Preview unavailable</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.5rem;">Run local server to view</div>
+                            <button onclick="window.open('${src}', '_blank')" 
+                                    style="margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #00ffff; cursor: pointer;">
+                                Open Direct
+                            </button>
+                        </div>
+                    `;
+                };
+            }
+            
+            cleanupContext(cardElement) {
+                if (this.activeContexts.has(cardElement)) {
+                    const iframe = this.activeContexts.get(cardElement);
+                    
+                    // Replace iframe with placeholder
+                    const lazyIframe = cardElement.querySelector('.lazy-iframe');
+                    if (lazyIframe) {
+                        const effectTitle = cardElement.querySelector('.effect-title')?.textContent || 'Effect';
+                        lazyIframe.innerHTML = `
+                            <div style="color: #00ffff; text-align: center; padding: 20px; font-family: monospace;">
+                                <div style="font-size: 1.5rem; margin-bottom: 1rem;">💤</div>
+                                <div>Context Cleaned Up</div>
+                                <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Scroll back to reload</div>
+                            </div>
+                        `;
+                        
+                        // Restore data-src for potential reload
+                        lazyIframe.dataset.src = iframe.src;
+                    }
+                    
+                    // Remove iframe and context
+                    iframe.remove();
+                    this.activeContexts.delete(cardElement);
+                    
+                    console.log(`🧹 Context cleaned up: ${this.activeContexts.size}/${this.maxContexts} active, ${this.loadQueue.length} in queue`);
+                    
+                    // Process queue after cleanup
+                    setTimeout(() => this.processQueue(), 100);
+                }
+            }
+            
+            getStatus() {
+                return {
+                    active: this.activeContexts.size,
+                    max: this.maxContexts,
+                    queue: this.loadQueue.length,
+                    available: this.maxContexts - this.activeContexts.size
+                };
+            }
+        }
+        
+        // Initialize context pool
+        const contextPool = new WebGLContextPool(6);
+        
+        // Enhanced Intersection Observer with auto-cleanup
+        const loadObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const lazyIframe = entry.target.querySelector('.lazy-iframe');
                     if (lazyIframe && lazyIframe.dataset.src) {
-                        const iframe = document.createElement('iframe');
-                        iframe.src = lazyIframe.dataset.src;
-                        iframe.style.cssText = 'width: 100%; height: 100%; border: none; background: #000;';
-                        iframe.sandbox = 'allow-scripts allow-same-origin';
-                        
-                        lazyIframe.style.background = '#000';
-                        lazyIframe.innerHTML = '<div style="color: #00ffff; text-align: center; padding: 20px;">Loading...</div>';
-                        
-                        iframe.onload = () => {
-                            lazyIframe.innerHTML = '';
-                            lazyIframe.appendChild(iframe);
-                        };
-                        
-                        iframe.onerror = () => {
-                            lazyIframe.innerHTML = `
-                                <div style="color: #ff0080; text-align: center; padding: 20px; font-family: monospace;">
-                                    <div style="font-size: 1.5rem; margin-bottom: 1rem;">⚠️</div>
-                                    <div>Preview unavailable</div>
-                                    <div style="font-size: 0.8rem; margin-top: 0.5rem;">Run local server to view</div>
-                                    <button onclick="window.open('${lazyIframe.dataset.src}', '_blank')" 
-                                            style="margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #00ffff; cursor: pointer;">
-                                        Open Direct
-                                    </button>
-                                </div>
-                            `;
-                        };
-                        
-                        // Remove data-src to prevent re-loading
-                        delete lazyIframe.dataset.src;
+                        // Add to queue instead of immediate load
+                        contextPool.addToQueue(entry.target, lazyIframe.dataset.src);
+                        delete lazyIframe.dataset.src; // Prevent re-adding to queue
                     }
-                    lazyLoadObserver.unobserve(entry.target);
                 }
             });
         }, {
-            rootMargin: '100px'
+            rootMargin: '200px' // Start loading earlier
         });
         
-        // Observe all effect cards for lazy loading
+        // Cleanup observer - more aggressive cleanup
+        const cleanupObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    // Card is out of view, cleanup its context
+                    contextPool.cleanupContext(entry.target);
+                }
+            });
+        }, {
+            rootMargin: '-100px' // Cleanup when card is well out of view
+        });
+        
+        // Observe all effect cards for loading and cleanup
         function observeCards() {
             document.querySelectorAll('.effect-card').forEach(card => {
-                lazyLoadObserver.observe(card);
+                loadObserver.observe(card);    // For lazy loading
+                cleanupObserver.observe(card); // For auto-cleanup
             });
         }
         
@@ -1091,6 +1202,40 @@
         
         // Initial observation
         setTimeout(observeCards, 100);
+        
+        // Add status display and debugging
+        function addContextStatusDisplay() {
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'context-status';
+            statusDiv.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: rgba(0, 0, 0, 0.9);
+                color: #00ffff;
+                padding: 10px 15px;
+                border: 1px solid #00ffff;
+                border-radius: 8px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.8rem;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+            `;
+            document.body.appendChild(statusDiv);
+            
+            // Update status every second
+            setInterval(() => {
+                const status = contextPool.getStatus();
+                statusDiv.innerHTML = `
+                    🎯 WebGL Pool: ${status.active}/${status.max} active<br>
+                    📋 Queue: ${status.queue} waiting<br>
+                    ✅ Available: ${status.available} slots
+                `;
+            }, 1000);
+        }
+        
+        // Add debug status display
+        setTimeout(addContextStatusDisplay, 1000);
         
         // Server status and instructions
         function checkServer() {
