@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Codex Gallery - Enhanced 4D System v2.2</title>
+    <title>Visual Codex Gallery - Fixed Layout System v2.3</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -892,7 +892,7 @@
     
     <!-- Crystal Container -->
     <div class="crystal-container" id="crystalContainer">
-        <!-- 6 crystal wafers will be created -->
+        <!-- 3 crystal wafers will be created dynamically -->
     </div>
 
     <script>
@@ -1833,41 +1833,26 @@
             createCrystalWafers() {
                 const container = document.getElementById('crystalContainer');
                 
-                // Check if mobile
-                const isMobile = window.innerWidth <= 768;
+                // Clear any existing content
+                container.innerHTML = '';
                 
-                // Always use 3 cards per section now
-                const cardCount = 3;
-                const totalSections = Math.ceil(contentSets[0].length / cardCount);
+                console.log('🔧 Creating 3 crystal wafers for desktop display');
                 
-                if (isMobile) {
-                    // Mobile: Create sections with 3 cards each
-                    for (let sectionIdx = 0; sectionIdx < totalSections; sectionIdx++) {
-                        const sectionDiv = document.createElement('div');
-                        sectionDiv.className = 'mobile-section';
-                        sectionDiv.id = `mobile-section-${sectionIdx}`;
-                        
-                        for (let cardIdx = 0; cardIdx < 3; cardIdx++) {
-                            const globalIdx = sectionIdx * 3 + cardIdx;
-                            if (globalIdx >= contentSets[0].length) break;
-                            
-                            const wafer = this.createWaferElement(globalIdx);
-                            sectionDiv.appendChild(wafer);
-                        }
-                        
-                        container.appendChild(sectionDiv);
-                    }
-                } else {
-                    // Desktop: 3 cards in a centered grid
-                    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                    container.style.gridTemplateRows = '1fr';
-                    container.style.justifyContent = 'center';
-                    
-                    for (let i = 0; i < 3; i++) {
-                        const wafer = this.createWaferElement(i);
-                        container.appendChild(wafer);
-                    }
+                // Desktop: Always create exactly 3 cards in a centered grid
+                container.style.display = 'grid';
+                container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                container.style.gridTemplateRows = '1fr';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.gap = '30px';
+                
+                for (let i = 0; i < 3; i++) {
+                    const wafer = this.createWaferElement(i);
+                    container.appendChild(wafer);
+                    console.log(`✅ Created crystal wafer ${i}`);
                 }
+                
+                console.log('💎 Crystal wafers created successfully');
             }
             
             createWaferElement(index) {
@@ -1921,12 +1906,20 @@
                 // Handle case where there are fewer than 3 items in a section
                 if (!content) {
                     const wafer = document.getElementById(`crystal-wafer-${waferIndex}`);
-                    if (wafer) wafer.style.display = 'none';
+                    if (wafer) {
+                        wafer.style.display = 'none';
+                        console.log(`⚠️ Hiding wafer ${waferIndex} - no content available`);
+                    }
                     return;
                 }
                 
                 const wafer = document.getElementById(`crystal-wafer-${waferIndex}`);
-                if (wafer) wafer.style.display = 'flex';
+                if (wafer) {
+                    wafer.style.display = 'flex';
+                    console.log(`✅ Showing wafer ${waferIndex}:`, content.title);
+                } else {
+                    console.error(`❌ Wafer element ${waferIndex} not found!`);
+                }
                 
                 // Update text content without destroying DOM structure
                 const titleEl = document.getElementById(`title-${waferIndex}`);
@@ -1952,9 +1945,14 @@
             updateContent() {
                 const currentSet = contentSets[this.currentSection];
                 
+                console.log(`🔄 Updating content for section ${this.currentSection}:`, currentSet);
+                
                 for (let i = 0; i < 3; i++) {
                     this.updateWaferContent(i);
+                    console.log(`✅ Updated wafer ${i} content`);
                 }
+                
+                console.log('💎 All wafers updated with current section content');
             }
             
             autoLoadPreview(waferIndex, content) {
