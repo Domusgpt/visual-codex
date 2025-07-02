@@ -1822,8 +1822,8 @@
                 const isMobile = window.innerWidth <= 768;
                 
                 // Always use 3 cards per section now
-                const cardsPerSection = 3;
-                const totalSections = Math.ceil(contentSets[0].length / cardsPerSection);
+                const cardCount = 3;
+                const totalSections = Math.ceil(contentSets[0].length / cardCount);
                 
                 if (isMobile) {
                     // Mobile: Create sections with 3 cards each
@@ -1924,9 +1924,11 @@
                 
                 // Update tags
                 const tagsContainer = document.getElementById(`info-tags-${waferIndex}`);
-                tagsContainer.innerHTML = content.tags.map(tag => 
-                    `<span class="info-tag">${tag}</span>`
-                ).join('');
+                if (tagsContainer) {
+                    tagsContainer.innerHTML = content.tags.map(tag => 
+                        `<span class="info-tag">${tag}</span>`
+                    ).join('');
+                }
                 
                 // Auto-load preview
                 this.autoLoadPreview(waferIndex, content);
@@ -1935,7 +1937,7 @@
             updateContent() {
                 const currentSet = contentSets[this.currentSection];
                 
-                for (let i = 0; i < 6; i++) {
+                for (let i = 0; i < 3; i++) {
                     this.updateWaferContent(i);
                 }
             }
