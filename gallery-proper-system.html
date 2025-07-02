@@ -1552,9 +1552,9 @@
                     
                     if (this.isTransitioning) return;
                     
-                    // Build momentum
+                    // Build momentum - slower accumulation for proper threshold feel
                     const delta = Math.abs(e.deltaY);
-                    this.scrollMomentum += delta * 0.4;
+                    this.scrollMomentum += delta * 0.25; // Reduced from 0.4 to build slower
                     this.scrollMomentum = Math.min(this.scrollMomentum, 100);
                     
                     // Update scroll progress for visualizers
@@ -1562,6 +1562,9 @@
                     this.polytopVisualizers.forEach(viz => {
                         if (viz) viz.updateScroll(scrollProgress);
                     });
+                    
+                    // Update card momentum effects as it builds
+                    this.updateCardMomentumEffects();
                     
                     // Show momentum indicator
                     this.showMomentumIndicator();
@@ -1571,17 +1574,18 @@
                     
                     // Debug tactile scroll behavior
                     if (this.scrollMomentum > 15) {
-                        console.log(`⚡ Scroll momentum: ${this.scrollMomentum.toFixed(1)}/25 - visualizers reacting`);
+                        console.log(`⚡ Building momentum: ${this.scrollMomentum.toFixed(1)}/${this.momentumThreshold} - cards anticipating`);
                     }
                     
-                    // Check for transition threshold
+                    // Check for transition threshold - only trigger at 25, not before
                     if (this.scrollMomentum >= this.momentumThreshold) {
+                        console.log(`🚀 THRESHOLD REACHED! Triggering transition at ${this.scrollMomentum.toFixed(1)}`);
                         this.triggerTransition(e.deltaY > 0 ? 1 : -1);
                     } else {
-                        // Set momentum decay
+                        // Set momentum decay - longer delay to allow building
                         momentumDecay = setTimeout(() => {
                             this.decayMomentum();
-                        }, 150);
+                        }, 200); // Increased from 150ms
                     }
                 }, { passive: false });
             }
@@ -1701,7 +1705,7 @@
             crystalBreakingSequence() {
                 const wafers = document.querySelectorAll('.crystal-wafer');
                 
-                // Phase 1: Breaking animation
+                // Phase 1: Breaking animation with momentum-responsive timing
                 wafers.forEach((wafer, index) => {
                     setTimeout(() => {
                         wafer.classList.add('breaking');
@@ -1723,6 +1727,33 @@
                             
                         }, 800);
                     }, index * 80);
+                });
+            }
+            
+            // Add momentum-responsive card effects
+            updateCardMomentumEffects() {
+                const wafers = document.querySelectorAll('.crystal-wafer');
+                const momentumPercent = this.scrollMomentum / this.momentumThreshold;
+                
+                wafers.forEach((wafer, index) => {
+                    const stagger = index * 0.1;
+                    const effectIntensity = Math.max(0, momentumPercent - stagger);
+                    
+                    if (effectIntensity > 0) {
+                        // Cards start to anticipate transition
+                        const anticipationScale = 1 + (effectIntensity * 0.02);
+                        const anticipationBlur = effectIntensity * 0.5;
+                        const anticipationBrightness = 1 + (effectIntensity * 0.2);
+                        
+                        wafer.style.transform = `scale(${anticipationScale})`;
+                        wafer.style.filter = `blur(${anticipationBlur}px) brightness(${anticipationBrightness})`;
+                        wafer.style.transition = 'all 0.1s ease-out';
+                    } else {
+                        // Reset to normal
+                        wafer.style.transform = '';
+                        wafer.style.filter = '';
+                        wafer.style.transition = 'all 0.3s ease-out';
+                    }
                 });
             }
             
@@ -1897,7 +1928,7 @@
             
             decayMomentum() {
                 const decayInterval = setInterval(() => {
-                    this.scrollMomentum -= 3;
+                    this.scrollMomentum -= 2; // Slower decay for better feel
                     
                     if (this.scrollMomentum <= 0) {
                         this.scrollMomentum = 0;
@@ -1908,16 +1939,20 @@
                         this.polytopVisualizers.forEach(viz => {
                             if (viz) viz.updateScroll(0);
                         });
+                        
+                        // Reset card effects
+                        this.updateCardMomentumEffects();
                     } else {
                         this.showMomentumIndicator();
                         
-                        // Update scroll progress
+                        // Update scroll progress and card effects during decay
                         const scrollProgress = this.scrollMomentum / 100;
                         this.polytopVisualizers.forEach(viz => {
                             if (viz) viz.updateScroll(scrollProgress);
                         });
+                        this.updateCardMomentumEffects();
                     }
-                }, 50);
+                }, 60); // Slightly slower decay rate
             }
             
             updateUI() {
