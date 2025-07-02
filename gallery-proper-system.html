@@ -1005,14 +1005,45 @@
         class PolytopBackgroundVisualizer {
             constructor(canvas, theme, sectionIndex) {
                 this.canvas = canvas;
-                this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
                 this.theme = theme;
                 this.sectionIndex = sectionIndex;
                 
+                // Force WebGL context creation with all possible options
+                const contextOptions = {
+                    alpha: true,
+                    depth: true,
+                    stencil: false,
+                    antialias: true,
+                    premultipliedAlpha: false,
+                    preserveDrawingBuffer: false,
+                    powerPreference: "default",
+                    failIfMajorPerformanceCaveat: false
+                };
+                
+                this.gl = canvas.getContext('webgl', contextOptions) || 
+                         canvas.getContext('experimental-webgl', contextOptions) ||
+                         canvas.getContext('webkit-3d', contextOptions) ||
+                         canvas.getContext('moz-webgl', contextOptions);
+                
                 if (!this.gl) {
-                    console.error(`❌ WebGL not supported for visualizer ${sectionIndex}`);
-                    throw new Error('WebGL not available');
+                    console.error(`❌ FORCING WebGL for visualizer ${sectionIndex} - trying alternative approaches`);
+                    
+                    // Try without options
+                    this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    
+                    if (!this.gl) {
+                        console.error(`❌ WebGL completely failed for visualizer ${sectionIndex}`);
+                        console.error(`Canvas dimensions: ${canvas.width}x${canvas.height}`);
+                        console.error(`Canvas parent:`, canvas.parentElement);
+                        throw new Error('WebGL not available');
+                    }
                 }
+                
+                console.log(`🎯 FORCING WebGL context for visualizer ${sectionIndex}: ${theme.name}`);
+                console.log(`  - WebGL version: ${this.gl.getParameter(this.gl.VERSION)}`);
+                console.log(`  - Renderer: ${this.gl.getParameter(this.gl.RENDERER)}`);
+                console.log(`  - Vendor: ${this.gl.getParameter(this.gl.VENDOR)}`);
+                console.log(`  - Canvas: ${canvas.width}x${canvas.height}`);
                 
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
@@ -1406,14 +1437,13 @@
             createPolytopBackgrounds() {
                 const container = document.getElementById('polytopBackgrounds');
                 
-                // Test WebGL availability once
-                const testCanvas = document.createElement('canvas');
-                const testGL = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-                const webglAvailable = !!testGL;
+                // FORCE WebGL - always try to create visualizers
+                console.log('🔥 FORCING WebGL visualizer creation - ignoring detection');
+                console.log('  - User Agent:', navigator.userAgent);
+                console.log('  - Platform:', navigator.platform);
+                console.log('  - GitHub Pages:', window.location.hostname.includes('github.io'));
                 
-                if (!webglAvailable) {
-                    console.log('🎨 WebGL not available - using stunning CSS-only 4D polytopal backgrounds');
-                }
+                const webglAvailable = true; // FORCE IT
                 
                 polytopThemes.forEach((theme, index) => {
                     const backgroundDiv = document.createElement('div');
@@ -1425,9 +1455,17 @@
                         const canvas = document.createElement('canvas');
                         canvas.className = 'polytopal-canvas';
                         canvas.id = `polytop-canvas-${index}`;
-                        canvas.width = window.innerWidth;
-                        canvas.height = window.innerHeight;
+                        
+                        // FORCE proper canvas dimensions
+                        canvas.width = window.innerWidth || 1920;
+                        canvas.height = window.innerHeight || 1080;
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                        canvas.style.display = 'block';
+                        
                         backgroundDiv.appendChild(canvas);
+                        
+                        console.log(`🎯 Canvas ${index} created: ${canvas.width}x${canvas.height}`);
                         
                         // Initialize visualizer array slot
                         this.polytopVisualizers[index] = null;
