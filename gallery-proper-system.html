@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Codex Gallery - Proper 4D System</title>
+    <title>Visual Codex Gallery - Proper 4D System v2.1</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
@@ -323,6 +324,9 @@
             flex-direction: column;
             border-radius: 12px;
             border: 2px solid var(--crystal-teal);
+            /* FORCE 3D appearance */
+            transform: translateZ(10px) rotateX(2deg) rotateY(1deg);
+            min-height: 400px;
             
             box-shadow: 
                 /* Ghosting afterimage effect */
@@ -881,7 +885,7 @@
     </div>
 
     <script>
-        console.log('💎 Visual Codex Proper 4D System - Polytopal Visualizers');
+        console.log('💎 Visual Codex Proper 4D System v2.1 - Cache Busted - Polytopal Visualizers');
         
         // REAL VISUAL EFFECTS DATA
         const contentSets = [
