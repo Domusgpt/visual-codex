@@ -1,6 +1,8 @@
 # Visual Codex Gallery
 
-**Private Repository - All Rights Reserved**
+## ⚠️ PROPRIETARY SOFTWARE - ALL RIGHTS RESERVED ⚠️
+
+**NO PERMISSIONS GRANTED. VIEWING FOR DEMONSTRATION ONLY.**
 
 An advanced interactive gallery showcasing 39 unique visual effects and style demonstrations. This serves as a comprehensive library of holographic, parallax, and interactive CSS/WebGL systems.
 
@@ -34,9 +36,18 @@ visual_codex/
 └── interactive_ui_components/  # UI component docs
 ```
 
-## 🔒 License
+## ⚠️ LEGAL NOTICE
 
-This is private, proprietary software. All rights reserved.
+**PROPRIETARY SOFTWARE - ALL RIGHTS RESERVED**
+
+- This repository contains PROPRIETARY and CONFIDENTIAL material
+- NO PERMISSION granted to use, copy, modify, distribute, or sell
+- VIEWING PERMITTED for demonstration purposes ONLY  
+- Any unauthorized use is STRICTLY PROHIBITED
+- Violators will be prosecuted to the full extent of the law
+
+**COPYRIGHT NOTICE**: This code is the exclusive property of Paul Phillips (domusgpt).
+Unauthorized use, reproduction, or distribution may result in severe civil and criminal penalties.
 
 ---
 
