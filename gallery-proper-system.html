@@ -873,13 +873,13 @@
         class PolytopBackgroundVisualizer {
             constructor(canvas, theme, sectionIndex) {
                 this.canvas = canvas;
-                this.gl = canvas.getContext('webgl');
+                this.gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
                 this.theme = theme;
                 this.sectionIndex = sectionIndex;
                 
                 if (!this.gl) {
-                    console.error('WebGL not supported');
-                    return;
+                    console.error(`❌ WebGL not supported for visualizer ${sectionIndex}`);
+                    throw new Error('WebGL not available');
                 }
                 
                 this.mouseX = 0.5;
@@ -1286,10 +1286,17 @@
                     
                     container.appendChild(backgroundDiv);
                     
-                    // Create polytopal visualizer
+                    // Create polytopal visualizer after canvas is ready
                     setTimeout(() => {
-                        const visualizer = new PolytopBackgroundVisualizer(canvas, theme, index);
-                        this.polytopVisualizers.push(visualizer);
+                        try {
+                            const visualizer = new PolytopBackgroundVisualizer(canvas, theme, index);
+                            this.polytopVisualizers.push(visualizer);
+                            console.log(`✅ Visualizer ${index} created: ${theme.name}`);
+                        } catch (error) {
+                            console.error(`❌ Visualizer ${index} failed:`, error);
+                            // Push null to maintain array indexing
+                            this.polytopVisualizers.push(null);
+                        }
                     }, index * 100);
                 });
             }
