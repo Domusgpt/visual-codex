@@ -1705,7 +1705,14 @@
             crystalBreakingSequence() {
                 const wafers = document.querySelectorAll('.crystal-wafer');
                 
-                // Phase 1: Breaking animation with momentum-responsive timing
+                // Clear any momentum effects before starting
+                wafers.forEach(wafer => {
+                    wafer.style.transform = '';
+                    wafer.style.filter = '';
+                    wafer.style.transition = '';
+                });
+                
+                // Phase 1: Breaking animation
                 wafers.forEach((wafer, index) => {
                     setTimeout(() => {
                         wafer.classList.add('breaking');
@@ -1720,9 +1727,13 @@
                                 this.updateWaferContent(index);
                             }, 200);
                             
-                            // Remove reforming class
+                            // Remove reforming class and ensure clean state
                             setTimeout(() => {
                                 wafer.classList.remove('reforming');
+                                // Ensure clean state after reforming
+                                wafer.style.transform = '';
+                                wafer.style.filter = '';
+                                wafer.style.transition = '';
                             }, 1000);
                             
                         }, 800);
@@ -1732,24 +1743,31 @@
             
             // Add momentum-responsive card effects
             updateCardMomentumEffects() {
+                // Don't interfere during transitions
+                if (this.isTransitioning) return;
+                
                 const wafers = document.querySelectorAll('.crystal-wafer');
                 const momentumPercent = this.scrollMomentum / this.momentumThreshold;
                 
                 wafers.forEach((wafer, index) => {
+                    // Skip if card is in breaking/reforming state
+                    if (wafer.classList.contains('breaking') || wafer.classList.contains('reforming')) {
+                        return;
+                    }
+                    
                     const stagger = index * 0.1;
                     const effectIntensity = Math.max(0, momentumPercent - stagger);
                     
                     if (effectIntensity > 0) {
                         // Cards start to anticipate transition
-                        const anticipationScale = 1 + (effectIntensity * 0.02);
-                        const anticipationBlur = effectIntensity * 0.5;
-                        const anticipationBrightness = 1 + (effectIntensity * 0.2);
+                        const anticipationScale = 1 + (effectIntensity * 0.01); // Reduced intensity
+                        const anticipationBrightness = 1 + (effectIntensity * 0.1);
                         
                         wafer.style.transform = `scale(${anticipationScale})`;
-                        wafer.style.filter = `blur(${anticipationBlur}px) brightness(${anticipationBrightness})`;
+                        wafer.style.filter = `brightness(${anticipationBrightness})`;
                         wafer.style.transition = 'all 0.1s ease-out';
                     } else {
-                        // Reset to normal
+                        // Reset to normal only if not in animation state
                         wafer.style.transform = '';
                         wafer.style.filter = '';
                         wafer.style.transition = 'all 0.3s ease-out';
