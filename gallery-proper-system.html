@@ -292,21 +292,23 @@
             opacity: 0.6;
         }
         
-        /* CRYSTAL WAFER SYSTEM */
+        /* CRYSTAL WAFER SYSTEM - 3 CARDS ONLY */
         .crystal-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 95vw;
-            max-width: 1400px;
-            height: 85vh;
+            max-width: 1200px;
+            height: 70vh;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 25px;
+            grid-template-rows: 1fr;
+            gap: 30px;
             z-index: 100;
             perspective: 2000px;
+            align-items: center;
+            justify-content: center;
         }
         
         .crystal-wafer {
@@ -1503,8 +1505,8 @@
                     const section = document.createElement('div');
                     section.className = 'nav-section';
                     section.innerHTML = `
-                        <div class="nav-section-name">${theme.name}</div>
-                        <div class="nav-section-info">${theme.geometry} • density: ${theme.density}</div>
+                        <div class="nav-section-name">Section ${index + 1}: ${theme.name}</div>
+                        <div class="nav-section-info">${theme.geometry} • density: ${theme.density} • 3 cards</div>
                     `;
                     
                     section.addEventListener('click', () => {
@@ -1820,10 +1822,12 @@
                 const isMobile = window.innerWidth <= 768;
                 const cardsPerSection = isMobile ? 3 : 6;
                 
+                // Always use 3 cards per section now
+                const cardsPerSection = 3;
+                const totalSections = Math.ceil(contentSets[0].length / cardsPerSection);
+                
                 if (isMobile) {
                     // Mobile: Create sections with 3 cards each
-                    const totalSections = Math.ceil(contentSets[0].length / 3);
-                    
                     for (let sectionIdx = 0; sectionIdx < totalSections; sectionIdx++) {
                         const sectionDiv = document.createElement('div');
                         sectionDiv.className = 'mobile-section';
@@ -1831,7 +1835,7 @@
                         
                         for (let cardIdx = 0; cardIdx < 3; cardIdx++) {
                             const globalIdx = sectionIdx * 3 + cardIdx;
-                            if (globalIdx >= 6) break; // Don't exceed 6 cards
+                            if (globalIdx >= contentSets[0].length) break;
                             
                             const wafer = this.createWaferElement(globalIdx);
                             sectionDiv.appendChild(wafer);
@@ -1840,8 +1844,12 @@
                         container.appendChild(sectionDiv);
                     }
                 } else {
-                    // Desktop: Keep original 6-card grid
-                    for (let i = 0; i < 6; i++) {
+                    // Desktop: 3 cards in a centered grid
+                    container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                    container.style.gridTemplateRows = '1fr';
+                    container.style.justifyContent = 'center';
+                    
+                    for (let i = 0; i < 3; i++) {
                         const wafer = this.createWaferElement(i);
                         container.appendChild(wafer);
                     }
@@ -1895,6 +1903,16 @@
             updateWaferContent(waferIndex) {
                 const currentSet = contentSets[this.currentSection];
                 const content = currentSet[waferIndex];
+                
+                // Handle case where there are fewer than 3 items in a section
+                if (!content) {
+                    const wafer = document.getElementById(`crystal-wafer-${waferIndex}`);
+                    if (wafer) wafer.style.display = 'none';
+                    return;
+                }
+                
+                const wafer = document.getElementById(`crystal-wafer-${waferIndex}`);
+                if (wafer) wafer.style.display = 'flex';
                 
                 // Update text content without destroying DOM structure
                 const titleEl = document.getElementById(`title-${waferIndex}`);
