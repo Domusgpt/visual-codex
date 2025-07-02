@@ -24,63 +24,96 @@
         }
         
         body {
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(255, 255, 0, 0.1) 0%, transparent 30%),
-                linear-gradient(135deg, #0a0a0f 0%, #1a0a1f 50%, #0f1a2f 100%);
+            background: #000;
             color: var(--neon-cyan);
             font-family: 'Courier New', monospace;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            margin: 0;
+            padding: 0;
         }
         
-        /* Animated grid background */
-        body::before {
-            content: '';
+        /* Evolving background canvas */
+        #background-visualizer {
             position: fixed;
             top: 0;
             left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        /* Snap scroll container */
+        .snap-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+        
+        /* Each snap section shows exactly 6 cards */
+        .snap-section {
+            height: 100vh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* Card styling for snap layout */
+        .snap-card {
+            background: var(--card-bg);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: var(--glow-intensity) var(--neon-cyan);
+        }
+        
+        .snap-card:hover {
+            transform: scale(1.05) translateZ(20px);
+            box-shadow: 0 0 40px var(--neon-magenta);
+            border-color: var(--neon-magenta);
+        }
+        
+        .snap-card h3 {
+            color: var(--neon-yellow);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .snap-card p {
+            color: var(--neon-cyan);
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .snap-card .preview-frame {
+            width: 100%;
+            height: 200px;
+            border: 1px solid var(--electric-blue);
+            border-radius: 8px;
+            background: rgba(0, 20, 40, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .snap-card iframe {
             width: 100%;
             height: 100%;
-            background: 
-                linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,0,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 20s linear infinite;
-            z-index: -1;
-        }
-        
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(40px, 40px); }
-        }
-        
-        /* Floating particles */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(2px 2px at 20px 30px, var(--neon-cyan), transparent),
-                radial-gradient(2px 2px at 40px 70px, var(--neon-magenta), transparent),
-                radial-gradient(1px 1px at 90px 40px, var(--neon-yellow), transparent),
-                radial-gradient(1px 1px at 130px 80px, var(--electric-blue), transparent);
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: particleFloat 15s ease-in-out infinite;
-            opacity: 0.6;
-            z-index: -1;
-        }
-        
-        @keyframes particleFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(120deg); }
-            66% { transform: translateY(10px) rotate(240deg); }
+            border: none;
+            border-radius: 8px;
         }
         
         header {
@@ -895,11 +928,12 @@
                 card.onclick = () => openModal(effect);
                 
                 const previewContent = effect.hasRealCode ? 
-                    `<div class="lazy-iframe" data-src="${effect.file}" style="width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; color: #00ffff; font-family: monospace;">
+                    `<div class="click-to-view" data-src="${effect.file}" style="width: 100%; height: 100%; background: linear-gradient(45deg, #0a0a0f, #1a0033); display: flex; align-items: center; justify-content: center; color: #00ffff; font-family: monospace; cursor: pointer; transition: all 0.3s ease;" onclick="window.open('${effect.file}', '_blank')">
                         <div style="text-align: center;">
-                            <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
-                            <div>Loading ${effect.title}...</div>
-                            <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Scroll into view to load</div>
+                            <div style="font-size: 3rem; margin-bottom: 1rem; filter: drop-shadow(0 0 20px #00ffff);">🚀</div>
+                            <div style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: bold;">Click to View</div>
+                            <div style="font-size: 1rem; margin-bottom: 1rem;">${effect.title}</div>
+                            <div style="font-size: 0.8rem; opacity: 0.7;">Opens in new tab</div>
                         </div>
                     </div>` :
                     `<div class="${effect.demoClass || 'demo-particles'}" style="width: 100%; height: 100%;"></div>`;

@@ -119,3 +119,30 @@ The Visual Codex operates on the principle of **"Extract, Enhance, Catalog"** - 
 ## 🔗 INTEGRATION WITH ROOT CLAUDE.MD
 
 This specialized workflow integrates with the root `CLAUDE.md` agentic development environment, focusing specifically on visual effect development, style extraction, and interactive demonstration creation within the broader experimental coding laboratory framework.
+
+## 🎯 CURRENT CRITICAL FIXES - PHASE 1
+
+**Reference Document:** `SYSTEMATIC_FIX_PLAN.md`
+
+### URGENT: Restore Core Functionality
+1. **Main Gallery Tactile Scroll** - Restore momentum physics with threshold triggering
+2. **Hover State Management** - Fix translucent cards, return to normal visibility
+3. **Card Expansion Enhancement** - Larger scaling (1.3x) with live effect previews
+4. **Demo Content Restoration** - Bring back all 35 demos with 5-item pagination
+5. **Click-to-Expand Rebuild** - Proper modal system with infinite scroll
+6. **Parameter-Only Scroll** - Prevent actual scrolling, map to parameters only
+
+### Implementation Principles
+- **Nothing Lost:** All original demos and functionality preserved
+- **Enhanced Not Simplified:** Every change adds capability  
+- **Smooth Transitions:** No jagged flips or sudden changes
+- **Tactile Feel:** Physical-like scroll behavior with momentum
+- **Visual Clarity:** Clear states for normal, hover, and expanded views
+- **Performance:** Smart canvas loading/unloading during transitions
+
+### Success Criteria
+- ✅ Tactile scroll physics like original system
+- ✅ Cards fully visible by default, enhanced on hover
+- ✅ All demos accessible (nothing lost)
+- ✅ Working click-to-expand with infinite scroll
+- ✅ Parameter-only scroll without page movement

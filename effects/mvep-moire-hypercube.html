@@ -9,8 +9,31 @@
             margin: 0;
             padding: 0;
             background: #000;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             font-family: 'Courier New', monospace;
+            height: 300vh; /* Make it scrollable */
+        }
+        
+        .infinite-scroll-content {
+            height: 300vh;
+            background: linear-gradient(0deg, 
+                rgba(0,20,40,0.3) 0%, 
+                rgba(20,0,40,0.2) 33%, 
+                rgba(40,20,0,0.2) 66%, 
+                rgba(0,40,20,0.3) 100%);
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            z-index: 100;
+            font-size: 12px;
         }
         #canvas {
             position: absolute;
@@ -67,10 +90,15 @@
     </style>
 </head>
 <body>
+    <div class="infinite-scroll-content"></div>
     <canvas id="canvas"></canvas>
     
     <div class="status" id="status">
-        MVEP 4D Hypercube - Mouse: Move | Audio: Click to Enable
+        MVEP 4D Hypercube - Mouse: Move | Scroll: Grid/Color | Audio: Click to Enable
+    </div>
+    
+    <div class="scroll-indicator" id="scrollIndicator">
+        Scroll: 0% | Grid: 12.0 | Color: 0.00
     </div>
     
     <div class="controls">
@@ -416,6 +444,36 @@
                     this.mouseX = e.clientX / window.innerWidth;
                     this.mouseY = 1.0 - (e.clientY / window.innerHeight); // Flip Y
                 });
+                
+                // PARAMETER-ONLY SCROLL (NO ACTUAL PAGE MOVEMENT)
+                this.scrollParameter = 0;
+                
+                window.addEventListener('wheel', (e) => {
+                    e.preventDefault(); // Prevent actual scrolling
+                    
+                    // Accumulate scroll input into parameter
+                    const delta = e.deltaY * 0.001;
+                    this.scrollParameter += delta;
+                    this.scrollParameter = Math.max(0, Math.min(1, this.scrollParameter)); // Clamp 0-1
+                    
+                    // Bind scroll parameter to grid density (5.0 to 25.0)
+                    this.params.gridDensity = 5.0 + (this.scrollParameter * 20.0);
+                    document.getElementById('gridDensity').value = this.params.gridDensity;
+                    document.getElementById('gridValue').textContent = this.params.gridDensity.toFixed(1);
+                    
+                    // Bind scroll parameter to color shift (-1.0 to 1.0)
+                    this.params.colorShift = -1.0 + (this.scrollParameter * 2.0);
+                    document.getElementById('colorShift').value = this.params.colorShift;
+                    document.getElementById('colorValue').textContent = this.params.colorShift.toFixed(1);
+                    
+                    // Update scroll indicator
+                    const indicator = document.getElementById('scrollIndicator');
+                    if (indicator) {
+                        indicator.textContent = `Scroll: ${(this.scrollParameter * 100).toFixed(1)}% | Grid: ${this.params.gridDensity.toFixed(1)} | Color: ${this.params.colorShift.toFixed(2)}`;
+                    }
+                    
+                    console.log(`🎛️ Parameter scroll: ${(this.scrollParameter * 100).toFixed(1)}% → Grid: ${this.params.gridDensity.toFixed(1)}, Color: ${this.params.colorShift.toFixed(2)} (no page movement)`);
+                }, { passive: false });
                 
                 // Parameter controls
                 const params = ['dimension', 'morphFactor', 'glitchIntensity', 'rotationSpeed', 'gridDensity', 'moireScale', 'colorShift'];

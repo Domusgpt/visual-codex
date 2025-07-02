@@ -190,7 +190,7 @@
             }
             
             createInsaneShaders() {
-                const vertexShaderSource = \`
+                const vertexShaderSource = `
                     attribute vec2 a_position;
                     varying vec2 v_uv;
                     varying vec3 v_worldPos;
@@ -214,9 +214,9 @@
                         v_worldPos = vec3(distorted * 2.0, sin(warpedTime * 0.1));
                         gl_Position = vec4(distorted, 0.0, 1.0);
                     }
-                \`;
+                `;
                 
-                const fragmentShaderSource = \`
+                const fragmentShaderSource = `
                     precision highp float;
                     
                     varying vec2 v_uv;
@@ -407,7 +407,7 @@
                         
                         gl_FragColor = vec4(finalColor, 1.0);
                     }
-                \`;
+                `;
                 
                 const vertexShader = this.compileShader(vertexShaderSource, this.gl.VERTEX_SHADER);
                 const fragmentShader = this.compileShader(fragmentShaderSource, this.gl.FRAGMENT_SHADER);
