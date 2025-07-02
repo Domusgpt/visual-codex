@@ -1282,20 +1282,24 @@
                     const canvas = document.createElement('canvas');
                     canvas.className = 'polytopal-canvas';
                     canvas.id = `polytop-canvas-${index}`;
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
                     backgroundDiv.appendChild(canvas);
                     
                     container.appendChild(backgroundDiv);
+                    
+                    // Initialize visualizer array slot
+                    this.polytopVisualizers[index] = null;
                     
                     // Create polytopal visualizer after canvas is ready
                     setTimeout(() => {
                         try {
                             const visualizer = new PolytopBackgroundVisualizer(canvas, theme, index);
-                            this.polytopVisualizers.push(visualizer);
+                            this.polytopVisualizers[index] = visualizer;
                             console.log(`✅ Visualizer ${index} created: ${theme.name}`);
                         } catch (error) {
                             console.error(`❌ Visualizer ${index} failed:`, error);
-                            // Push null to maintain array indexing
-                            this.polytopVisualizers.push(null);
+                            this.polytopVisualizers[index] = null;
                         }
                     }, index * 100);
                 });
@@ -1504,6 +1508,12 @@
                 const backgrounds = document.querySelectorAll('.polytopal-background');
                 backgrounds.forEach((bg, index) => {
                     bg.classList.toggle('active', index === this.currentSection);
+                    
+                    // Ensure visualizer exists and is rendering
+                    if (index === this.currentSection && this.polytopVisualizers[index]) {
+                        // Activate the current visualizer
+                        console.log(`🎯 Activating visualizer ${index}: ${polytopThemes[index].name}`);
+                    }
                 });
             }
             
@@ -1587,9 +1597,14 @@
                 const currentSet = contentSets[this.currentSection];
                 const content = currentSet[waferIndex];
                 
-                document.getElementById(`title-${waferIndex}`).textContent = content.title;
-                document.getElementById(`info-title-${waferIndex}`).textContent = content.title;
-                document.getElementById(`info-description-${waferIndex}`).textContent = content.description;
+                // Update text content without destroying DOM structure
+                const titleEl = document.getElementById(`title-${waferIndex}`);
+                const infoTitleEl = document.getElementById(`info-title-${waferIndex}`);
+                const infoDescEl = document.getElementById(`info-description-${waferIndex}`);
+                
+                if (titleEl) titleEl.textContent = content.title;
+                if (infoTitleEl) infoTitleEl.textContent = content.title;
+                if (infoDescEl) infoDescEl.textContent = content.description;
                 
                 // Update tags
                 const tagsContainer = document.getElementById(`info-tags-${waferIndex}`);
@@ -1733,8 +1748,15 @@
             
             startRenderLoop() {
                 const render = () => {
-                    this.polytopVisualizers.forEach(viz => {
-                        if (viz) viz.render();
+                    this.polytopVisualizers.forEach((viz, index) => {
+                        if (viz && viz.gl && !viz.gl.isContextLost()) {
+                            try {
+                                viz.render();
+                            } catch (error) {
+                                console.warn(`⚠️ Visualizer ${index} render error:`, error);
+                                // Don't break the entire render loop for one failed visualizer
+                            }
+                        }
                     });
                     requestAnimationFrame(render);
                 };
