@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Codex Gallery - Proper 4D System v2.1</title>
+    <title>Visual Codex Gallery - Enhanced 4D System v2.2</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💎</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -313,29 +313,37 @@
         }
         
         .crystal-wafer {
-            background: var(--silicon-green);
+            background: linear-gradient(135deg, 
+                rgba(13, 40, 24, 0.95) 0%,
+                rgba(0, 255, 170, 0.1) 25%,
+                rgba(255, 0, 77, 0.05) 50%,
+                rgba(13, 40, 24, 0.95) 100%);
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             transform-style: preserve-3d;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            border-radius: 12px;
-            border: 2px solid var(--crystal-teal);
-            /* FORCE 3D appearance */
-            transform: translateZ(10px) rotateX(2deg) rotateY(1deg);
-            min-height: 400px;
+            border-radius: 16px;
+            border: 3px solid var(--crystal-teal);
+            /* ENHANCED 3D FLOATING APPEARANCE */
+            transform: translateZ(40px) rotateX(5deg) rotateY(3deg) scale(1.0);
+            min-height: 450px;
+            padding: 25px;
+            opacity: 1.0;
             
             box-shadow: 
-                /* Ghosting afterimage effect */
-                -3px -3px 0 var(--accent-red),
-                3px 3px 0 var(--electric-blue),
-                /* Crystal depth */
-                0 15px 30px rgba(0, 0, 0, 0.7),
-                /* Inner crystal glow */
-                inset 0 2px 0 rgba(0, 255, 170, 0.1);
+                /* Enhanced ghosting afterimage effect */
+                -8px -8px 0 var(--accent-red),
+                8px 8px 0 var(--electric-blue),
+                /* Deep crystal depth */
+                0 40px 80px rgba(0, 0, 0, 0.8),
+                0 20px 40px rgba(0, 255, 170, 0.1),
+                /* Multi-layer inner glow */
+                inset 0 3px 0 rgba(0, 255, 170, 0.2),
+                inset 0 -3px 0 rgba(255, 0, 77, 0.1);
         }
         
         /* REACTIVE ENERGY BORDER SYSTEM */
@@ -363,18 +371,21 @@
         }
         
         .crystal-wafer:hover {
-            transform: scale(1.4) translateZ(80px) rotateX(8deg) rotateY(8deg);
+            transform: scale(1.5) translateZ(120px) rotateX(12deg) rotateY(10deg);
             box-shadow: 
-                /* Enhanced ghosting afterimage */
-                -12px -12px 0 var(--accent-red),
-                12px 12px 0 var(--electric-blue),
-                /* Crystal resonance */
-                0 0 120px var(--crystal-teal),
-                /* Deep shadow */
-                0 50px 100px rgba(0, 0, 0, 0.9),
-                /* Inner glow */
-                inset 0 4px 0 rgba(0, 255, 170, 0.5);
+                /* Massive ghosting afterimage */
+                -20px -20px 0 var(--accent-red),
+                20px 20px 0 var(--electric-blue),
+                /* Intense crystal resonance */
+                0 0 200px var(--crystal-teal),
+                0 0 80px var(--neon-cyan),
+                /* Treasure chest depth */
+                0 80px 160px rgba(0, 0, 0, 0.95),
+                /* Holographic inner glow */
+                inset 0 8px 0 rgba(0, 255, 170, 0.8),
+                inset 0 -8px 0 rgba(255, 0, 77, 0.3);
             z-index: 1000;
+            border-color: var(--neon-cyan);
         }
         
         .crystal-wafer:hover::before {
