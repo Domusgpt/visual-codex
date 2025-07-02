@@ -1091,7 +1091,9 @@
                     </div>
                 `;
                 
+                // Set up load and error handlers before setting src
                 iframe.onload = () => {
+                    console.log(`✅ Iframe loaded: ${src}`);
                     lazyIframe.innerHTML = '';
                     lazyIframe.appendChild(iframe);
                     this.activeContexts.set(cardElement, iframe);
@@ -1099,11 +1101,12 @@
                 };
                 
                 iframe.onerror = () => {
+                    console.log(`❌ Iframe failed to load: ${src}`);
                     lazyIframe.innerHTML = `
                         <div style="color: #ff0080; text-align: center; padding: 20px; font-family: monospace;">
                             <div style="font-size: 1.5rem; margin-bottom: 1rem;">⚠️</div>
                             <div>Preview unavailable</div>
-                            <div style="font-size: 0.8rem; margin-top: 0.5rem;">Run local server to view</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.5rem;">CORS or loading error</div>
                             <button onclick="window.open('${src}', '_blank')" 
                                     style="margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(0,255,255,0.2); border: 1px solid #00ffff; color: #00ffff; cursor: pointer;">
                                 Open Direct
@@ -1111,6 +1114,16 @@
                         </div>
                     `;
                 };
+                
+                // Add timeout fallback
+                const timeout = setTimeout(() => {
+                    if (!iframe.contentDocument) {
+                        console.log(`⏰ Iframe load timeout: ${src}`);
+                        iframe.onerror();
+                    }
+                }, 10000); // 10 second timeout
+                
+                iframe.addEventListener('load', () => clearTimeout(timeout));
             }
             
             cleanupContext(cardElement) {
@@ -1163,14 +1176,18 @@
                 if (entry.isIntersecting) {
                     const lazyIframe = entry.target.querySelector('.lazy-iframe');
                     if (lazyIframe && lazyIframe.dataset.src) {
+                        console.log(`🔍 Card intersecting, adding to queue: ${lazyIframe.dataset.src}`);
                         // Add to queue instead of immediate load
                         contextPool.addToQueue(entry.target, lazyIframe.dataset.src);
                         delete lazyIframe.dataset.src; // Prevent re-adding to queue
+                    } else {
+                        console.log('⚠️ Card intersecting but no data-src found');
                     }
                 }
             });
         }, {
-            rootMargin: '200px' // Start loading earlier
+            rootMargin: '100px', // Reduced margin for more precise triggering
+            threshold: 0.1 // Trigger when 10% of card is visible
         });
         
         // Cleanup observer - more aggressive cleanup
