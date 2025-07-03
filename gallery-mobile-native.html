@@ -7,7 +7,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
     
     <!-- ZingTouch for Advanced Gesture Recognition -->
-    <script src="https://cdn.jsdelivr.net/npm/zingtouch@1.0.6/dist/zingtouch.min.js"></script>
+    <script src="https://unpkg.com/zingtouch@1.0.6/dist/zingtouch.min.js"></script>
     
     <style>
         /* Mobile-First CSS Framework */
@@ -570,22 +570,48 @@
             }
             
             setupGestureRecognition() {
-                // Initialize ZingTouch for advanced gesture recognition
-                this.gestureRegion = new ZT.Region(document.body);
+                // Initialize ZingTouch for advanced gesture recognition with fallback
+                if (typeof ZT !== 'undefined') {
+                    this.gestureRegion = new ZT.Region(document.body);
+                } else {
+                    console.warn('⚠️ ZingTouch not loaded, using fallback touch handling');
+                    this.gestureRegion = null;
+                }
                 
                 const gallery = document.getElementById('mobileGallery');
                 
                 // Vertical swipe navigation
-                this.gestureRegion.bind(gallery, 'swipe', (event) => {
-                    const direction = event.detail.data[0].currentDirection;
+                if (this.gestureRegion) {
+                    this.gestureRegion.bind(gallery, 'swipe', (event) => {
+                        const direction = event.detail.data[0].currentDirection;
+                        
+                        // Vertical swipes (up/down)
+                        if (direction >= 45 && direction <= 135) {
+                            this.navigateToSection(this.currentSection - 1); // Swipe up = previous
+                        } else if (direction >= 225 && direction <= 315) {
+                            this.navigateToSection(this.currentSection + 1); // Swipe down = next
+                        }
+                    });
+                } else {
+                    // Fallback touch swipe detection
+                    let startY = 0;
+                    gallery.addEventListener('touchstart', (e) => {
+                        startY = e.touches[0].clientY;
+                    }, { passive: true });
                     
-                    // Vertical swipes (up/down)
-                    if (direction >= 45 && direction <= 135) {
-                        this.navigateToSection(this.currentSection - 1); // Swipe up = previous
-                    } else if (direction >= 225 && direction <= 315) {
-                        this.navigateToSection(this.currentSection + 1); // Swipe down = next
-                    }
-                });
+                    gallery.addEventListener('touchend', (e) => {
+                        const endY = e.changedTouches[0].clientY;
+                        const diffY = startY - endY;
+                        
+                        if (Math.abs(diffY) > 50) { // Minimum swipe distance
+                            if (diffY > 0) {
+                                this.navigateToSection(this.currentSection + 1); // Swipe up = next
+                            } else {
+                                this.navigateToSection(this.currentSection - 1); // Swipe down = previous
+                            }
+                        }
+                    }, { passive: true });
+                }
                 
                 // Touch feedback on all interactive elements
                 document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
@@ -700,8 +726,8 @@
             createMobileCards() {
                 const gallery = document.getElementById('mobileGallery');
                 
-                // Mobile-optimized content sets
-                const mobileContentSets = [
+                // Store mobile content sets as class property
+                this.mobileContentSets = [
                     // Section 0: Touch-Optimized CSS Effects
                     [
                         {
@@ -753,7 +779,7 @@
                 ];
                 
                 // Create cards for current section
-                this.createCardsForSection(this.currentSection, mobileContentSets);
+                this.createCardsForSection(this.currentSection, this.mobileContentSets);
                 
                 console.log(`📱 Created mobile cards for section ${this.currentSection}`);
             }
