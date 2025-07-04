@@ -836,30 +836,36 @@
         @media (max-width: 768px) {
             body {
                 cursor: default;
-                overflow-y: auto; /* Allow page scrolling */
-                overflow-x: hidden;
+                overflow: hidden; /* NO visible scrolling */
                 font-size: var(--font-size-base);
-                height: auto;
-                min-height: 100vh;
+                height: 100vh;
+                position: fixed;
+                width: 100%;
             }
             
             .crystal-container {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 16px;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px;
                 width: 100%;
-                padding: 80px 16px 40px 16px; /* Top padding for header */
-                min-height: 100vh;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+                height: 100vh;
+                padding: 80px 16px 40px 16px;
+                overflow: hidden; /* NO scrollbars */
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                /* Infinite scroll via transform */
+                transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
             
             .crystal-wafer {
-                width: 100%;
-                height: 250px;
+                width: calc(100% - 32px) !important;
+                max-width: 400px;
+                height: 280px !important;
                 min-height: var(--touch-target);
                 margin: 0 auto;
                 border-radius: 20px;
+                display: block !important;
                 /* Enhanced Touch Feedback */
                 transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
@@ -891,17 +897,24 @@
                 line-height: 1.4;
             }
             
-            /* Mobile Navigation */
+            /* Mobile Navigation - Start Collapsed */
             .nav-toggle {
                 width: var(--touch-target);
                 height: var(--touch-target);
                 padding: 12px;
+                z-index: 1001;
             }
             
             .nav-container {
                 padding: 20px;
                 max-height: 80vh;
                 overflow-y: auto;
+                transform: translateX(-100%); /* Start collapsed */
+                transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+            
+            .nav-container.open {
+                transform: translateX(0); /* Slide in when open */
             }
             
             .nav-section {
@@ -915,23 +928,38 @@
                 flex-direction: column;
             }
             
-            /* Mobile Momentum Indicator */
+            /* Mobile Momentum Indicator - Start Hidden */
             .momentum-indicator {
                 bottom: 60px;
                 left: 50%;
-                transform: translateX(-50%);
+                transform: translateX(-50%) translateY(100px); /* Start collapsed */
                 width: 200px;
                 padding: 12px 20px;
                 border-radius: 25px;
                 font-size: var(--font-size-sm);
+                opacity: 0;
+                transition: all 0.3s ease;
             }
             
-            /* Mobile Section Indicator */
+            .momentum-indicator.visible {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            
+            /* Mobile Section Indicator - Start Minimized */
             .section-indicator {
                 top: var(--safe-area-top, 20px);
-                padding: 12px 20px;
+                padding: 8px 16px; /* Smaller by default */
                 border-radius: 20px;
                 text-align: center;
+                transform: scale(0.8); /* Start smaller */
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .section-indicator.expanded {
+                padding: 12px 20px;
+                transform: scale(1);
             }
             
             .section-title {
@@ -982,14 +1010,17 @@
         /* Landscape Mobile */
         @media (max-width: 768px) and (orientation: landscape) {
             .crystal-container {
-                grid-template-columns: repeat(2, 1fr);
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                justify-content: space-around;
                 gap: 12px;
                 padding: 60px 16px 20px 16px;
             }
             
             .crystal-wafer {
-                width: 100%;
-                height: 180px;
+                width: calc(50% - 12px) !important;
+                max-width: 350px;
+                height: 180px !important;
             }
         }
         
@@ -1017,6 +1048,7 @@
         
         .swipe-zone.top {
             top: 0;
+            height: 200px; /* Extended to avoid refresh trigger */
             background: linear-gradient(to bottom, rgba(0, 255, 170, 0.2), transparent);
         }
         
@@ -1669,11 +1701,17 @@
                 // ADD mobile enhancements ON TOP of existing functionality
                 if (this.isMobile) {
                     this.addMobileEnhancements();
+                    this.setupCollapsibleUI();
                 }
                 
                 this.updateContent();
                 
                 console.log(`✅ Enhanced System ready - All desktop functionality + ${this.isMobile ? 'mobile touch optimizations' : 'desktop perfection'}`);
+                
+                // Mobile demo optimization
+                if (this.isMobile) {
+                    this.optimizeAllDemosForMobile();
+                }
             }
             
             createPolytopBackgrounds() {
@@ -1867,79 +1905,171 @@
             }
             
             setupMobileTouchMomentum() {
-                // Edge swipe system for state changes
+                // Invisible infinite scroll system
                 let touchStartY = 0;
                 let touchStartTime = 0;
-                let isEdgeSwipe = false;
-                const edgeThreshold = 100; // pixels from top/bottom
-                const swipeThreshold = 150; // minimum swipe distance
+                let scrollAccumulator = 0;
+                let isScrolling = false;
+                let cardScrollOffset = 0; // For infinite card browsing
+                
+                console.log('📱 Invisible infinite scroll system enabled');
                 
                 document.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
                     touchStartTime = Date.now();
+                    scrollAccumulator = 0;
+                    isScrolling = false;
                     
-                    // Check if touch started near edges
-                    const screenHeight = window.innerHeight;
-                    isEdgeSwipe = touchStartY < edgeThreshold || touchStartY > (screenHeight - edgeThreshold);
-                    
-                    // Show edge indicators when touching edges
-                    if (isEdgeSwipe) {
-                        if (touchStartY < edgeThreshold) {
-                            document.getElementById('swipeZoneTop').classList.add('active');
-                        } else {
-                            document.getElementById('swipeZoneBottom').classList.add('active');
-                        }
-                    }
+                    // Show minimized indicators
+                    this.showScrollIndicators();
                 }, { passive: true });
                 
                 document.addEventListener('touchmove', (e) => {
-                    if (!isEdgeSwipe || this.isTransitioning) return;
+                    if (this.isTransitioning) return;
                     
                     const currentY = e.touches[0].clientY;
-                    const deltaY = currentY - touchStartY;
+                    const deltaY = touchStartY - currentY;
+                    const deltaTime = Date.now() - touchStartTime;
                     
-                    // Visual feedback for swipe progress
-                    const progress = Math.min(Math.abs(deltaY) / swipeThreshold, 1);
-                    if (touchStartY < edgeThreshold) {
-                        // Swiping from top
-                        document.getElementById('swipeZoneTop').style.opacity = 1 - progress;
+                    // Determine scroll type based on position and gesture
+                    const screenHeight = window.innerHeight;
+                    const touchPercent = touchStartY / screenHeight;
+                    
+                    if (touchPercent < 0.3 || touchPercent > 0.7) {
+                        // Edge zones - state transitions
+                        this.handleStateTransitionScroll(deltaY);
                     } else {
-                        // Swiping from bottom  
-                        document.getElementById('swipeZoneBottom').style.opacity = 1 - progress;
+                        // Center zone - infinite card scroll
+                        this.handleInfiniteCardScroll(deltaY);
                     }
+                    
+                    isScrolling = true;
                 }, { passive: true });
                 
                 document.addEventListener('touchend', (e) => {
-                    if (!isEdgeSwipe || this.isTransitioning) {
-                        this.hideSwipeZones();
-                        return;
-                    }
+                    // Hide indicators after interaction
+                    setTimeout(() => {
+                        this.hideScrollIndicators();
+                    }, 2000);
                     
-                    const endY = e.changedTouches[0].clientY;
-                    const deltaY = endY - touchStartY;
-                    const deltaTime = Date.now() - touchStartTime;
-                    
-                    // Check for valid edge swipe
-                    if (Math.abs(deltaY) > swipeThreshold && deltaTime < 1000) {
-                        if (touchStartY < edgeThreshold && deltaY > 0) {
-                            // Swipe down from top - previous section
-                            console.log('📱 Edge swipe from top - Previous section');
-                            this.triggerTransition(-1);
-                            this.hapticFeedback('transition');
-                        } else if (touchStartY > (window.innerHeight - edgeThreshold) && deltaY < 0) {
-                            // Swipe up from bottom - next section
-                            console.log('📱 Edge swipe from bottom - Next section');
-                            this.triggerTransition(1);
-                            this.hapticFeedback('transition');
-                        }
-                    }
-                    
-                    this.hideSwipeZones();
-                    isEdgeSwipe = false;
+                    isScrolling = false;
+                    scrollAccumulator = 0;
                 }, { passive: true });
+            }
+            
+            handleStateTransitionScroll(deltaY) {
+                // Build momentum for state changes
+                this.scrollMomentum += Math.abs(deltaY) * 0.3;
+                this.scrollMomentum = Math.min(this.scrollMomentum, 100);
                 
-                // Allow normal page scrolling for content
-                console.log('📱 Edge swipe system enabled - Swipe from top/bottom edges to change sections');
+                // Update visualizer parameters
+                const scrollProgress = this.scrollMomentum / 100;
+                this.polytopVisualizers.forEach(viz => {
+                    if (viz) viz.updateScroll(scrollProgress);
+                });
+                
+                // Show momentum indicator
+                this.showMomentumIndicator();
+                document.getElementById('momentumFill').style.width = `${this.scrollMomentum}%`;
+                
+                // Check for state transition threshold
+                if (this.scrollMomentum >= this.momentumThreshold) {
+                    console.log(`🚀 State transition triggered: ${this.scrollMomentum.toFixed(1)}`);
+                    this.triggerTransition(deltaY > 0 ? 1 : -1);
+                    this.hapticFeedback('transition');
+                    this.scrollMomentum = 0;
+                }
+            }
+            
+            handleInfiniteCardScroll(deltaY) {
+                // Infinite card browsing with parallax
+                this.cardScrollOffset += deltaY * 0.5;
+                
+                // Apply infinite transform to cards
+                const container = document.getElementById('crystalContainer');
+                const cards = container.querySelectorAll('.crystal-wafer');
+                
+                cards.forEach((card, index) => {
+                    const offset = this.cardScrollOffset + (index * 100);
+                    const parallaxFactor = 0.8 + (index * 0.1); // Different speeds
+                    
+                    // Create infinite loop effect
+                    const wrappedOffset = ((offset % 1000) + 1000) % 1000;
+                    const yPos = (wrappedOffset - 500) * parallaxFactor;
+                    
+                    card.style.transform = `translateY(${yPos}px) translateZ(${Math.sin(offset * 0.01) * 20}px)`;
+                    
+                    // Update card opacity based on position
+                    const centerDistance = Math.abs(yPos) / 500;
+                    card.style.opacity = Math.max(0.3, 1 - centerDistance);
+                });
+                
+                // Update 4D visualizer parameters based on scroll
+                const rotationPhase = this.cardScrollOffset * 0.001;
+                this.polytopVisualizers.forEach((viz, index) => {
+                    if (viz) {
+                        viz.updateInteraction(
+                            0.5 + Math.sin(rotationPhase + index) * 0.2,
+                            0.5 + Math.cos(rotationPhase + index) * 0.2,
+                            Math.abs(Math.sin(rotationPhase * 2)) * 0.5
+                        );
+                    }
+                });
+            }
+            
+            showScrollIndicators() {
+                document.querySelector('.section-indicator').classList.add('expanded');
+                document.querySelector('.momentum-indicator').classList.add('visible');
+            }
+            
+            hideScrollIndicators() {
+                document.querySelector('.section-indicator').classList.remove('expanded');
+                document.querySelector('.momentum-indicator').classList.remove('visible');
+            }
+            
+            setupCollapsibleUI() {
+                console.log('📱 Setting up collapsible UI elements...');
+                
+                // Make section indicator toggleable
+                const sectionIndicator = document.querySelector('.section-indicator');
+                if (sectionIndicator) {
+                    sectionIndicator.addEventListener('click', () => {
+                        sectionIndicator.classList.toggle('expanded');
+                        this.hapticFeedback('tap');
+                    });
+                }
+                
+                // Auto-collapse navigation after selection
+                const navSections = document.querySelectorAll('.nav-section');
+                navSections.forEach(section => {
+                    section.addEventListener('click', () => {
+                        // Close navigation after 1 second
+                        setTimeout(() => {
+                            document.getElementById('navToggle').classList.remove('open');
+                            document.getElementById('navContainer').classList.remove('open');
+                        }, 1000);
+                    });
+                });
+                
+                // Tap outside to collapse elements
+                document.addEventListener('click', (e) => {
+                    const sectionIndicator = document.querySelector('.section-indicator');
+                    const navContainer = document.getElementById('navContainer');
+                    const navToggle = document.getElementById('navToggle');
+                    
+                    // Collapse section indicator if clicking outside
+                    if (sectionIndicator && !sectionIndicator.contains(e.target)) {
+                        sectionIndicator.classList.remove('expanded');
+                    }
+                    
+                    // Collapse navigation if clicking outside
+                    if (navContainer && navToggle && !navContainer.contains(e.target) && !navToggle.contains(e.target)) {
+                        navToggle.classList.remove('open');
+                        navContainer.classList.remove('open');
+                    }
+                });
+                
+                console.log('✅ Collapsible UI elements configured');
             }
             
             hideSwipeZones() {
@@ -1951,6 +2081,210 @@
                 if (navigator.vibrate && this.hapticPatterns) {
                     navigator.vibrate(this.hapticPatterns[type] || [10]);
                 }
+            }
+            
+            optimizeAllDemosForMobile() {
+                console.log('🔧 Optimizing all demos for mobile...');
+                
+                // Add mobile optimization script that injects into iframes
+                const optimizationScript = this.createMobileOptimizationScript();
+                
+                // Monitor iframe loads and inject optimizations
+                this.monitorIframeLoads(optimizationScript);
+                
+                console.log('📱 Mobile demo optimization system active');
+            }
+            
+            createMobileOptimizationScript() {
+                return `
+                    // Mobile Demo Optimization Injector
+                    (function() {
+                        console.log('📱 Mobile optimization injected');
+                        
+                        // Touch event simulation for mouse events
+                        function addTouchSupport() {
+                            let lastTouch = null;
+                            
+                            // Convert touch to mouse events
+                            document.addEventListener('touchstart', function(e) {
+                                lastTouch = e.touches[0];
+                                const mouseEvent = new MouseEvent('mousedown', {
+                                    clientX: lastTouch.clientX,
+                                    clientY: lastTouch.clientY,
+                                    bubbles: true
+                                });
+                                e.target.dispatchEvent(mouseEvent);
+                            }, { passive: false });
+                            
+                            document.addEventListener('touchmove', function(e) {
+                                if (!lastTouch) return;
+                                e.preventDefault(); // Prevent scrolling in demo
+                                
+                                const touch = e.touches[0];
+                                const mouseEvent = new MouseEvent('mousemove', {
+                                    clientX: touch.clientX,
+                                    clientY: touch.clientY,
+                                    movementX: touch.clientX - lastTouch.clientX,
+                                    movementY: touch.clientY - lastTouch.clientY,
+                                    bubbles: true
+                                });
+                                document.dispatchEvent(mouseEvent);
+                                lastTouch = touch;
+                            }, { passive: false });
+                            
+                            document.addEventListener('touchend', function(e) {
+                                if (!lastTouch) return;
+                                
+                                const mouseEvent = new MouseEvent('mouseup', {
+                                    clientX: lastTouch.clientX,
+                                    clientY: lastTouch.clientY,
+                                    bubbles: true
+                                });
+                                e.target.dispatchEvent(mouseEvent);
+                                
+                                // Also trigger click
+                                const clickEvent = new MouseEvent('click', {
+                                    clientX: lastTouch.clientX,
+                                    clientY: lastTouch.clientY,
+                                    bubbles: true
+                                });
+                                e.target.dispatchEvent(clickEvent);
+                                
+                                lastTouch = null;
+                            }, { passive: false });
+                        }
+                        
+                        // Touch scroll to wheel events
+                        function addScrollSupport() {
+                            let isScrolling = false;
+                            let startY = 0;
+                            
+                            document.addEventListener('touchstart', function(e) {
+                                startY = e.touches[0].clientY;
+                                isScrolling = false;
+                            }, { passive: true });
+                            
+                            document.addEventListener('touchmove', function(e) {
+                                const currentY = e.touches[0].clientY;
+                                const deltaY = startY - currentY;
+                                
+                                if (Math.abs(deltaY) > 10) {
+                                    isScrolling = true;
+                                    
+                                    // Simulate wheel event
+                                    const wheelEvent = new WheelEvent('wheel', {
+                                        deltaY: deltaY * 2,
+                                        deltaMode: 0,
+                                        bubbles: true
+                                    });
+                                    document.dispatchEvent(wheelEvent);
+                                }
+                            }, { passive: true });
+                        }
+                        
+                        // Mobile-optimize WebGL canvases
+                        function optimizeWebGL() {
+                            const canvases = document.querySelectorAll('canvas');
+                            canvases.forEach(canvas => {
+                                // Reduce resolution for mobile
+                                const rect = canvas.getBoundingClientRect();
+                                const scale = window.devicePixelRatio || 1;
+                                const mobileScale = Math.min(scale, 2); // Max 2x for mobile
+                                
+                                canvas.width = rect.width * mobileScale;
+                                canvas.height = rect.height * mobileScale;
+                                canvas.style.width = rect.width + 'px';
+                                canvas.style.height = rect.height + 'px';
+                                
+                                // Get context and scale
+                                const ctx = canvas.getContext('2d') || canvas.getContext('webgl');
+                                if (ctx && ctx.scale) {
+                                    ctx.scale(mobileScale, mobileScale);
+                                }
+                            });
+                        }
+                        
+                        // Add touch targets
+                        function enhanceTouchTargets() {
+                            const interactiveElements = document.querySelectorAll('button, a, [onclick], .interactive, .clickable');
+                            interactiveElements.forEach(element => {
+                                const style = getComputedStyle(element);
+                                const width = parseInt(style.width) || 0;
+                                const height = parseInt(style.height) || 0;
+                                
+                                // Ensure minimum 44px touch target
+                                if (width > 0 && width < 44) {
+                                    element.style.minWidth = '44px';
+                                    element.style.padding = '0 ' + ((44 - width) / 2) + 'px';
+                                }
+                                if (height > 0 && height < 44) {
+                                    element.style.minHeight = '44px';
+                                    element.style.paddingTop = ((44 - height) / 2) + 'px';
+                                    element.style.paddingBottom = ((44 - height) / 2) + 'px';
+                                }
+                            });
+                        }
+                        
+                        // Apply all optimizations when DOM is ready
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', function() {
+                                addTouchSupport();
+                                addScrollSupport();
+                                optimizeWebGL();
+                                enhanceTouchTargets();
+                                console.log('✅ Mobile optimizations applied');
+                            });
+                        } else {
+                            addTouchSupport();
+                            addScrollSupport();
+                            optimizeWebGL();
+                            enhanceTouchTargets();
+                            console.log('✅ Mobile optimizations applied');
+                        }
+                    })();
+                `;
+            }
+            
+            monitorIframeLoads(optimizationScript) {
+                // Monitor existing iframes
+                const iframes = document.querySelectorAll('.wafer-preview iframe');
+                iframes.forEach(iframe => this.injectOptimization(iframe, optimizationScript));
+                
+                // Monitor new iframes
+                const observer = new MutationObserver(mutations => {
+                    mutations.forEach(mutation => {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.tagName === 'IFRAME') {
+                                this.injectOptimization(node, optimizationScript);
+                            } else if (node.querySelectorAll) {
+                                const iframes = node.querySelectorAll('iframe');
+                                iframes.forEach(iframe => this.injectOptimization(iframe, optimizationScript));
+                            }
+                        });
+                    });
+                });
+                
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+            
+            injectOptimization(iframe, script) {
+                iframe.addEventListener('load', () => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const scriptElement = iframeDoc.createElement('script');
+                            scriptElement.textContent = script;
+                            iframeDoc.head.appendChild(scriptElement);
+                            console.log('📱 Mobile optimization injected into:', iframe.src);
+                        }
+                    } catch (e) {
+                        // Cross-origin iframe, can't inject - that's ok
+                        console.log('ℹ️ Cross-origin iframe, using URL parameter method');
+                        if (iframe.src && !iframe.src.includes('mobile=1')) {
+                            iframe.src += (iframe.src.includes('?') ? '&' : '?') + 'mobile=1';
+                        }
+                    }
+                });
             }
             
             addTouchFeedback() {
