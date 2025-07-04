@@ -836,28 +836,29 @@
         @media (max-width: 768px) {
             body {
                 cursor: default;
-                overflow-y: hidden; /* Keep desktop momentum system */
+                overflow-y: auto; /* Allow page scrolling */
+                overflow-x: hidden;
                 font-size: var(--font-size-base);
+                height: auto;
+                min-height: 100vh;
             }
             
             .crystal-container {
-                display: flex;
-                flex-direction: column;
-                gap: 24px;
-                width: 95vw;
-                height: auto;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+                width: 100%;
+                padding: 80px 16px 40px 16px; /* Top padding for header */
                 min-height: 100vh;
-                padding: 30px 20px;
-                justify-content: center;
-                align-items: center;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             
             .crystal-wafer {
                 width: 100%;
-                max-width: 400px;
-                height: 200px;
+                height: 250px;
                 min-height: var(--touch-target);
-                margin-bottom: 16px;
+                margin: 0 auto;
                 border-radius: 20px;
                 /* Enhanced Touch Feedback */
                 transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -981,28 +982,73 @@
         /* Landscape Mobile */
         @media (max-width: 768px) and (orientation: landscape) {
             .crystal-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-around;
-                padding: 20px 10px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 60px 16px 20px 16px;
             }
             
             .crystal-wafer {
-                width: calc(50% - 12px);
-                height: 160px;
+                width: 100%;
+                height: 180px;
             }
         }
         
         /* Very Small Screens */
         @media (max-width: 480px) {
             .crystal-wafer {
-                height: 180px;
-                margin-bottom: 12px;
+                height: 220px;
             }
             
             .wafer-preview {
                 height: 100px;
             }
+        }
+        
+        /* Edge Swipe Zones for State Changes */
+        .swipe-zone {
+            position: fixed;
+            width: 100%;
+            height: 80px;
+            z-index: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .swipe-zone.top {
+            top: 0;
+            background: linear-gradient(to bottom, rgba(0, 255, 170, 0.2), transparent);
+        }
+        
+        .swipe-zone.bottom {
+            bottom: 0;
+            background: linear-gradient(to top, rgba(255, 0, 77, 0.2), transparent);
+        }
+        
+        .swipe-zone.active {
+            opacity: 1;
+        }
+        
+        /* Swipe Indicator */
+        .swipe-indicator {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            animation: swipePulse 1s ease-in-out infinite;
+        }
+        
+        .swipe-zone.top .swipe-indicator {
+            bottom: 10px;
+        }
+        
+        .swipe-zone.bottom .swipe-indicator {
+            top: 10px;
+        }
+        
+        @keyframes swipePulse {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
         }
     </style>
 </head>
@@ -1050,6 +1096,14 @@
     <!-- Crystal Container -->
     <div class="crystal-container" id="crystalContainer">
         <!-- 3 crystal wafers will be created dynamically -->
+    </div>
+    
+    <!-- Mobile Edge Swipe Zones -->
+    <div class="swipe-zone top" id="swipeZoneTop">
+        <div class="swipe-indicator">⬇️</div>
+    </div>
+    <div class="swipe-zone bottom" id="swipeZoneBottom">
+        <div class="swipe-indicator">⬆️</div>
     </div>
 
     <script>
@@ -1813,53 +1867,90 @@
             }
             
             setupMobileTouchMomentum() {
-                // Touch-based momentum system (similar to desktop wheel but for touch)
+                // Edge swipe system for state changes
                 let touchStartY = 0;
                 let touchStartTime = 0;
-                let touchMomentum = 0;
+                let isEdgeSwipe = false;
+                const edgeThreshold = 100; // pixels from top/bottom
+                const swipeThreshold = 150; // minimum swipe distance
                 
                 document.addEventListener('touchstart', (e) => {
                     touchStartY = e.touches[0].clientY;
                     touchStartTime = Date.now();
-                    touchMomentum = 0;
-                }, { passive: true });
-                
-                document.addEventListener('touchmove', (e) => {
-                    if (this.isTransitioning) return;
                     
-                    const currentY = e.touches[0].clientY;
-                    const deltaY = touchStartY - currentY;
-                    const deltaTime = Date.now() - touchStartTime;
+                    // Check if touch started near edges
+                    const screenHeight = window.innerHeight;
+                    isEdgeSwipe = touchStartY < edgeThreshold || touchStartY > (screenHeight - edgeThreshold);
                     
-                    // Build momentum like desktop scroll
-                    const velocity = Math.abs(deltaY) / Math.max(deltaTime, 1);
-                    touchMomentum += velocity * 0.5;
-                    touchMomentum = Math.min(touchMomentum, 100);
-                    
-                    // Update visualizers with touch momentum
-                    const scrollProgress = touchMomentum / 100;
-                    this.polytopVisualizers.forEach(viz => {
-                        if (viz) viz.updateScroll(scrollProgress);
-                    });
-                    
-                    // Update momentum indicator
-                    this.showMomentumIndicator();
-                    document.getElementById('momentumFill').style.width = `${touchMomentum}%`;
-                    
-                    // Check threshold like desktop
-                    if (touchMomentum >= this.momentumThreshold) {
-                        console.log(`🚀 TOUCH THRESHOLD REACHED! ${touchMomentum.toFixed(1)}`);
-                        this.triggerTransition(deltaY > 0 ? 1 : -1);
-                        touchMomentum = 0;
+                    // Show edge indicators when touching edges
+                    if (isEdgeSwipe) {
+                        if (touchStartY < edgeThreshold) {
+                            document.getElementById('swipeZoneTop').classList.add('active');
+                        } else {
+                            document.getElementById('swipeZoneBottom').classList.add('active');
+                        }
                     }
                 }, { passive: true });
                 
-                document.addEventListener('touchend', () => {
-                    // Decay momentum after touch ends
-                    setTimeout(() => {
-                        this.decayMomentum();
-                    }, 200);
+                document.addEventListener('touchmove', (e) => {
+                    if (!isEdgeSwipe || this.isTransitioning) return;
+                    
+                    const currentY = e.touches[0].clientY;
+                    const deltaY = currentY - touchStartY;
+                    
+                    // Visual feedback for swipe progress
+                    const progress = Math.min(Math.abs(deltaY) / swipeThreshold, 1);
+                    if (touchStartY < edgeThreshold) {
+                        // Swiping from top
+                        document.getElementById('swipeZoneTop').style.opacity = 1 - progress;
+                    } else {
+                        // Swiping from bottom  
+                        document.getElementById('swipeZoneBottom').style.opacity = 1 - progress;
+                    }
                 }, { passive: true });
+                
+                document.addEventListener('touchend', (e) => {
+                    if (!isEdgeSwipe || this.isTransitioning) {
+                        this.hideSwipeZones();
+                        return;
+                    }
+                    
+                    const endY = e.changedTouches[0].clientY;
+                    const deltaY = endY - touchStartY;
+                    const deltaTime = Date.now() - touchStartTime;
+                    
+                    // Check for valid edge swipe
+                    if (Math.abs(deltaY) > swipeThreshold && deltaTime < 1000) {
+                        if (touchStartY < edgeThreshold && deltaY > 0) {
+                            // Swipe down from top - previous section
+                            console.log('📱 Edge swipe from top - Previous section');
+                            this.triggerTransition(-1);
+                            this.hapticFeedback('transition');
+                        } else if (touchStartY > (window.innerHeight - edgeThreshold) && deltaY < 0) {
+                            // Swipe up from bottom - next section
+                            console.log('📱 Edge swipe from bottom - Next section');
+                            this.triggerTransition(1);
+                            this.hapticFeedback('transition');
+                        }
+                    }
+                    
+                    this.hideSwipeZones();
+                    isEdgeSwipe = false;
+                }, { passive: true });
+                
+                // Allow normal page scrolling for content
+                console.log('📱 Edge swipe system enabled - Swipe from top/bottom edges to change sections');
+            }
+            
+            hideSwipeZones() {
+                document.getElementById('swipeZoneTop').classList.remove('active');
+                document.getElementById('swipeZoneBottom').classList.remove('active');
+            }
+            
+            hapticFeedback(type = 'tap') {
+                if (navigator.vibrate && this.hapticPatterns) {
+                    navigator.vibrate(this.hapticPatterns[type] || [10]);
+                }
             }
             
             addTouchFeedback() {
