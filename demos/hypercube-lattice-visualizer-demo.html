@@ -427,7 +427,7 @@
         }
         
         animate(0);
-        
+
         // Export function for Lattice Visualizer
         function exportLatticeData() {
             const exportData = {
@@ -458,23 +458,13 @@
         }
         
         // Add export button to controls
-        if (document.querySelector('.controls')) {
+        const controlsContent = document.querySelector('.controls-content');
+        if (controlsContent) {
             const exportBtn = document.createElement('button');
             exportBtn.textContent = 'Export Lattice';
+            exportBtn.className = 'btn';
             exportBtn.onclick = exportLatticeData;
-            exportBtn.style.cssText = `
-                background: linear-gradient(45deg, #00ffff, #ff00ff);
-                border: none;
-                color: white;
-                padding: 10px 20px;
-                margin: 5px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-family: 'Orbitron', monospace;
-                width: 100%;
-                box-sizing: border-box;
-            `;
-            document.querySelector('.controls').appendChild(exportBtn);
+            controlsContent.appendChild(exportBtn);
         }
     </script>
     

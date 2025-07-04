@@ -130,7 +130,7 @@
             <label>Color Shift: <span class="value-display" id="colorValue">0.0</span></label>
             <input type="range" id="colorShift" min="-1.0" max="1.0" step="0.1" value="0.0">
         </div>
-        <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">Enable Audio</button>
+        <button class="audio-btn" id="audioBtn">Enable Audio</button>
     </div>
 
     <script>
@@ -485,6 +485,8 @@
                         display.textContent = e.target.value;
                     });
                 });
+
+                document.getElementById('audioBtn').addEventListener('click', () => this.toggleAudio());
             }
             
             async initAudio() {
@@ -504,6 +506,16 @@
                     document.getElementById('status').textContent = 'MVEP 4D Hypercube - Mouse: Move | Audio: LIVE';
                 } catch (error) {
                     console.error('Audio initialization failed:', error);
+                }
+            }
+
+            toggleAudio() {
+                if (!this.audioEnabled) {
+                    this.initAudio();
+                } else {
+                    this.audioEnabled = false;
+                    document.getElementById('audioBtn').textContent = 'Enable Audio';
+                    document.getElementById('status').textContent = 'MVEP 4D Hypercube - Mouse: Move | Audio: OFF';
                 }
             }
             
@@ -574,18 +586,8 @@
         
         // Initialize
         const mvepVisualizer = new MVEPMoireHypercube();
-        
-        // Audio toggle function
-        function toggleAudio() {
-            if (!mvepVisualizer.audioEnabled) {
-                mvepVisualizer.initAudio();
-            } else {
-                mvepVisualizer.audioEnabled = false;
-                document.getElementById('audioBtn').textContent = 'Enable Audio';
-                document.getElementById('status').textContent = 'MVEP 4D Hypercube - Mouse: Move | Audio: OFF';
-            }
-        }
-        
+        window.mvepVisualizer = mvepVisualizer;
+
         // Add touch reactions for mobile
         function setupTouchReactions() {
             let touchIntensity = 0;

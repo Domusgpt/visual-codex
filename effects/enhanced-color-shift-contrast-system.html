@@ -47,7 +47,7 @@
             height: 100vh;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 15px;
             padding: 20px;
         }
@@ -884,7 +884,7 @@
             });
             
             // Disable auto mode on any user interaction with controls
-            const controls = document.querySelector('.control-panel');
+            const controls = document.querySelector('.color-controls');
             if (controls) {
                 ['click', 'input', 'change'].forEach(event => {
                     controls.addEventListener(event, () => {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Active Holographic Systems - 30 WebGL Variations</title>
+    <title>Active Holographic Systems - 30 Variations</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
@@ -22,336 +22,142 @@
             cursor: crosshair;
             background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
         }
-        
-        .demo-header {
+
+        .header {
             position: fixed;
             top: 20px;
-            left: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
             z-index: 2000;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px solid #00ffff;
-            backdrop-filter: blur(10px);
-        }
-        
-        .demo-title {
             color: #00ffff;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
             text-shadow: 0 0 10px #00ffff;
         }
-        
-        .demo-counter {
-            color: #ff00ff;
-            font-size: 0.8rem;
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
         }
-        
-        /* TAB NAVIGATION SYSTEM */
+
+        .header p {
+            font-size: 1rem;
+        }
+
         .tab-navigation {
             position: fixed;
-            top: 120px;
+            top: 100px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1500;
             display: flex;
             gap: 10px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
             border-radius: 15px;
-            border: 2px solid #00ffff;
-            backdrop-filter: blur(15px);
+            border: 1px solid #00ffff;
+            backdrop-filter: blur(10px);
             flex-wrap: wrap;
-            max-width: 90vw;
             justify-content: center;
         }
         
         .tab-button {
             background: rgba(0, 255, 255, 0.1);
-            border: 2px solid #00ffff;
+            border: 1px solid #00ffff;
             color: #00ffff;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
             font-family: 'Orbitron', monospace;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 120px;
-            text-align: center;
         }
         
         .tab-button:hover {
             background: rgba(0, 255, 255, 0.2);
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
         }
         
         .tab-button.active {
             background: rgba(0, 255, 255, 0.3);
-            border-width: 3px;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
-            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
         }
-        
-        /* ACTIVE HOLOGRAPHIC GRID SYSTEM - 3 ITEM LAYOUT */
+
         .holographic-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: 1fr;
-            gap: 30px;
-            width: 90vw;
+            gap: 20px;
+            width: 95vw;
             height: 70vh;
             position: fixed;
             top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 20px;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
         }
-        
-        /* BASE ACTIVE HOLOGRAPHIC CONTAINER */
-        .active-holographic-container {
+
+        .holographic-instance {
             position: relative;
-            background: #000;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            border-radius: 8px;
+            border-radius: 15px;
             overflow: hidden;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            z-index: 1;
+            border: 1px solid rgba(0, 255, 255, 0.2);
         }
-        
-        .active-holographic-container:hover {
-            border-color: rgba(0, 255, 255, 0.8);
-            transform: scale(2.0) rotateX(2deg) rotateY(2deg);
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.6);
-            z-index: 100;
-        }
-        
-        /* PRESENTATION MODE - 75% SCREEN FILL */
-        .active-holographic-container.presentation-mode {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            width: 75vw !important;
-            height: 75vh !important;
-            transform: translate(-50%, -50%) scale(1) !important;
-            z-index: 1000 !important;
-            border: 3px solid #00ffff !important;
-            border-radius: 20px !important;
-            box-shadow: 
-                0 0 100px rgba(0, 255, 255, 0.8),
-                0 0 200px rgba(255, 0, 255, 0.4),
-                inset 0 0 50px rgba(0, 255, 255, 0.1) !important;
-            backdrop-filter: blur(5px);
-        }
-        
-        /* MULTI-LAYER CANVAS SYSTEM */
-        .holographic-depth-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            perspective: 800px;
-            transform-style: preserve-3d;
-        }
-        
-        .depth-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-        }
-        
-        .depth-layer.background {
-            z-index: 1;
-            transform: translateZ(-50px);
-        }
-        
-        .depth-layer.shadow {
-            z-index: 2;
-            transform: translateZ(-25px);
-        }
-        
-        .depth-layer.content {
-            z-index: 3;
-            transform: translateZ(0px);
-        }
-        
-        .depth-layer.highlight {
-            z-index: 4;
-            transform: translateZ(25px);
-        }
-        
-        .depth-layer.accent {
-            z-index: 5;
-            transform: translateZ(50px);
-        }
-        
-        /* VISUALIZER CANVAS STYLING */
+
         .visualizer-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transition: all 0.3s ease;
         }
-        
-        /* VARIANT TITLES */
-        .variant-title {
+
+        .instance-overlay {
             position: absolute;
             bottom: 10px;
             left: 10px;
             right: 10px;
-            font-size: 1rem;
-            color: #00ffff;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 10px;
             text-align: center;
-            text-shadow: 0 0 10px #00ffff;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px;
-            border-radius: 5px;
-            z-index: 10;
-            pointer-events: none;
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .holographic-grid {
-                grid-template-columns: 1fr;
-                margin-top: 160px;
-            }
-            
-            .tab-navigation {
-                top: 80px;
-                max-width: 95vw;
-            }
-            
-            .tab-button {
-                font-size: 0.7rem;
-                padding: 8px 12px;
-                min-width: 80px;
-            }
-            
-            .active-holographic-container {
-                height: 250px;
-            }
+            color: #00ffff;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
-    <div class="demo-header">
-        <div class="demo-title">ACTIVE HOLOGRAPHIC SYSTEMS</div>
-        <div class="demo-counter">30 Holographic Variations × 3 Active = Efficient Loading</div>
+    <div class="header">
+        <h1>ACTIVE HOLOGRAPHIC SYSTEMS</h1>
+        <p>30 Variations | 10 Tabs | 3 Canvases</p>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="tab-navigation" id="tabNavigation">
-        <!-- Tabs will be generated here -->
-    </div>
+    <div class="tab-navigation" id="tabNavigation"></div>
 
-    <!-- Main Grid (3 visualizers at a time) -->
-    <div class="holographic-grid" id="holographicGrid">
-        <!-- 3 Active Holographic Containers will be displayed at a time -->
-    </div>
+    <div class="holographic-grid" id="holographicGrid"></div>
 
     <script>
-        console.log('🌌 Active Holographic Systems - Tabbed Edition');
-        
-        // ORIGINAL ACTIVE HOLOGRAPHIC VISUALIZER WITH ALL EFFECTS
-        class ActiveHolographicVisualizer {
-            constructor(canvasId, role = 'content', geometry = 'hypercube', reactivity = 1.0) {
-                this.canvas = document.getElementById(canvasId);
-                this.role = role;
-                this.geometry = geometry;
-                this.reactivity = reactivity;
+        // Base HolographicVisualizer class from tech-layout-active-holographic-demo.html
+        class HolographicVisualizer {
+            constructor(canvas, config) {
+                this.canvas = canvas;
                 this.gl = this.canvas.getContext('webgl');
-                
                 if (!this.gl) {
-                    console.error(`WebGL not supported for ${canvasId}`);
+                    console.error("WebGL not supported");
                     return;
                 }
-                
-                // Role-specific parameters with variation
-                this.roleParams = {
-                    'background': { 
-                        densityMult: 0.4, speedMult: 0.2, colorShift: 0.0, intensity: 0.2,
-                        mouseReactivity: 0.3, clickReactivity: 0.1 
-                    },
-                    'shadow': { 
-                        densityMult: 0.8, speedMult: 0.3, colorShift: 180.0, intensity: 0.4,
-                        mouseReactivity: 0.5, clickReactivity: 0.3 
-                    },
-                    'content': { 
-                        densityMult: 1.0 + Math.random() * 0.5, speedMult: 0.6 + Math.random() * 0.3, 
-                        colorShift: Math.random() * 360, intensity: 0.7 + Math.random() * 0.2,
-                        mouseReactivity: 1.0, clickReactivity: 0.8 
-                    },
-                    'highlight': { 
-                        densityMult: 1.5, speedMult: 0.8, colorShift: 60.0, intensity: 0.6,
-                        mouseReactivity: 1.2, clickReactivity: 1.0 
-                    },
-                    'accent': { 
-                        densityMult: 0.6, speedMult: 0.4, colorShift: 300.0, intensity: 0.3,
-                        mouseReactivity: 1.5, clickReactivity: 1.2 
-                    }
-                }[role] || { densityMult: 1.0, speedMult: 0.5, colorShift: 0.0, intensity: 0.5, mouseReactivity: 1.0, clickReactivity: 0.5 };
-                
-                // Geometry parameters with variation
-                this.geometryParams = this.getGeometryParams(geometry);
-                
-                // Mouse interaction state
+
+                this.config = config;
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
                 this.clickIntensity = 0.0;
                 this.clickDecay = 0.95;
-                
-                // Density variation
-                this.baseDensity = 6.0 + Math.random() * 4.0;
-                this.densityVariation = 0.0;
                 this.densityTarget = 0.0;
-                
-                // Color variation
-                this.colorVariation = Math.random() * 60 - 30; // -30 to +30
-                this.speedVariation = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
-                
+                this.densityVariation = 0.0;
+
                 this.startTime = Date.now();
                 this.initShaders();
                 this.initBuffers();
                 this.resize();
-                
-                console.log(`✅ Active Holographic Visualizer (${role}/${geometry}) - Reactivity: ${reactivity}x`);
             }
-            
-            getGeometryParams(geometry) {
-                const configs = {
-                    'hypercube': { geomIndex: 0.0, speedMod: 1.0, baseColor: [0.0, 1.0, 1.0] },
-                    'tetrahedron': { geomIndex: 1.0, speedMod: 0.8, baseColor: [1.0, 0.3, 0.8] },
-                    'sphere': { geomIndex: 2.0, speedMod: 0.6, baseColor: [0.8, 0.8, 1.0] },
-                    'torus': { geomIndex: 3.0, speedMod: 1.2, baseColor: [1.0, 0.8, 0.3] },
-                    'wave': { geomIndex: 4.0, speedMod: 1.5, baseColor: [0.3, 1.0, 0.3] },
-                    'crystal': { geomIndex: 5.0, speedMod: 0.4, baseColor: [1.0, 0.5, 1.0] },
-                    'spiral': { geomIndex: 6.0, speedMod: 2.0, baseColor: [0.5, 1.0, 0.8] },
-                    'fractal': { geomIndex: 7.0, speedMod: 0.3, baseColor: [1.0, 0.2, 0.2] },
-                    'neural': { geomIndex: 8.0, speedMod: 1.8, baseColor: [0.2, 0.8, 1.0] },
-                    'quantum': { geomIndex: 9.0, speedMod: 2.5, baseColor: [0.8, 0.2, 1.0] }
-                };
-                
-                return configs[geometry] || configs['hypercube'];
-            }
-            
+
             initShaders() {
                 const vertexShaderSource = `
                     attribute vec2 a_position;
@@ -366,36 +172,26 @@
                     uniform vec2 u_resolution;
                     uniform float u_time;
                     uniform vec2 u_mouse;
-                    uniform float u_geometry;
                     uniform float u_density;
                     uniform float u_speed;
                     uniform vec3 u_color;
-                    uniform float u_intensity;
-                    uniform float u_roleDensity;
-                    uniform float u_roleSpeed;
-                    uniform float u_colorShift;
                     uniform float u_mouseIntensity;
                     uniform float u_clickIntensity;
                     uniform float u_densityVariation;
-                    uniform float u_colorVariation;
-                    uniform float u_speedVariation;
+                    uniform float u_geometryType; // New uniform for geometry type
                     
-                    // Enhanced 4D rotation matrices
                     mat4 rotateXW(float theta) {
-                        float c = cos(theta);
-                        float s = sin(theta);
+                        float c = cos(theta); float s = sin(theta);
                         return mat4(c, 0, 0, -s, 0, 1, 0, 0, 0, 0, 1, 0, s, 0, 0, c);
                     }
                     
                     mat4 rotateYW(float theta) {
-                        float c = cos(theta);
-                        float s = sin(theta);
+                        float c = cos(theta); float s = sin(theta);
                         return mat4(1, 0, 0, 0, 0, c, 0, -s, 0, 0, 1, 0, 0, s, 0, c);
                     }
                     
                     mat4 rotateZW(float theta) {
-                        float c = cos(theta);
-                        float s = sin(theta);
+                        float c = cos(theta); float s = sin(theta);
                         return mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, c, -s, 0, 0, s, c);
                     }
                     
@@ -404,28 +200,34 @@
                         return vec3(p.x * w, p.y * w, p.z * w);
                     }
                     
-                    float getGeometryValue(vec3 p, float density, float geomType) {
-                        float result = 0.0;
-                        vec3 q = fract(p * density) - 0.5;
-                        
-                        if (geomType < 0.5) { // Hypercube
-                            result = 1.0 - smoothstep(0.4, 0.45, max(max(abs(q.x), abs(q.y)), abs(q.z)));
-                        } else if (geomType < 1.5) { // Tetrahedron
-                            float d = length(q);
-                            result = 1.0 - smoothstep(0.35, 0.4, d);
-                        } else if (geomType < 2.5) { // Sphere
-                            float d = length(q);
-                            result = 1.0 - smoothstep(0.3, 0.35, d);
-                        } else if (geomType < 3.5) { // Torus
+                    // Generic lattice function based on geometry type
+                    float getLattice(vec3 p, float gridSize, float type) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float dist = 0.0;
+
+                        if (type < 0.5) { // Tetrahedron
+                            dist = max(max(-q.x-q.y-q.z, q.x+q.y-q.z), max(-q.x+q.y+q.z, q.x-q.y+q.z));
+                            return 1.0 - smoothstep(0.3, 0.4, dist);
+                        } else if (type < 1.5) { // Cube
+                            dist = max(max(abs(q.x), abs(q.y)), abs(q.z));
+                            return 1.0 - smoothstep(0.4, 0.5, dist);
+                        } else if (type < 2.5) { // Sphere
+                            dist = length(q);
+                            return 1.0 - smoothstep(0.3, 0.35, dist);
+                        } else if (type < 3.5) { // Torus
                             vec2 t = vec2(length(q.xz) - 0.3, q.y);
-                            result = 1.0 - smoothstep(0.15, 0.2, length(t));
-                        } else if (geomType < 4.5) { // Wave
-                            result = sin(q.x * 10.0) * sin(q.y * 10.0) * sin(q.z * 10.0) * 0.5 + 0.5;
-                        } else { // Default lattice
-                            result = 1.0 - smoothstep(0.0, 0.1, min(min(abs(q.x), abs(q.y)), abs(q.z)));
+                            dist = length(t);
+                            return 1.0 - smoothstep(0.15, 0.2, dist);
+                        } else if (type < 4.5) { // Wave
+                            dist = sin(q.x * 10.0) * sin(q.y * 10.0) * sin(q.z * 10.0) * 0.5 + 0.5;
+                            return dist;
+                        } else if (type < 5.5) { // Crystal
+                            dist = max(max(abs(q.x), abs(q.y)), abs(q.z));
+                            return 1.0 - smoothstep(0.2, 0.3, dist);
+                        } else { // Default to Tetrahedron
+                            dist = max(max(-q.x-q.y-q.z, q.x+q.y-q.z), max(-q.x+q.y+q.z, q.x-q.y+q.z));
+                            return 1.0 - smoothstep(0.3, 0.4, dist);
                         }
-                        
-                        return result;
                     }
                     
                     vec3 hsv2rgb(vec3 c) {
@@ -440,53 +242,29 @@
                         uv.x *= aspectRatio;
                         uv -= 0.5;
                         
-                        // Enhanced 4D space with constant movement
-                        float time = u_time * 0.0003 * u_speed * u_roleSpeed * u_speedVariation;
+                        float time = u_time * 0.0004 * u_speed;
                         
-                        // Mouse influence
-                        float mouseInfluence = u_mouseIntensity * 0.4;
+                        float mouseInfluence = u_mouseIntensity * 0.5;
                         vec2 mouseOffset = (u_mouse - 0.5) * mouseInfluence;
                         
-                        // Constant subtle movement even without mouse
-                        vec4 p4d = vec4(uv + mouseOffset * 0.08, 
-                                       sin(time * 0.12) * 0.12 + cos(time * 0.07) * 0.08, 
-                                       cos(time * 0.09) * 0.12 + sin(time * 0.11) * 0.08);
+                        vec4 p4d = vec4(uv + mouseOffset * 0.1, sin(time * 0.1) * 0.15, cos(time * 0.08) * 0.15);
                         
-                        // Multi-axis 4D rotations with constant movement
-                        p4d = rotateXW(time * 0.18 + mouseOffset.y * 0.4 + sin(time * 0.05) * 0.1) * p4d;
-                        p4d = rotateYW(time * 0.13 + mouseOffset.x * 0.4 + cos(time * 0.07) * 0.1) * p4d;
-                        p4d = rotateZW(time * 0.21 + u_clickIntensity * 0.25 + sin(time * 0.03) * 0.15) * p4d;
+                        p4d = rotateXW(time * 0.2 + mouseOffset.y * 0.5) * p4d;
+                        p4d = rotateYW(time * 0.15 + mouseOffset.x * 0.5) * p4d;
+                        p4d = rotateZW(time * 0.25 + u_clickIntensity * 0.3) * p4d;
                         
                         vec3 p = project4Dto3D(p4d);
                         
-                        // Dynamic density with variation
-                        float roleDensity = (u_density + u_densityVariation) * u_roleDensity;
+                        float density = u_density + u_densityVariation;
+                        float lattice = getLattice(p, density, u_geometryType);
                         
-                        // Get geometry value
-                        float lattice = getGeometryValue(p, roleDensity, u_geometry);
-                        
-                        // Enhanced coloring with variations
-                        float baseHue = atan(u_color.r, u_color.g);
-                        float hue = baseHue + u_colorShift * 0.017453 + u_mouseIntensity * 0.15 + u_colorVariation;
-                        float saturation = 0.7 + lattice * 0.25 + u_clickIntensity * 0.1;
-                        float brightness = 0.15 + lattice * 0.7 + u_intensity * 0.25 + u_mouseIntensity * 0.12;
+                        float hue = atan(u_color.r, u_color.g) + u_mouseIntensity * 0.2;
+                        float saturation = 0.8 + lattice * 0.2 + u_clickIntensity * 0.1;
+                        float brightness = 0.2 + lattice * 0.8 + u_mouseIntensity * 0.15;
                         
                         vec3 color = hsv2rgb(vec3(hue, saturation, brightness));
                         
-                        // Mouse interaction glow
-                        float mouseDist = length(uv - (u_mouse - 0.5) * vec2(aspectRatio, 1.0));
-                        float mouseGlow = exp(-mouseDist * 2.0) * u_mouseIntensity * 0.15;
-                        color += vec3(mouseGlow) * u_color * 0.5;
-                        
-                        // Click pulse effect
-                        float clickPulse = u_clickIntensity * exp(-mouseDist * 2.5) * 0.25;
-                        color += vec3(clickPulse, clickPulse * 0.7, clickPulse * 1.2);
-                        
-                        // Constant subtle flashing/pulsing
-                        float pulse = (sin(u_time * 0.002) + 1.0) * 0.05;
-                        color += vec3(pulse) * u_color * 0.3;
-                        
-                        gl_FragColor = vec4(color, 0.92);
+                        gl_FragColor = vec4(color, 1.0);
                     }
                 `;
                 
@@ -495,368 +273,207 @@
                     resolution: this.gl.getUniformLocation(this.program, 'u_resolution'),
                     time: this.gl.getUniformLocation(this.program, 'u_time'),
                     mouse: this.gl.getUniformLocation(this.program, 'u_mouse'),
-                    geometry: this.gl.getUniformLocation(this.program, 'u_geometry'),
                     density: this.gl.getUniformLocation(this.program, 'u_density'),
                     speed: this.gl.getUniformLocation(this.program, 'u_speed'),
                     color: this.gl.getUniformLocation(this.program, 'u_color'),
-                    intensity: this.gl.getUniformLocation(this.program, 'u_intensity'),
-                    roleDensity: this.gl.getUniformLocation(this.program, 'u_roleDensity'),
-                    roleSpeed: this.gl.getUniformLocation(this.program, 'u_roleSpeed'),
-                    colorShift: this.gl.getUniformLocation(this.program, 'u_colorShift'),
                     mouseIntensity: this.gl.getUniformLocation(this.program, 'u_mouseIntensity'),
                     clickIntensity: this.gl.getUniformLocation(this.program, 'u_clickIntensity'),
                     densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation'),
-                    colorVariation: this.gl.getUniformLocation(this.program, 'u_colorVariation'),
-                    speedVariation: this.gl.getUniformLocation(this.program, 'u_speedVariation')
+                    geometryType: this.gl.getUniformLocation(this.program, 'u_geometryType')
                 };
             }
-            
+
             createProgram(vertexSource, fragmentSource) {
                 const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexSource);
                 const fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, fragmentSource);
-                
                 const program = this.gl.createProgram();
                 this.gl.attachShader(program, vertexShader);
                 this.gl.attachShader(program, fragmentShader);
                 this.gl.linkProgram(program);
-                
                 if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
                     console.error('Program linking failed:', this.gl.getProgramInfoLog(program));
                     return null;
                 }
-                
                 return program;
             }
-            
+
             createShader(type, source) {
                 const shader = this.gl.createShader(type);
                 this.gl.shaderSource(shader, source);
                 this.gl.compileShader(shader);
-                
                 if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
                     console.error('Shader compilation failed:', this.gl.getShaderInfoLog(shader));
                     return null;
                 }
-                
                 return shader;
             }
-            
+
             initBuffers() {
                 const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-                
                 this.buffer = this.gl.createBuffer();
                 this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
                 this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
-                
                 const positionLocation = this.gl.getAttribLocation(this.program, 'a_position');
                 this.gl.enableVertexAttribArray(positionLocation);
-                this.gl.vertexAttribPointer(positionLocation, 2, this.gl.FLOAT, false, 0, 0);
+                this.gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
             }
-            
+
             resize() {
                 this.canvas.width = this.canvas.clientWidth;
                 this.canvas.height = this.canvas.clientHeight;
                 this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
             }
-            
+
             updateInteraction(mouseX, mouseY, intensity) {
                 this.mouseX = mouseX;
                 this.mouseY = mouseY;
-                this.mouseIntensity = intensity * this.roleParams.mouseReactivity * this.reactivity;
+                this.mouseIntensity = intensity;
             }
-            
-            triggerClick(x, y) {
-                this.clickIntensity = Math.min(1.0, this.clickIntensity + this.roleParams.clickReactivity * this.reactivity);
+
+            triggerClick() {
+                this.clickIntensity = 1.0;
             }
             
             updateDensity(variation) {
                 this.densityTarget = variation;
             }
-            
+
             render() {
                 if (!this.program) return;
-                
                 this.resize();
                 this.gl.useProgram(this.program);
-                
-                // Smooth density variation
-                this.densityVariation += (this.densityTarget - this.densityVariation) * 0.04;
-                
-                // Click intensity decay
+
+                this.densityVariation += (this.densityTarget - this.densityVariation) * 0.05;
                 this.clickIntensity *= this.clickDecay;
                 
                 const time = Date.now() - this.startTime;
                 
-                // Set uniforms
                 this.gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
                 this.gl.uniform1f(this.uniforms.time, time);
                 this.gl.uniform2f(this.uniforms.mouse, this.mouseX, this.mouseY);
-                this.gl.uniform1f(this.uniforms.geometry, this.geometryParams.geomIndex);
-                this.gl.uniform1f(this.uniforms.density, this.baseDensity);
-                this.gl.uniform1f(this.uniforms.speed, 0.5 * this.geometryParams.speedMod);
-                this.gl.uniform3fv(this.uniforms.color, new Float32Array(this.geometryParams.baseColor));
-                this.gl.uniform1f(this.uniforms.intensity, this.roleParams.intensity);
-                this.gl.uniform1f(this.uniforms.roleDensity, this.roleParams.densityMult);
-                this.gl.uniform1f(this.uniforms.roleSpeed, this.roleParams.speedMult);
-                this.gl.uniform1f(this.uniforms.colorShift, this.roleParams.colorShift);
+                this.gl.uniform1f(this.uniforms.density, this.config.density);
+                this.gl.uniform1f(this.uniforms.speed, this.config.speed);
+                this.gl.uniform3fv(this.uniforms.color, new Float32Array(this.config.color));
                 this.gl.uniform1f(this.uniforms.mouseIntensity, this.mouseIntensity);
                 this.gl.uniform1f(this.uniforms.clickIntensity, this.clickIntensity);
                 this.gl.uniform1f(this.uniforms.densityVariation, this.densityVariation);
-                this.gl.uniform1f(this.uniforms.colorVariation, this.colorVariation);
-                this.gl.uniform1f(this.uniforms.speedVariation, this.speedVariation);
+                this.gl.uniform1f(this.uniforms.geometryType, this.config.geometryType);
                 
-                this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
+                this.gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         }
-        
-        // TABBED HOLOGRAPHIC SYSTEM MANAGER - PRESERVES ALL ORIGINAL EFFECTS
-        class TabbedHolographicSystemManager {
+
+        class HolographicSystemManager {
             constructor() {
-                this.currentPage = 0;
-                this.totalPages = 10;
-                this.visualizersPerPage = 3;
+                this.variations = this.createVariations();
                 this.activeVisualizers = [];
-                this.mouseX = 0.5;
-                this.mouseY = 0.5;
-                this.mouseIntensity = 0.0;
-                
-                // All 30 geometry variations
-                this.geometryTypes = [
-                    'hypercube', 'tetrahedron', 'sphere', 'torus', 'wave', 
-                    'crystal', 'spiral', 'fractal', 'neural', 'quantum',
-                    'mobius', 'klein', 'polytope', 'tesseract', 'manifold',
-                    'vortex', 'plasma', 'matrix', 'lattice', 'field',
-                    'chaos', 'attractor', 'oscillator', 'resonance', 'harmonic',
-                    'prism', 'dodecahedron', 'icosahedron', 'octahedron', 'stellated'
-                ];
-                
-                this.initialize();
+                this.currentPage = 0;
+                this.init();
             }
-            
-            initialize() {
-                console.log('🎨 Initializing Tabbed Holographic System...');
-                
-                this.createTabNavigation();
-                this.showPage(0);
+
+            createVariations() {
+                const variations = [];
+                const geometryTypes = [
+                    { name: "Tetrahedron", type: 0 }, { name: "Cube", type: 1 }, { name: "Sphere", type: 2 }, 
+                    { name: "Torus", type: 3 }, { name: "Wave", type: 4 }, { name: "Crystal", type: 5 }
+                ];
+
+                for (let i = 0; i < 30; i++) {
+                    const geo = geometryTypes[Math.floor(Math.random() * geometryTypes.length)];
+                    variations.push({
+                        name: `${geo.name} Variant ${i + 1}`,
+                        density: 4.0 + Math.random() * 4.0,
+                        speed: 0.2 + Math.random() * 0.8,
+                        color: [Math.random(), Math.random(), Math.random()],
+                        geometryType: geo.type
+                    });
+                }
+                return variations;
+            }
+
+            init() {
+                this.setupTabs();
+                this.loadPage(0);
                 this.setupInteractions();
                 this.startRenderLoop();
-                
-                console.log('✅ Tabbed system ready - 30 variations, 3 active with full effects');
             }
-            
-            createTabNavigation() {
-                const navContainer = document.getElementById('tabNavigation');
-                
-                for (let i = 0; i < this.totalPages; i++) {
+
+            setupTabs() {
+                const tabContainer = document.getElementById('tabNavigation');
+                for (let i = 0; i < 10; i++) {
                     const button = document.createElement('button');
                     button.className = 'tab-button';
-                    button.textContent = `Set ${i + 1}`;
-                    button.onclick = () => this.showPage(i);
-                    if (i === 0) button.classList.add('active');
-                    navContainer.appendChild(button);
+                    button.textContent = `Page ${i + 1}`;
+                    button.onclick = () => this.loadPage(i);
+                    tabContainer.appendChild(button);
                 }
+                tabContainer.children[0].classList.add('active');
             }
-            
-            showPage(pageIndex) {
-                if (pageIndex < 0 || pageIndex >= this.totalPages) return;
-                
-                // Clean up existing visualizers
-                this.cleanupVisualizers();
-                
+
+            loadPage(pageIndex) {
                 this.currentPage = pageIndex;
-                
-                // Update UI
-                this.updateTabButtons();
-                
-                // Create new visualizers for this page
-                this.createPageVisualizers(pageIndex);
-                
-                console.log(`📄 Showing page ${pageIndex + 1}/${this.totalPages} with original holographic effects`);
-            }
-            
-            cleanupVisualizers() {
-                // Clear the grid
+
+                const tabContainer = document.getElementById('tabNavigation');
+                Array.from(tabContainer.children).forEach((btn, index) => {
+                    btn.classList.toggle('active', index === pageIndex);
+                });
+
                 const grid = document.getElementById('holographicGrid');
                 grid.innerHTML = '';
-                
-                // Clear visualizer array
                 this.activeVisualizers = [];
-            }
-            
-            createPageVisualizers(pageIndex) {
-                const grid = document.getElementById('holographicGrid');
-                const startIndex = pageIndex * this.visualizersPerPage;
-                
-                for (let i = 0; i < this.visualizersPerPage; i++) {
-                    const geoIndex = startIndex + i;
-                    if (geoIndex >= this.geometryTypes.length) break;
+
+                const startIndex = pageIndex * 3;
+                for (let i = 0; i < 3; i++) {
+                    const variationIndex = startIndex + i;
+                    if (variationIndex >= this.variations.length) break;
+
+                    const instanceDiv = document.createElement('div');
+                    instanceDiv.className = 'holographic-instance';
                     
-                    const container = document.createElement('div');
-                    container.className = 'active-holographic-container';
-                    container.setAttribute('data-variant', this.geometryTypes[geoIndex]);
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'visualizer-canvas';
                     
-                    // Create holographic depth container
-                    const depthContainer = document.createElement('div');
-                    depthContainer.className = 'holographic-depth-container';
-                    
-                    // Create 5 depth layers with canvases (ORIGINAL SYSTEM)
-                    const layers = ['background', 'shadow', 'content', 'highlight', 'accent'];
-                    
-                    layers.forEach((layerType, layerIndex) => {
-                        const layer = document.createElement('div');
-                        layer.className = `depth-layer ${layerType}`;
-                        
-                        const canvas = document.createElement('canvas');
-                        canvas.className = `visualizer-canvas ${layerType}-visualizer`;
-                        canvas.id = `canvas-${geoIndex}-${layerType}`;
-                        
-                        layer.appendChild(canvas);
-                        depthContainer.appendChild(layer);
-                        
-                        // Create visualizer with ORIGINAL parameters
-                        setTimeout(() => {
-                            const reactivity = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
-                            const visualizer = new ActiveHolographicVisualizer(
-                                canvas.id,
-                                layerType,
-                                this.geometryTypes[geoIndex],
-                                reactivity
-                            );
-                            this.activeVisualizers.push(visualizer);
-                        }, i * 50 + layerIndex * 20); // Staggered creation
-                    });
-                    
-                    // Add variant title
-                    const title = document.createElement('div');
-                    title.className = 'variant-title';
-                    title.textContent = this.geometryTypes[geoIndex].toUpperCase();
-                    
-                    container.appendChild(depthContainer);
-                    container.appendChild(title);
-                    grid.appendChild(container);
+                    const overlay = document.createElement('div');
+                    overlay.className = 'instance-overlay';
+                    overlay.textContent = this.variations[variationIndex].name;
+
+                    instanceDiv.appendChild(canvas);
+                    instanceDiv.appendChild(overlay);
+                    grid.appendChild(instanceDiv);
+
+                    const visualizer = new HolographicVisualizer(canvas, this.variations[variationIndex]);
+                    this.activeVisualizers.push(visualizer);
                 }
             }
-            
-            updateTabButtons() {
-                const buttons = document.querySelectorAll('.tab-button');
-                buttons.forEach((button, index) => {
-                    button.classList.toggle('active', index === this.currentPage);
-                });
-            }
-            
+
             setupInteractions() {
-                // ORIGINAL mouse tracking with full reactivity
                 document.addEventListener('mousemove', (e) => {
-                    this.mouseX = e.clientX / window.innerWidth;
-                    this.mouseY = 1.0 - (e.clientY / window.innerHeight);
-                    this.mouseIntensity = Math.min(1.0, Math.sqrt(e.movementX*e.movementX + e.movementY*e.movementY) / 30);
-                    
-                    // Update ALL active visualizers
-                    this.activeVisualizers.forEach(viz => {
-                        viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
-                    });
+                    const mouseX = e.clientX / window.innerWidth;
+                    const mouseY = 1.0 - (e.clientY / window.innerHeight);
+                    const intensity = Math.min(1.0, Math.sqrt(e.movementX**2 + e.movementY**2) / 40);
+                    this.activeVisualizers.forEach(viz => viz.updateInteraction(mouseX, mouseY, intensity));
+                });
+
+                document.addEventListener('click', () => {
+                    this.activeVisualizers.forEach(viz => viz.triggerClick());
                 });
                 
-                // ORIGINAL click interactions
-                document.addEventListener('click', (e) => {
-                    const clickX = e.clientX / window.innerWidth;
-                    const clickY = 1.0 - (e.clientY / window.innerHeight);
-                    
-                    this.activeVisualizers.forEach(viz => {
-                        viz.triggerClick(clickX, clickY);
-                    });
-                });
-                
-                // ORIGINAL scroll detection for density variation
-                let scrollTimeout;
                 window.addEventListener('scroll', () => {
-                    clearTimeout(scrollTimeout);
-                    const scrollIntensity = Math.min(1.0, Math.abs(window.scrollY) / 500);
-                    
-                    this.activeVisualizers.forEach(viz => {
-                        viz.updateDensity(scrollIntensity * 3.0);
-                    });
-                    
-                    scrollTimeout = setTimeout(() => {
-                        this.activeVisualizers.forEach(viz => {
-                            viz.updateDensity(0.0);
-                        });
-                    }, 200);
-                });
-                
-                // Touch support for mobile
-                document.addEventListener('touchstart', (e) => {
-                    const touch = e.touches[0];
-                    const clickX = touch.clientX / window.innerWidth;
-                    const clickY = 1.0 - (touch.clientY / window.innerHeight);
-                    
-                    this.activeVisualizers.forEach(viz => {
-                        viz.triggerClick(clickX, clickY);
-                    });
-                }, { passive: true });
-                
-                document.addEventListener('touchmove', (e) => {
-                    const touch = e.touches[0];
-                    this.mouseX = touch.clientX / window.innerWidth;
-                    this.mouseY = 1.0 - (touch.clientY / window.innerHeight);
-                    this.mouseIntensity = 0.5; // Constant intensity for touch
-                    
-                    this.activeVisualizers.forEach(viz => {
-                        viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
-                    });
-                }, { passive: true });
-                
-                // Keyboard navigation
-                document.addEventListener('keydown', (e) => {
-                    switch(e.key) {
-                        case 'ArrowLeft':
-                            this.showPage(Math.max(0, this.currentPage - 1));
-                            break;
-                        case 'ArrowRight':
-                            this.showPage(Math.min(this.totalPages - 1, this.currentPage + 1));
-                            break;
-                        case 'Home':
-                            this.showPage(0);
-                            break;
-                        case 'End':
-                            this.showPage(this.totalPages - 1);
-                            break;
-                    }
+                    const densityVar = Math.sin(window.scrollY / 500) * 2.0;
+                    this.activeVisualizers.forEach(viz => viz.updateDensity(densityVar));
                 });
             }
-            
+
             startRenderLoop() {
                 const render = () => {
-                    this.activeVisualizers.forEach(viz => {
-                        if (viz && viz.render) {
-                            viz.render();
-                        }
-                    });
+                    this.activeVisualizers.forEach(viz => viz.render());
                     requestAnimationFrame(render);
                 };
-                
                 render();
-                console.log('🎬 Render loop started for active visualizers with full effects');
             }
         }
-        
-        // Initialize when page loads
-        window.addEventListener('load', () => {
-            console.log('🚀 Initializing Tabbed Active Holographic Systems...');
-            const manager = new TabbedHolographicSystemManager();
-            window.tabbedManager = manager;
-        });
-        
+
+        window.addEventListener('load', () => new HolographicSystemManager());
     </script>
-    
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

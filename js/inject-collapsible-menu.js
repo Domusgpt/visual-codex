@@ -72,40 +72,43 @@
             // Create a tab system for multiple menus
             const tabContainer = document.createElement('div');
             tabContainer.className = 'ucm-tab-container';
-            tabContainer.innerHTML = `
-                <div class="ucm-tabs">
-                    ${Array.from(menus).map((menu, index) => {
-                        const title = menu.querySelector('h3, h4, .title')?.textContent || `Menu ${index + 1}`;
-                        return `<button class="ucm-tab" data-tab="${index}">${title}</button>`;
-                    }).join('')}
-                </div>
-                <div class="ucm-tab-content"></div>
-            `;
             
-            // Add tab functionality
-            const tabs = tabContainer.querySelectorAll('.ucm-tab');
-            const content = tabContainer.querySelector('.ucm-tab-content');
+            const tabButtons = document.createElement('div');
+            tabButtons.className = 'ucm-tabs';
             
-            tabs.forEach((tab, index) => {
-                tab.addEventListener('click', () => {
+            const tabContent = document.createElement('div');
+            tabContent.className = 'ucm-tab-content';
+
+            menus.forEach((menu, index) => {
+                const title = menu.querySelector('h3, h4, .title')?.textContent || `Menu ${index + 1}`;
+                const tabButton = document.createElement('button');
+                tabButton.className = 'ucm-tab';
+                tabButton.dataset.tab = index;
+                tabButton.textContent = title;
+                
+                tabButton.addEventListener('click', () => {
                     // Update active tab
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
+                    tabButtons.querySelectorAll('.ucm-tab').forEach(t => t.classList.remove('active'));
+                    tabButton.classList.add('active');
                     
                     // Show corresponding menu
-                    content.innerHTML = '';
-                    content.appendChild(menus[index].cloneNode(true));
+                    menus.forEach((m, i) => {
+                        m.style.display = i === index ? 'block' : 'none';
+                    });
                 });
+                
+                tabButtons.appendChild(tabButton);
+                tabContent.appendChild(menu);
             });
             
-            // Show first tab by default
-            tabs[0]?.click();
+            tabContainer.appendChild(tabButtons);
+            tabContainer.appendChild(tabContent);
             
             // Add to collapsible menu
             window.collapsibleMenu.addToMenu(tabContainer);
             
-            // Hide original menus
-            menus.forEach(menu => menu.style.display = 'none');
+            // Show first tab by default
+            tabButtons.querySelector('.ucm-tab')?.click();
         }
     }
     

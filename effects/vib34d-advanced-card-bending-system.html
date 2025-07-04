@@ -17,7 +17,7 @@
             background: #000;
             color: white;
             font-family: 'Orbitron', 'Courier New', monospace;
-            overflow: hidden;
+            overflow-x: hidden;
             height: 100vh;
             cursor: crosshair;
             background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
@@ -44,6 +44,8 @@
             --scale-factor: 1.0;
             --warp-strength: 0.0;
             --dimensional-shift: 0.0;
+            --skew-x: 0deg;
+            --skew-y: 0deg;
         }
         
         .container {
@@ -62,7 +64,7 @@
         @media (max-width: 768px) {
             .container {
                 grid-template-columns: 1fr;
-                grid-template-rows: repeat(6, 180px);
+                grid-template-rows: repeat(6, auto);
                 gap: 20px;
                 padding: 20px;
                 height: auto;
@@ -77,8 +79,7 @@
             }
             
             .bend-card {
-                min-height: 160px;
-                max-height: 180px;
+                min-height: 200px;
                 transform: none !important; /* Disable 3D transforms on mobile for performance */
                 perspective: none;
                 border-radius: 15px;
@@ -114,12 +115,10 @@
             .container {
                 padding: 15px;
                 gap: 15px;
-                grid-template-rows: repeat(6, 150px);
             }
             
             .bend-card {
-                min-height: 130px;
-                max-height: 150px;
+                min-height: 180px;
                 border-radius: 12px;
             }
             
@@ -158,14 +157,12 @@
             transform-style: preserve-3d;
             cursor: pointer;
             
-            /* Base 3D Transform */
+            /* Base 2D-like Transform */
             transform: 
-                perspective(var(--perspective-depth))
-                rotateX(calc(var(--rotation-x) * var(--bend-intensity)))
-                rotateY(calc(var(--rotation-y) * var(--bend-intensity)))
-                rotateZ(calc(var(--rotation-z) * var(--bend-intensity)))
                 scale(calc(var(--scale-factor) + var(--micro-chaos) * 0.02))
-                translateZ(calc(var(--dimensional-shift) * 50px));
+                rotateZ(calc(var(--rotation-z) * var(--bend-intensity)))
+                skewX(calc(var(--skew-x) * var(--bend-intensity)))
+                skewY(calc(var(--skew-y) * var(--bend-intensity)));
             
             box-shadow: 
                 0 calc(15px + var(--global-energy) * 20px) calc(35px + var(--global-energy) * 30px) rgba(0, 0, 0, 0.4),
@@ -177,89 +174,71 @@
         /* Individual Card Bending Behaviors */
         .bend-card.perspective-tilt {
             transform: 
-                perspective(800px)
-                rotateX(15deg)
-                rotateY(10deg)
-                scale(1.05);
+                scale(1.05)
+                rotateZ(5deg)
+                skewX(5deg);
             transform-origin: center center;
         }
 
         .bend-card.deep-perspective {
             transform: 
-                perspective(1200px)
-                rotateX(25deg)
-                rotateY(-15deg)
-                translateZ(80px)
-                scale(1.1);
+                scale(1.1)
+                rotateZ(-8deg)
+                skewY(7deg);
         }
 
         .bend-card.twist-warp {
             transform: 
-                perspective(900px)
-                rotateX(10deg)
-                rotateY(20deg)
-                rotateZ(5deg)
-                skew(3deg, 2deg)
-                scale(1.08);
+                scale(1.08)
+                rotateZ(10deg)
+                skewX(8deg)
+                skewY(5deg);
         }
 
         .bend-card.dimension-fold {
             transform: 
-                perspective(600px)
-                rotateX(30deg)
-                rotateY(25deg)
-                translateZ(120px)
+                scaleX(1.15)
                 scaleY(0.9)
-                scaleX(1.15);
+                rotateZ(15deg)
+                skewX(10deg);
         }
 
         .bend-card.reality-bend {
             transform: 
-                perspective(1000px)
-                rotateX(-20deg)
-                rotateY(35deg)
-                rotateZ(-8deg)
-                translateX(20px)
-                translateY(-15px)
-                scale(1.12);
+                scale(1.12)
+                rotateZ(-12deg)
+                skewX(-10deg)
+                skewY(8deg);
         }
 
         .bend-card.portal-emergence {
             transform: 
-                perspective(1400px)
-                rotateX(40deg)
-                rotateY(-30deg)
-                translateZ(150px)
-                scale(1.2);
+                scale(1.2)
+                rotateZ(20deg)
+                skewX(15deg);
             animation: portal-pulse 3s ease-in-out infinite;
         }
 
         @keyframes portal-pulse {
             0% { 
                 transform: 
-                    perspective(1400px)
-                    rotateX(40deg)
-                    rotateY(-30deg)
-                    translateZ(150px)
-                    scale(1.2);
+                    scale(1.2)
+                    rotateZ(20deg)
+                    skewX(15deg);
                 filter: hue-rotate(0deg) saturate(150%);
             }
             50% {
                 transform: 
-                    perspective(1400px)
-                    rotateX(45deg)
-                    rotateY(-35deg)
-                    translateZ(180px)
-                    scale(1.25);
+                    scale(1.25)
+                    rotateZ(25deg)
+                    skewX(20deg);
                 filter: hue-rotate(180deg) saturate(200%);
             }
             100% { 
                 transform: 
-                    perspective(1400px)
-                    rotateX(40deg)
-                    rotateY(-30deg)
-                    translateZ(150px)
-                    scale(1.2);
+                    scale(1.2)
+                    rotateZ(20deg)
+                    skewX(15deg);
                 filter: hue-rotate(360deg) saturate(150%);
             }
         }
@@ -283,52 +262,41 @@
 
         .bend-card.perspective-tilt:hover {
             transform: 
-                perspective(600px)
-                rotateX(25deg)
-                rotateY(20deg)
-                translateZ(100px)
-                scale(1.15);
+                scale(1.15)
+                rotateZ(10deg)
+                skewX(10deg);
             animation: holographic-shimmer 1.5s ease-in-out infinite;
         }
 
         .bend-card.deep-perspective:hover {
             transform: 
-                perspective(800px)
-                rotateX(45deg)
-                rotateY(-35deg)
-                translateZ(160px)
-                scale(1.25);
+                scale(1.25)
+                rotateZ(-15deg)
+                skewY(12deg);
         }
 
         .bend-card.twist-warp:hover {
             transform: 
-                perspective(700px)
-                rotateX(20deg)
-                rotateY(40deg)
-                rotateZ(15deg)
-                skew(8deg, 5deg)
-                scale(1.18);
+                scale(1.18)
+                rotateZ(20deg)
+                skewX(15deg)
+                skewY(10deg);
         }
 
         .bend-card.dimension-fold:hover {
             transform: 
-                perspective(500px)
-                rotateX(50deg)
-                rotateY(45deg)
-                translateZ(200px)
+                scaleX(1.3)
                 scaleY(0.8)
-                scaleX(1.3);
+                rotateZ(25deg)
+                skewX(18deg);
         }
 
         .bend-card.reality-bend:hover {
             transform: 
-                perspective(800px)
-                rotateX(-35deg)
-                rotateY(55deg)
-                rotateZ(-15deg)
-                translateX(40px)
-                translateY(-30px)
-                scale(1.22);
+                scale(1.22)
+                rotateZ(-20deg)
+                skewX(-15deg)
+                skewY(12deg);
         }
 
         @keyframes holographic-shimmer {
@@ -362,7 +330,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             line-height: 1.1;
-            transform: translateZ(20px);
+            transform: translateZ(0px); /* Keep content flat */
         }
 
         .card-subtitle {
@@ -372,7 +340,7 @@
             text-shadow: 0 0 8px #00ffff;
             letter-spacing: 0.5px;
             font-weight: 700;
-            transform: translateZ(15px);
+            transform: translateZ(0px); /* Keep content flat */
         }
 
         .card-description {
@@ -381,7 +349,7 @@
             line-height: 1.5;
             text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
             font-family: 'JetBrains Mono', monospace;
-            transform: translateZ(10px);
+            transform: translateZ(0px); /* Keep content flat */
         }
 
         .bend-controls {
@@ -480,7 +448,7 @@
 <body>
     <div class="info-panel">
         <div class="info-title">VIB34D Card Bending</div>
-        <div class="info-item"><span class="info-key">System:</span> Advanced 3D CSS Transform Engine</div>
+        <div class="info-item"><span class="info-key">System:</span> Advanced 2D/3D CSS Transform Engine</div>
         <div class="info-item"><span class="info-key">Cards:</span> 6 Unique Bending Behaviors</div>
         <div class="info-item"><span class="info-key">Interaction:</span> Hover for Extreme Transforms</div>
         <div class="info-item"><span class="info-key">Controls:</span> Real-time Parameter Adjustment</div>
@@ -531,72 +499,42 @@
         <div class="bend-card perspective-tilt">
             <div class="card-content">
                 <div class="card-title">Perspective Tilt</div>
-                <div class="card-subtitle">Basic 3D Rotation</div>
-                <div class="card-description">
-                    Gentle perspective tilt with rotateX(15deg) and rotateY(10deg). 
-                    Hover enhances the effect with shimmer animation and increased depth.
-                    This demonstrates the foundation of 3D card bending.
-                </div>
+                <div class="card-description">Gentle perspective tilt with rotateZ(5deg) and skewX(5deg). Hover enhances the effect with shimmer animation and increased depth.</div>
             </div>
         </div>
 
         <div class="bend-card deep-perspective">
             <div class="card-content">
                 <div class="card-title">Deep Perspective</div>
-                <div class="card-subtitle">Enhanced Z-Depth</div>
-                <div class="card-description">
-                    Dramatic perspective with rotateX(25deg), rotateY(-15deg), and translateZ(80px).
-                    Creates the illusion of cards floating in true 3D space.
-                    Hover pushes the card even further into dimensional depth.
-                </div>
+                <div class="card-description">Dramatic perspective with rotateZ(-8deg) and skewY(7deg). Creates the illusion of cards floating in true 3D space.</div>
             </div>
         </div>
 
         <div class="bend-card twist-warp">
             <div class="card-content">
                 <div class="card-title">Twist Warp</div>
-                <div class="card-subtitle">Multi-Axis Rotation</div>
-                <div class="card-description">
-                    Complex transformation combining rotateX, rotateY, rotateZ, and skew.
-                    Creates a twisted warping effect that suggests dimensional folding.
-                    Hover intensifies all rotation axes for extreme warping.
-                </div>
+                <div class="card-description">Complex transformation combining rotateZ, skewX, and skewY. Creates a twisted warping effect that suggests dimensional folding.</div>
             </div>
         </div>
 
         <div class="bend-card dimension-fold">
             <div class="card-content">
                 <div class="card-title">Dimension Fold</div>
-                <div class="card-subtitle">Non-Uniform Scaling</div>
-                <div class="card-description">
-                    Advanced folding effect using scaleY(0.9) and scaleX(1.15) with rotation.
-                    Simulates cards bending along multiple axes simultaneously.
-                    Hover creates extreme aspect ratio distortion.
-                </div>
+                <div class="card-description">Advanced folding effect using scaleY(0.9) and scaleX(1.15) with rotation. Simulates cards bending along multiple axes simultaneously.</div>
             </div>
         </div>
 
         <div class="bend-card reality-bend">
             <div class="card-content">
                 <div class="card-title">Reality Bend</div>
-                <div class="card-subtitle">Spatial Displacement</div>
-                <div class="card-description">
-                    Combines rotation with translateX and translateY displacement.
-                    Creates the effect of reality bending around the card.
-                    Hover pushes the spatial distortion to its limits.
-                </div>
+                <div class="card-description">Combines rotation with translateX and translateY displacement. Creates the effect of reality bending around the card.</div>
             </div>
         </div>
 
         <div class="bend-card portal-emergence">
             <div class="card-content">
                 <div class="card-title">Portal Emergence</div>
-                <div class="card-subtitle">Animated 4D Gateway</div>
-                <div class="card-description">
-                    Extreme perspective with animated portal-pulse effect.
-                    Continuously cycles through rotations and color shifts.
-                    Represents cards emerging from higher-dimensional space.
-                </div>
+                <div class="card-description">Extreme perspective with animated portal-pulse effect. Continuously cycles through rotations and color shifts.</div>
             </div>
         </div>
     </div>
@@ -675,18 +613,21 @@
                         const deltaX = (e.clientX - centerX) / (rect.width / 2);
                         const deltaY = (e.clientY - centerY) / (rect.height / 2);
                         
-                        // Apply dynamic rotation based on mouse position
-                        const rotateY = deltaX * 20 * this.params.bendIntensity;
-                        const rotateX = -deltaY * 20 * this.params.bendIntensity;
+                        // Apply dynamic 2D-like rotation and skew based on mouse position
+                        const rotateZ = deltaX * 10 * this.params.bendIntensity;
+                        const skewX = -deltaY * 5 * this.params.bendIntensity;
+                        const skewY = deltaX * 5 * this.params.bendIntensity;
                         
-                        card.style.setProperty('--rotation-x', rotateX + 'deg');
-                        card.style.setProperty('--rotation-y', rotateY + 'deg');
+                        card.style.setProperty('--rotation-z', rotateZ + 'deg');
+                        card.style.setProperty('--skew-x', skewX + 'deg');
+                        card.style.setProperty('--skew-y', skewY + 'deg');
                     });
                     
                     // Reset on mouse leave
                     card.addEventListener('mouseleave', () => {
-                        card.style.setProperty('--rotation-x', '0deg');
-                        card.style.setProperty('--rotation-y', '0deg');
+                        card.style.setProperty('--rotation-z', '0deg');
+                        card.style.setProperty('--skew-x', '0deg');
+                        card.style.setProperty('--skew-y', '0deg');
                     });
                     
                     // Click for random bend
@@ -697,21 +638,21 @@
             }
             
             randomBend(card) {
-                const randomRotX = (Math.random() - 0.5) * 60;
-                const randomRotY = (Math.random() - 0.5) * 60;
                 const randomRotZ = (Math.random() - 0.5) * 30;
+                const randomSkewX = (Math.random() - 0.5) * 20;
+                const randomSkewY = (Math.random() - 0.5) * 20;
                 const randomScale = 0.8 + Math.random() * 0.6;
                 
-                card.style.setProperty('--rotation-x', randomRotX + 'deg');
-                card.style.setProperty('--rotation-y', randomRotY + 'deg');
                 card.style.setProperty('--rotation-z', randomRotZ + 'deg');
+                card.style.setProperty('--skew-x', randomSkewX + 'deg');
+                card.style.setProperty('--skew-y', randomSkewY + 'deg');
                 card.style.setProperty('--scale-factor', randomScale);
                 
                 // Reset after 2 seconds
                 setTimeout(() => {
-                    card.style.setProperty('--rotation-x', '0deg');
-                    card.style.setProperty('--rotation-y', '0deg');
                     card.style.setProperty('--rotation-z', '0deg');
+                    card.style.setProperty('--skew-x', '0deg');
+                    card.style.setProperty('--skew-y', '0deg');
                     card.style.setProperty('--scale-factor', this.params.scaleFactor);
                 }, 2000);
             }

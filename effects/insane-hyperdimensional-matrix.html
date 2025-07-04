@@ -30,6 +30,35 @@
             z-index: 100;
             width: 200px;
             box-shadow: 0 0 20px rgba(255, 0, 128, 0.5);
+            transition: all 0.3s ease;
+        }
+        .controls.collapsed {
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+            overflow: hidden;
+        }
+        .controls-toggle {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 128, 0.2);
+            border: 1px solid #ff0080;
+            color: #ff0080;
+            cursor: pointer;
+            padding: 3px 6px;
+            font-size: 10px;
+            z-index: 101;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 0, 128, 0.4);
+        }
+        .controls-content {
+            transition: opacity 0.3s ease;
+        }
+        .controls.collapsed .controls-content {
+            opacity: 0;
+            pointer-events: none;
         }
         .control-group {
             margin-bottom: 10px;
@@ -99,41 +128,44 @@
         <div>REALITY BEND: <span id="realityDisplay">25%</span></div>
     </div>
     
-    <div class="controls">
-        <div class="control-group">
-            <label>Chaos Level: <span class="value-display" id="chaosValue">5.0</span></label>
-            <input type="range" id="chaosLevel" min="0.0" max="10.0" step="0.1" value="5.0">
+    <div class="controls collapsed" id="controlsPanel">
+        <button class="controls-toggle" onclick="toggleControls()">▼</button>
+        <div class="controls-content">
+            <div class="control-group">
+                <label>Chaos Level: <span class="value-display" id="chaosValue">5.0</span></label>
+                <input type="range" id="chaosLevel" min="0.0" max="10.0" step="0.1" value="5.0">
+            </div>
+            <div class="control-group">
+                <label>Dimension Break: <span class="value-display" id="dimensionValue">4.2</span></label>
+                <input type="range" id="dimensionBreak" min="3.0" max="8.0" step="0.1" value="4.2">
+            </div>
+            <div class="control-group">
+                <label>Time Warp: <span class="value-display" id="timeWarpValue">1.0</span></label>
+                <input type="range" id="timeWarp" min="0.1" max="50.0" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Fractal Depth: <span class="value-display" id="fractalValue">8</span></label>
+                <input type="range" id="fractalDepth" min="1" max="20" step="1" value="8">
+            </div>
+            <div class="control-group">
+                <label>Quantum Tunnel: <span class="value-display" id="quantumValue">2.0</span></label>
+                <input type="range" id="quantumTunnel" min="0.0" max="5.0" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Reality Bend: <span class="value-display" id="realityValue">25.0</span></label>
+                <input type="range" id="realityBend" min="0.0" max="100.0" step="1.0" value="25.0">
+            </div>
+            <div class="control-group">
+                <label>Chaos Attractor: <span class="value-display" id="attractorValue">3.14</span></label>
+                <input type="range" id="chaosAttractor" min="0.0" max="10.0" step="0.01" value="3.14">
+            </div>
+            <div class="control-group">
+                <label>Hyperspace Flow: <span class="value-display" id="flowValue">7.5</span></label>
+                <input type="range" id="hyperspaceFlow" min="0.0" max="20.0" step="0.1" value="7.5">
+            </div>
+            <button class="insane-btn" onclick="triggerChaosExplosion()">CHAOS EXPLOSION</button>
+            <button class="insane-btn" onclick="resetReality()">RESET REALITY</button>
         </div>
-        <div class="control-group">
-            <label>Dimension Break: <span class="value-display" id="dimensionValue">4.2</span></label>
-            <input type="range" id="dimensionBreak" min="3.0" max="8.0" step="0.1" value="4.2">
-        </div>
-        <div class="control-group">
-            <label>Time Warp: <span class="value-display" id="timeWarpValue">1.0</span></label>
-            <input type="range" id="timeWarp" min="0.1" max="50.0" step="0.1" value="1.0">
-        </div>
-        <div class="control-group">
-            <label>Fractal Depth: <span class="value-display" id="fractalValue">8</span></label>
-            <input type="range" id="fractalDepth" min="1" max="20" step="1" value="8">
-        </div>
-        <div class="control-group">
-            <label>Quantum Tunnel: <span class="value-display" id="quantumValue">2.0</span></label>
-            <input type="range" id="quantumTunnel" min="0.0" max="5.0" step="0.1" value="2.0">
-        </div>
-        <div class="control-group">
-            <label>Reality Bend: <span class="value-display" id="realityValue">25.0</span></label>
-            <input type="range" id="realityBend" min="0.0" max="100.0" step="1.0" value="25.0">
-        </div>
-        <div class="control-group">
-            <label>Chaos Attractor: <span class="value-display" id="attractorValue">3.14</span></label>
-            <input type="range" id="chaosAttractor" min="0.0" max="10.0" step="0.01" value="3.14">
-        </div>
-        <div class="control-group">
-            <label>Hyperspace Flow: <span class="value-display" id="flowValue">7.5</span></label>
-            <input type="range" id="hyperspaceFlow" min="0.0" max="20.0" step="0.1" value="7.5">
-        </div>
-        <button class="insane-btn" onclick="triggerChaosExplosion()">CHAOS EXPLOSION</button>
-        <button class="insane-btn" onclick="resetReality()">RESET REALITY</button>
     </div>
     
     <div class="reality-warning">
@@ -578,16 +610,14 @@
         function resetReality() {
             insaneMatrix.resetReality();
         }
+
+        function toggleControls() {
+            const controls = document.getElementById('controlsPanel');
+            const toggle = controls.querySelector('.controls-toggle');
+            
+            controls.classList.toggle('collapsed');
+            toggle.textContent = controls.classList.contains('collapsed') ? '▼' : '▲';
+        }
     </script>
-    
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

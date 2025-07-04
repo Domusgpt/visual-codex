@@ -92,8 +92,7 @@ class UniversalCollapsibleMenu {
                 
                 // Check if it's actually a control panel
                 if (this.isControlElement(element)) {
-                    this.menuWrapper.appendChild(element.cloneNode(true));
-                    element.style.display = 'none';
+                    this.menuWrapper.appendChild(element);
                     foundControls = true;
                 }
             });
@@ -347,33 +346,6 @@ class UniversalCollapsibleMenu {
     addToMenu(element) {
         if (this.menuWrapper && element) {
             this.menuWrapper.appendChild(element);
-        }
-    }
-    
-    // Method to sync with existing controls
-    syncWithOriginalControls() {
-        // Re-sync values when menu is opened
-        if (this.menuWrapper) {
-            const inputs = this.menuWrapper.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                const id = input.id || input.name;
-                if (id) {
-                    const original = document.querySelector(`#${id}`);
-                    if (original && original !== input) {
-                        // Sync value from original
-                        input.value = original.value;
-                        
-                        // Mirror changes back to original
-                        input.addEventListener('input', (e) => {
-                            if (original) {
-                                original.value = e.target.value;
-                                original.dispatchEvent(new Event('input', { bubbles: true }));
-                                original.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                        });
-                    }
-                }
-            });
         }
     }
 }
