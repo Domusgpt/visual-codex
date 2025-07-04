@@ -148,6 +148,14 @@
             animation: redPulse 4s ease-in-out infinite;
         }
         
+        #polytop-7 { /* Spectral Extensions - Mint Green */
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 128, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 25% 75%, rgba(128, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(0, 40, 20, 0.8) 0%, rgba(13, 40, 24, 0.8) 100%);
+            animation: mintPulse 6s ease-in-out infinite;
+        }
+        
         /* CSS-Only 4D Effect Animations */
         @keyframes magentaPulse {
             0% { background-position: 0% 0%, 100% 100%; filter: hue-rotate(0deg) brightness(0.8); }
@@ -189,6 +197,12 @@
             0% { background-position: 100% 0%, 0% 100%; filter: hue-rotate(0deg) brightness(0.9) contrast(1.3); }
             50% { background-position: 0% 0%, 100% 100%; filter: hue-rotate(10deg) brightness(1.4) contrast(1.5); }
             100% { background-position: 100% 0%, 0% 100%; filter: hue-rotate(0deg) brightness(0.9) contrast(1.3); }
+        }
+        
+        @keyframes mintPulse {
+            0% { background-position: 50% 50%, 25% 75%; filter: hue-rotate(0deg) brightness(0.8) saturate(1.1); }
+            50% { background-position: 75% 25%, 50% 50%; filter: hue-rotate(150deg) brightness(1.2) saturate(1.4); }
+            100% { background-position: 50% 50%, 25% 75%; filter: hue-rotate(0deg) brightness(0.8) saturate(1.1); }
         }
         
         /* COLLAPSIBLE NAVIGATION */
@@ -1144,7 +1158,7 @@
 <body>
     <!-- 4D Polytopal Visualizer Backgrounds -->
     <div id="polytopBackgrounds">
-        <!-- 7 polytopal backgrounds will be created dynamically -->
+        <!-- 8 polytopal backgrounds will be created dynamically -->
     </div>
     
     <!-- Site Reaction Overlay -->
@@ -1262,6 +1276,15 @@
                 { title: "Hypercube Core", description: "Core hypercube framework with mathematical precision", tags: ["WebGL", "Hypercube", "Core"], url: "effects/hypercube-core-framework.html", name: "Hypercube Core" },
                 { title: "Insane Matrix", description: "8D+ hyperdimensional chaos with infinite complexity", tags: ["WebGL", "8D", "Matrix"], url: "effects/insane-hyperdimensional-matrix.html", name: "Hyperdimensional Matrix" },
                 { title: "MVEP Hypercube", description: "Production MVEP system with moire interference patterns", tags: ["WebGL", "MVEP", "Hypercube"], url: "effects/mvep-moire-hypercube.html", name: "MVEP Moire Hypercube" }
+            ],
+            // Set 8: Spectral Extensions
+            [
+                { title: "Polytopal Consciousness", description: "N-dimensional consciousness patterns with abstract thought visualization", tags: ["WebGL", "Polytopal", "Consciousness"], url: "demos/polytopal-consciousness-shader-demo.html", name: "Polytopal Consciousness" },
+                { title: "Millzmaleficarum Codex", description: "Advanced magical interface system with spell-casting interactions", tags: ["WebGL", "Magic", "Interface"], url: "demos/millzmaleficarum-codex-demo.html", name: "Millzmaleficarum Codex" },
+                { title: "VIB3Code Digital Magazine", description: "Interactive digital publication with immersive page transitions", tags: ["WebGL", "Magazine", "Interactive"], url: "demos/vib3code-digital-magazine-demo.html", name: "VIB3Code Digital Magazine" },
+                { title: "Elegant 4D Flow", description: "Graceful 4D particle systems with fluid dynamics and crystalline formations", tags: ["WebGL", "4D", "Flow"], url: "effects/elegant-4d-flow-visualizer.html", name: "Elegant 4D Flow" },
+                { title: "Enhanced Color Shift", description: "Extreme filter effects with contrast shifts and chromatic aberration", tags: ["CSS", "Color", "Filters"], url: "effects/enhanced-color-shift-contrast-system.html", name: "Enhanced Color Shift" },
+                { title: "Multi Canvas System", description: "Multiple synchronized visualizer instances with coordinated behaviors", tags: ["WebGL", "Multi", "Canvas"], url: "effects/multi-canvas-visualizer-system.html", name: "Multi Canvas System" }
             ]
         ];
         
@@ -1315,6 +1338,13 @@
                 rotation: [0.8, 0.7, 0.6, 0.8],
                 density: 20.0,
                 colors: [1.0, 0.0, 0.0]  // red
+            },
+            { 
+                name: 'Spectral Extensions', 
+                geometry: 'hypersphere',
+                rotation: [0.9, 0.8, 0.7, 0.9],
+                density: 25.0,
+                colors: [0.0, 1.0, 0.5]  // mint green
             }
         ];
         
@@ -2515,11 +2545,11 @@
                 
                 const newSection = this.currentSection + direction;
                 
-                // Boundary check with wraparound
+                // Boundary check with wraparound (now 8 sections: 0-7)
                 let targetSection;
                 if (newSection < 0) {
-                    targetSection = 6; // Wrap to last section
-                } else if (newSection > 6) {
+                    targetSection = 7; // Wrap to last section
+                } else if (newSection > 7) {
                     targetSection = 0; // Wrap to first section
                 } else {
                     targetSection = newSection;
@@ -2787,12 +2817,20 @@
             autoLoadPreview(waferIndex, content) {
                 const preview = document.getElementById(`preview-${waferIndex}`);
                 
-                if (content.isHeavy) {
+                // Check if this is a heavy demo by URL pattern or isHeavy flag
+                const isHeavyDemo = content.isHeavy || 
+                                   content.url.includes('active-holographic-systems-mega-demo') ||
+                                   content.url.includes('insane-hyperdimensional-matrix') ||
+                                   content.name.includes('Active Holographic');
+                
+                if (isHeavyDemo) {
+                    const megaDemoCount = content.url.includes('active-holographic') ? '125' : '50+';
                     preview.innerHTML = `
                         <div style="padding: 20px; text-align: center;">
                             <div style="color: var(--crystal-teal); margin-bottom: 15px; font-size: 1.1em;">⚡ MEGA SYSTEM</div>
                             <div style="font-size: 0.8em; line-height: 1.6; color: var(--crystal-teal);">
-                                125 WebGL visualizers<br>
+                                ${megaDemoCount} WebGL visualizers<br>
+                                <strong>Mobile Optimized</strong><br>
                                 <button onclick="window.open('${content.url}', '_blank')" 
                                         style="margin-top: 10px; padding: 8px 16px; background: var(--silicon-green); 
                                                border: 2px solid var(--crystal-teal); color: var(--crystal-teal); 
@@ -2802,6 +2840,7 @@
                             </div>
                         </div>
                     `;
+                    console.log(`🎯 Heavy demo detected: ${content.name} - using launch button instead of iframe`);
                 } else {
                     // Auto-load with staggered entrance
                     setTimeout(() => {
@@ -2819,6 +2858,8 @@
                         iframe.onload = () => {
                             iframe.style.opacity = '1';
                         };
+                        
+                        console.log(`🎯 Loading preview for: ${content.name}`);
                     }, waferIndex * 150 + 300);
                 }
             }
