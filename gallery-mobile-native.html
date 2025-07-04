@@ -726,55 +726,70 @@
             createMobileCards() {
                 const gallery = document.getElementById('mobileGallery');
                 
-                // Store mobile content sets as class property
+                // COMPLETE ORIGINAL CONTENT - ALL DEMOS MOBILE-ENHANCED
                 this.mobileContentSets = [
-                    // Section 0: Touch-Optimized CSS Effects
+                    // Set 1: Holographic Genesis
                     [
-                        {
-                            title: "Neoskeuomorphic Cards",
-                            description: "Modern depth-based card design optimized for touch interactions with enhanced shadow systems",
-                            tags: ["CSS", "Touch", "Cards"],
-                            url: "demos/neoskeuomorphic-cards-demo.html",
-                            performance: "high"
-                        },
-                        {
-                            title: "Glassmorphic UI",
-                            description: "Translucent interface elements with backdrop blur, optimized for mobile performance",
-                            tags: ["CSS", "Glass", "Modern"],
-                            url: "demos/css-glassmorphism-demo.html",
-                            performance: "medium"
-                        },
-                        {
-                            title: "Progress Indicators",
-                            description: "Touch-friendly progress bars and indicators with haptic-like feedback animations",
-                            tags: ["CSS", "Progress", "Touch"],
-                            url: "demos/holographic-progress-indicators-demo.html",
-                            performance: "high"
-                        }
+                        { title: "Neoskeuomorphic", description: "Modern depth-based card design with advanced shadow systems and interactive hover states", tags: ["CSS", "Design", "Cards"], url: "demos/neoskeuomorphic-cards-demo.html?mobile=1", name: "Neoskeuomorphic Cards" },
+                        { title: "Glassmorphism", description: "Translucent glass-like interface elements with backdrop blur and transparency", tags: ["CSS", "Glass", "Modern"], url: "demos/css-glassmorphism-demo.html?mobile=1", name: "Glassmorphism UI" },
+                        { title: "Holographic Progress", description: "Futuristic progress indicators with neon glow effects and smooth animations", tags: ["CSS", "Progress", "Neon"], url: "demos/holographic-progress-indicators-demo.html?mobile=1", name: "Holographic Progress" },
+                        { title: "State Control", description: "Interactive navigation dot systems with smooth state transitions", tags: ["CSS", "Controls", "Interactive"], url: "demos/state-control-dots-demo.html?mobile=1", name: "State Control Dots" },
+                        { title: "Vaporwave", description: "Retro-futuristic aesthetic elements with classic 80s styling", tags: ["CSS", "Retro", "Aesthetic"], url: "demos/css-vaporwave-aesthetics-demo.html?mobile=1", name: "Vaporwave Aesthetics" },
+                        { title: "Grid Overlay", description: "Dynamic grid pattern animations with morphing geometric structures", tags: ["CSS", "Grid", "Animation"], url: "demos/animated-grid-overlay-demo.html?mobile=1", name: "Animated Grid Overlay" }
                     ],
-                    // Section 1: Interactive Effects
+                    // Set 2: Plasma Emergence
                     [
-                        {
-                            title: "State Control Dots",
-                            description: "Large touch targets for navigation with smooth state transitions and visual feedback",
-                            tags: ["CSS", "Navigation", "Touch"],
-                            url: "demos/state-control-dots-demo.html",
-                            performance: "high"
-                        },
-                        {
-                            title: "Vaporwave Aesthetics",
-                            description: "Retro-futuristic mobile interface with optimized particle systems",
-                            tags: ["CSS", "Retro", "Mobile"],
-                            url: "demos/css-vaporwave-aesthetics-demo.html",
-                            performance: "medium"
-                        },
-                        {
-                            title: "Grid Animations",
-                            description: "Dynamic grid patterns optimized for touch devices with reduced complexity",
-                            tags: ["CSS", "Grid", "Animation"],
-                            url: "demos/animated-grid-overlay-demo.html",
-                            performance: "medium"
-                        }
+                        { title: "Holographic Visualizer", description: "Multi-layer WebGL blend mode system with depth-based holographic effects", tags: ["WebGL", "Holographic", "Blend"], url: "effects/holographic-visualizer.html?mobile=1", name: "Holographic Visualizer" },
+                        { title: "Cyberpunk UI", description: "Futuristic interface design elements with neon highlights and tech aesthetics", tags: ["CSS", "Cyberpunk", "Interface"], url: "demos/css-cyberpunk-ui-demo.html?mobile=1", name: "Cyberpunk UI" },
+                        { title: "Particle System", description: "Advanced particle physics visualization with 3D depth and movement", tags: ["WebGL", "Particles", "Physics"], url: "demos/holographic-particle-system-demo.html?mobile=1", name: "Particle System" },
+                        { title: "Glitch Effects", description: "Digital corruption and distortion effects with RGB channel separation", tags: ["CSS", "Glitch", "Digital"], url: "demos/css-glitch-effects-demo.html?mobile=1", name: "Glitch Effects" },
+                        { title: "Depth Layers", description: "Multi-dimensional depth visualization with parallax scrolling effects", tags: ["CSS", "Depth", "Layers"], url: "demos/holographic-depth-layers-demo.html?mobile=1", name: "Depth Layers" },
+                        { title: "Adaptive Cards", description: "Dynamic responsive card system with intelligent layout adaptation", tags: ["CSS", "Adaptive", "Responsive"], url: "demos/vib34d-adaptive-cards-demo.html?mobile=1", name: "VIB34D Adaptive Cards" }
+                    ],
+                    // Set 3: Neural Awakening
+                    [
+                        { title: "MVEP Hypercube", description: "4D hypercube with interference patterns and mathematical precision", tags: ["WebGL", "4D", "Hypercube"], url: "effects/mvep-moire-hypercube.html?mobile=1", name: "MVEP Hypercube" },
+                        { title: "Hypercube Codex", description: "Advanced 4D mathematical visualization with interactive rotation controls", tags: ["WebGL", "Math", "4D"], url: "demos/moire-hypercube-codex-demo.html?mobile=1", name: "Hypercube Codex" },
+                        { title: "Lattice Visualizer", description: "Geometric lattice structure system with crystalline formations", tags: ["WebGL", "Lattice", "Geometry"], url: "demos/hypercube-lattice-visualizer-demo.html?mobile=1", name: "Lattice Visualizer" },
+                        { title: "Chaos Overlay", description: "Digital interference and chaos patterns with algorithmic generation", tags: ["WebGL", "Chaos", "Interference"], url: "demos/chaos-overlay-effects-demo.html?mobile=1", name: "Chaos Overlay" },
+                        { title: "Orchestration Engine", description: "Coordinated multi-system visualization with synchronized behaviors", tags: ["WebGL", "System", "Orchestra"], url: "demos/system-orchestration-engine-demo.html?mobile=1", name: "System Orchestration" },
+                        { title: "Reactive Core", description: "Reactive state management system with real-time data visualization", tags: ["WebGL", "Reactive", "Core"], url: "demos/vib3code-reactive-core-demo.html?mobile=1", name: "VIB3Code Reactive Core" }
+                    ],
+                    // Set 4: Crystal Resonance  
+                    [
+                        { title: "VIB34D Complete", description: "Revolutionary 4D framework with 8+ geometric systems and advanced rendering", tags: ["WebGL", "VIB34D", "Framework"], url: "effects/vib34d-complete-system.html?mobile=1", name: "VIB34D Complete System" },
+                        { title: "4D HyperAV", description: "Proven 4D audiovisual system with synchronized sound and visuals", tags: ["WebGL", "4D", "Audio"], url: "effects/working-4d-hyperav.html?mobile=1", name: "4D HyperAV" },
+                        { title: "Core Framework", description: "Core 4D mathematics framework with optimized projection algorithms", tags: ["WebGL", "Core", "Math"], url: "effects/hypercube-core-framework.html?mobile=1", name: "Hypercube Core Framework" },
+                        { title: "Consciousness Shader", description: "N-dimensional consciousness visualization with abstract thought patterns", tags: ["WebGL", "Polytopal", "Consciousness"], url: "demos/polytopal-consciousness-shader-demo.html?mobile=1", name: "Polytopal Consciousness" },
+                        { title: "Elegant 4D Flow", description: "Graceful 4D particle systems with fluid dynamics", tags: ["WebGL", "4D", "Flow"], url: "effects/elegant-4d-flow-visualizer.html?mobile=1", name: "Elegant 4D Flow" },
+                        { title: "Holographic Pulse", description: "Rhythmic holographic pulse visualization system", tags: ["WebGL", "Holographic", "Pulse"], url: "effects/holographic-pulse-system.html?mobile=1", name: "Holographic Pulse" }
+                    ],
+                    // Set 5: Quantum Chaos
+                    [
+                        { title: "Hyperdimensional Matrix", description: "8D+ chaos visualization with fractal tessellations and infinite complexity", tags: ["WebGL", "8D", "Chaos"], url: "effects/insane-hyperdimensional-matrix.html?mobile=1", name: "Hyperdimensional Matrix" },
+                        { title: "Card Bending", description: "Advanced 3D CSS transform morphing with 6 unique bending behaviors", tags: ["CSS", "3D", "Morphing"], url: "effects/vib34d-advanced-card-bending-system.html?mobile=1", name: "VIB34D Card Bending" },
+                        { title: "Color Shift", description: "Extreme filter effects with contrast shifts and chromatic aberration", tags: ["CSS", "Color", "Filters"], url: "effects/enhanced-color-shift-contrast-system.html?mobile=1", name: "Enhanced Color Shift" },
+                        { title: "Maleficarum Codex", description: "Advanced magical interface system with spell-casting interactions", tags: ["WebGL", "Magic", "Interface"], url: "demos/millzmaleficarum-codex-demo.html?mobile=1", name: "Millzmaleficarum Codex" },
+                        { title: "Morphing Blog", description: "Dynamic content morphing system with seamless transitions", tags: ["WebGL", "Morphing", "Blog"], url: "demos/vib34d-morphing-blog-demo.html?mobile=1", name: "VIB34D Morphing Blog" },
+                        { title: "Multi Canvas", description: "Multiple synchronized visualizer instances with coordinated behaviors", tags: ["WebGL", "Multi", "Canvas"], url: "effects/multi-canvas-visualizer-system.html?mobile=1", name: "Multi Canvas System" }
+                    ],
+                    // Set 6: Fractal Storm
+                    [
+                        { title: "Narrative Choreography", description: "JSON-driven scroll transformations with story-based interactions", tags: ["WebGL", "Narrative", "Choreography"], url: "effects/narrative-choreography-engine.html?mobile=1", name: "Narrative Choreography" },
+                        { title: "Tabbed Visualizer", description: "Advanced WebGL tab management with state preservation", tags: ["WebGL", "Tabs", "Management"], url: "effects/tabbed-visualizer-system.html?mobile=1", name: "Tabbed Visualizer" },
+                        { title: "WebGL Framework", description: "High-performance shader framework with optimization algorithms", tags: ["WebGL", "Framework", "Performance"], url: "effects/hypercube-core-webgl-framework.html?mobile=1", name: "WebGL Framework" },
+                        { title: "Digital Magazine", description: "Interactive digital publication with immersive page transitions", tags: ["WebGL", "Magazine", "Interactive"], url: "demos/vib3code-digital-magazine-demo.html?mobile=1", name: "VIB3Code Digital Magazine" },
+                        { title: "Tech Layout", description: "Advanced layout with active systems and dynamic positioning", tags: ["WebGL", "Layout", "Tech"], url: "demos/tech-layout-active-holographic-demo.html?mobile=1", name: "Tech Layout Active" },
+                        { title: "Parallax Systems", description: "Advanced parallax visualization with infinite depth perception", tags: ["WebGL", "Parallax", "System"], url: "demos/holographic-parallax-systems-mega-demo.html?mobile=1", name: "Holographic Parallax" }
+                    ],
+                    // Set 7: Dimensional Collapse
+                    [
+                        { title: "Active Holographic", description: "125 WebGL visualizers in mega-demo with coordinated chaos", tags: ["WebGL", "Mega", "Active"], url: "demos/active-holographic-systems-mega-demo.html?mobile=1", name: "Active Holographic Mega", isHeavy: true },
+                        { title: "VIB34D Complete", description: "Revolutionary 4D framework with all geometric systems enabled", tags: ["WebGL", "VIB34D", "Complete"], url: "effects/vib34d-complete-system.html?mobile=1", name: "VIB34D Complete" },
+                        { title: "Working 4D HyperAV", description: "Proven audiovisual 4D system with synchronized rendering", tags: ["WebGL", "4D", "Audio"], url: "effects/working-4d-hyperav.html?mobile=1", name: "Working 4D HyperAV" },
+                        { title: "Hypercube Core", description: "Core hypercube framework with mathematical precision", tags: ["WebGL", "Hypercube", "Core"], url: "effects/hypercube-core-framework.html?mobile=1", name: "Hypercube Core" },
+                        { title: "Insane Matrix", description: "8D+ hyperdimensional chaos with infinite complexity", tags: ["WebGL", "8D", "Matrix"], url: "effects/insane-hyperdimensional-matrix.html?mobile=1", name: "Hyperdimensional Matrix" },
+                        { title: "MVEP Hypercube", description: "Production MVEP system with moire interference patterns", tags: ["WebGL", "MVEP", "Hypercube"], url: "effects/mvep-moire-hypercube.html?mobile=1", name: "MVEP Moire Hypercube" }
                     ]
                 ];
                 

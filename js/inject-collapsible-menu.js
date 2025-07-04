@@ -1,0 +1,184 @@
+// Helper script to inject collapsible menu into any demo
+// Usage: Add this script tag to any demo HTML
+
+(function() {
+    // Configuration - can be overridden by setting window.COLLAPSIBLE_MENU_CONFIG before this script loads
+    const config = window.COLLAPSIBLE_MENU_CONFIG || {
+        startCollapsed: true,
+        position: 'top-right',
+        theme: 'dark',
+        mobileOnly: false
+    };
+    
+    // Load the universal collapsible menu system
+    function loadCollapsibleMenu() {
+        // Check if already loaded
+        if (window.UniversalCollapsibleMenu) {
+            initializeMenu();
+            return;
+        }
+        
+        // Load the script
+        const script = document.createElement('script');
+        script.src = '../js/universal-collapsible-menu.js';
+        script.onload = initializeMenu;
+        script.onerror = () => {
+            console.error('Failed to load universal collapsible menu system');
+            // Try alternative path
+            script.src = './js/universal-collapsible-menu.js';
+            document.head.appendChild(script);
+        };
+        document.head.appendChild(script);
+    }
+    
+    // Initialize the menu
+    function initializeMenu() {
+        if (window.UniversalCollapsibleMenu) {
+            window.collapsibleMenu = new UniversalCollapsibleMenu(config);
+            console.log('✅ Collapsible menu injected successfully');
+            
+            // Special handling for specific demos
+            handleDemoSpecificMenus();
+        }
+    }
+    
+    // Handle demo-specific menu configurations
+    function handleDemoSpecificMenus() {
+        const pathname = window.location.pathname;
+        
+        // Working 4D HyperAV - Has 4 separate menus
+        if (pathname.includes('working-4d-hyperav')) {
+            handleMultipleMenus();
+        }
+        
+        // Active Holograms - Needs special tab handling
+        if (pathname.includes('active-holographic-systems')) {
+            handleActiveHologramsMenu();
+        }
+        
+        // VIB34D demos often have complex control structures
+        if (pathname.includes('vib34d')) {
+            handleVIB34DMenus();
+        }
+    }
+    
+    // Handle demos with multiple menus
+    function handleMultipleMenus() {
+        // Find all control panels
+        const menus = document.querySelectorAll('.controls, .control-panel, .menu-panel');
+        if (menus.length > 1) {
+            console.log(`📊 Found ${menus.length} menus to collapse`);
+            
+            // Create a tab system for multiple menus
+            const tabContainer = document.createElement('div');
+            tabContainer.className = 'ucm-tab-container';
+            tabContainer.innerHTML = `
+                <div class="ucm-tabs">
+                    ${Array.from(menus).map((menu, index) => {
+                        const title = menu.querySelector('h3, h4, .title')?.textContent || `Menu ${index + 1}`;
+                        return `<button class="ucm-tab" data-tab="${index}">${title}</button>`;
+                    }).join('')}
+                </div>
+                <div class="ucm-tab-content"></div>
+            `;
+            
+            // Add tab functionality
+            const tabs = tabContainer.querySelectorAll('.ucm-tab');
+            const content = tabContainer.querySelector('.ucm-tab-content');
+            
+            tabs.forEach((tab, index) => {
+                tab.addEventListener('click', () => {
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding menu
+                    content.innerHTML = '';
+                    content.appendChild(menus[index].cloneNode(true));
+                });
+            });
+            
+            // Show first tab by default
+            tabs[0]?.click();
+            
+            // Add to collapsible menu
+            window.collapsibleMenu.addToMenu(tabContainer);
+            
+            // Hide original menus
+            menus.forEach(menu => menu.style.display = 'none');
+        }
+    }
+    
+    // Special handling for Active Holograms
+    function handleActiveHologramsMenu() {
+        console.log('🎯 Configuring Active Holograms menu system');
+        // This will be implemented when we rebuild the Active Holograms demo
+    }
+    
+    // Handle VIB34D specific menus
+    function handleVIB34DMenus() {
+        // Ensure value syncing for complex controls
+        setTimeout(() => {
+            window.collapsibleMenu?.syncWithOriginalControls();
+        }, 1000);
+    }
+    
+    // Add custom styles for multi-menu tabs
+    function addTabStyles() {
+        const styles = `
+            .ucm-tab-container {
+                width: 100%;
+            }
+            
+            .ucm-tabs {
+                display: flex;
+                gap: 5px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .ucm-tab {
+                background: rgba(0, 255, 255, 0.1);
+                border: 1px solid #00ffff;
+                color: #00ffff;
+                padding: 8px 16px;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: all 0.3s ease;
+                font-size: 14px;
+                min-height: 44px;
+            }
+            
+            .ucm-tab:hover {
+                background: rgba(0, 255, 255, 0.2);
+            }
+            
+            .ucm-tab.active {
+                background: rgba(0, 255, 255, 0.3);
+                border-width: 2px;
+            }
+            
+            .ucm-tab-content {
+                padding: 10px;
+                border: 1px solid rgba(0, 255, 255, 0.3);
+                border-radius: 4px;
+                background: rgba(0, 0, 0, 0.5);
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCollapsibleMenu();
+            addTabStyles();
+        });
+    } else {
+        loadCollapsibleMenu();
+        addTabStyles();
+    }
+})();

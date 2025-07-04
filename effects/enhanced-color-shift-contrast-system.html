@@ -75,6 +75,35 @@
             opacity: calc(var(--opacity-level) / 100);
             mix-blend-mode: var(--mix-blend-mode);
         }
+        
+        .color-demo-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.3);
+        }
+        
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+        
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .card-description {
+            font-size: 0.8em;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
 
         /* Individual Card Color Behaviors */
         .color-demo-card.rainbow-shift {
@@ -639,6 +668,7 @@
                     blendMode: 'normal'
                 };
                 
+                this.isAutoMode = true; // Start in auto mode to show effects
                 this.init();
             }
             
@@ -853,13 +883,29 @@
                 }
             });
             
-            // Disable auto mode on any user interaction
-            ['click', 'mousemove', 'scroll', 'keydown'].forEach(event => {
-                document.addEventListener(event, () => {
-                    colorSystem.isAutoMode = false;
-                }, { once: true });
-            });
+            // Disable auto mode on any user interaction with controls
+            const controls = document.querySelector('.control-panel');
+            if (controls) {
+                ['click', 'input', 'change'].forEach(event => {
+                    controls.addEventListener(event, () => {
+                        colorSystem.isAutoMode = false;
+                    });
+                });
+            }
+            
+            // Show initial auto mode status
+            console.log('🌈 Color Shift System started in AUTO MODE - Press A to toggle');
         });
     </script>
+    
+    <!-- Add collapsible menu system -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark'
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>
