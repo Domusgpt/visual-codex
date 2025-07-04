@@ -206,11 +206,32 @@
         
         .gallery-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-            padding: 0 2rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1600px;
             margin: 0 auto;
+        }
+        
+        /* Responsive grid layout */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1201px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
         
         .effect-card {
@@ -561,112 +582,128 @@
         const effects = [
             {
                 id: 1,
-                title: "MVEP Moiré 4D Hypercube",
-                description: "Audio-reactive 4D hypercube with true six-axis rotations and moiré patterns.",
-                tags: ["webgl", "4d", "audio"],
-                interactive: ["mouse", "audio"],
-                file: "effects/mvep-moire-hypercube.html",
-                hasRealCode: true
+                title: "🌌 Active Holographic Systems - FIXED",
+                description: "30 holographic variations displayed 3 at a time with tabs. Efficient loading, full 4D mathematics preserved.",
+                tags: ["webgl", "4d", "holographic", "tabs"],
+                interactive: ["mouse", "scroll", "touch", "keyboard"],
+                file: "demos/active-holographic-systems-mega-demo.html",
+                hasRealCode: true,
+                status: "✅ FIXED"
             },
             {
                 id: 2,
-                title: "Holographic Particle System",
-                description: "Multi-layer RGB channel separation with Z-depth particle rendering.",
-                tags: ["canvas", "particles", "holographic"],
-                interactive: ["mouse", "theme"],
-                file: "demos/holographic-particle-system-demo.html",
-                hasRealCode: true
+                title: "🎭 Narrative Choreography Engine - FIXED",
+                description: "JSON-driven story transformations with sequential point animation. Fixed overlay issue.",
+                tags: ["css", "scroll", "narrative"],
+                interactive: ["scroll", "click"],
+                file: "effects/narrative-choreography-engine.html",
+                hasRealCode: true,
+                status: "✅ FIXED"
             },
             {
                 id: 3,
-                title: "VIB34D Complete System",
-                description: "Revolutionary 4D framework with interaction analysis engine.",
-                tags: ["webgl", "4d", "system"],
-                interactive: ["mouse", "scroll", "click"],
-                demoClass: "demo-moire",
-                hasRealCode: false
+                title: "🎨 Enhanced Color Shift System - FIXED",
+                description: "Advanced color manipulation with auto-mode functionality. Fixed initialization issue.",
+                tags: ["css", "color", "interactive"],
+                interactive: ["mouse", "auto"],
+                file: "effects/enhanced-color-shift-contrast-system.html",
+                hasRealCode: true,
+                status: "✅ FIXED"
             },
             {
                 id: 4,
-                title: "Insane Hyperdimensional Matrix",
-                description: "Mind-bending 8D+ visualizations with fractal tessellations.",
-                tags: ["webgl", "4d", "chaos"],
-                interactive: ["mouse", "scroll"],
-                file: "effects/insane-hyperdimensional-matrix.html",
-                hasRealCode: true
+                title: "📊 Tabbed Visualizer System - FIXED",
+                description: "Multi-tab visualization system with proper canvas initialization. Fixed tab switching.",
+                tags: ["canvas", "tabs", "particles"],
+                interactive: ["tabs", "click"],
+                file: "effects/tabbed-visualizer-system.html",
+                hasRealCode: true,
+                status: "✅ FIXED"
             },
             {
                 id: 5,
-                title: "Elegant 4D Flow Visualizer",
-                description: "Sophisticated organic movements with graceful particle systems.",
-                tags: ["webgl", "4d", "organic"],
-                interactive: ["mouse", "scroll", "click"],
-                file: "effects/elegant-4d-flow-visualizer.html",
-                hasRealCode: true
+                title: "🔥 MVEP 4D Hypercube - ENHANCED",
+                description: "Audio-reactive 4D hypercube with touch reactions, visual feedback, and multi-touch chaos.",
+                tags: ["webgl", "4d", "audio", "touch"],
+                interactive: ["mouse", "audio", "touch", "multi-touch"],
+                file: "effects/mvep-moire-hypercube.html",
+                hasRealCode: true,
+                status: "✅ ENHANCED"
             },
             {
                 id: 6,
-                title: "Narrative Choreography Engine",
-                description: "JSON-driven story transformations with scroll-triggered animations.",
-                tags: ["css", "scroll", "narrative"],
-                interactive: ["scroll", "click"],
-                demoClass: "demo-hypercube",
-                hasRealCode: false
-            },
-            {
-                id: 7,
-                title: "Elegant Motion CSS System",
-                description: "Sophisticated hover choreography with ecosystem-wide responses.",
-                tags: ["css", "animation", "ui"],
-                interactive: ["hover", "focus"],
-                demoClass: "demo-particles",
-                hasRealCode: false
-            },
-            {
-                id: 8,
-                title: "HypercubeCore WebGL Framework", 
-                description: "High-performance shader system with 8 unified 4D geometries.",
-                tags: ["webgl", "framework", "4d"],
-                interactive: ["mouse", "geometry-swap"],
-                file: "effects/hypercube-core-framework.html",
-                hasRealCode: true
-            },
-            {
-                id: 9,
-                title: "Working 4D HyperAV",
-                description: "Proven interaction systems with 6 polytopal projection types.",
+                title: "🖥️ Working 4D HyperAV - OPTIMIZED",
+                description: "Proven interaction systems with collapsible menus for all 4 control panels.",
                 tags: ["webgl", "4d", "hyperav"],
                 interactive: ["mouse", "scroll", "click", "keyboard"],
                 file: "effects/working-4d-hyperav.html",
-                hasRealCode: true
+                hasRealCode: true,
+                status: "✅ OPTIMIZED"
+            },
+            {
+                id: 7,
+                title: "🃏 VIB34D Card Bending - MOBILE READY",
+                description: "Advanced card bending system with responsive mobile layout and optimized scrolling.",
+                tags: ["css", "3d", "mobile", "cards"],
+                interactive: ["mouse", "scroll", "responsive"],
+                file: "effects/vib34d-advanced-card-bending-system.html",
+                hasRealCode: true,
+                status: "✅ MOBILE READY"
+            },
+            {
+                id: 8,
+                title: "💎 Insane Hyperdimensional Matrix",
+                description: "Mind-bending 8D+ visualizations with fractal tessellations and collapsible controls.",
+                tags: ["webgl", "4d", "chaos"],
+                interactive: ["mouse", "scroll"],
+                file: "effects/insane-hyperdimensional-matrix.html",
+                hasRealCode: true,
+                status: "✅ OPTIMIZED"
+            },
+            {
+                id: 9,
+                title: "🔬 Hypercube Lattice Visualizer - EXPORT READY",
+                description: "Lattice visualization with complete data export functionality and collapsible menu.",
+                tags: ["webgl", "lattice", "export"],
+                interactive: ["mouse", "parameters", "export"],
+                file: "demos/hypercube-lattice-visualizer-demo.html",
+                hasRealCode: true,
+                status: "✅ EXPORT READY"
             },
             {
                 id: 10,
-                title: "System Orchestration Engine",
-                description: "Central orchestrator that coordinates all VIB34D system modules with interactive architecture diagram.",
-                tags: ["system", "orchestration", "core"],
-                interactive: ["mouse", "click"],
-                file: "demos/system-orchestration-engine-demo.html",
-                hasRealCode: true
+                title: "🎯 Moiré Hypercube Codex - EXPORT READY",
+                description: "Advanced moiré patterns with complete parameter export and collapsible controls.",
+                tags: ["webgl", "moire", "export"],
+                interactive: ["mouse", "effects", "export"],
+                file: "demos/moire-hypercube-codex-demo.html",
+                hasRealCode: true,
+                status: "✅ EXPORT READY"
             },
             {
                 id: 11,
-                title: "Polytopal Consciousness Shader",
-                description: "Renders consciousness fields through multidimensional polytope surfaces.",
-                tags: ["webgl", "4d", "shader"],
-                interactive: ["mouse", "parameters"],
-                file: "demos/polytopal-consciousness-shader-demo.html",
-                hasRealCode: true
+                title: "🚀 VIB34D Complete System",
+                description: "Revolutionary 4D framework with enhanced interaction analysis and mobile optimization.",
+                tags: ["webgl", "4d", "system"],
+                interactive: ["mouse", "scroll", "click"],
+                file: "effects/vib34d-complete-system-enhanced.html",
+                hasRealCode: true,
+                status: "✅ OPTIMIZED"
             },
             {
                 id: 12,
-                title: "VIB34D Moiré RGB Effects Demo",
-                description: "Advanced multi-layer grid interference patterns with RGB channel shifting.",
-                tags: ["webgl", "moire", "rgb", "glitch"],
-                interactive: ["mouse", "sliders", "buttons"],
-                file: "demos/moire-hypercube-codex-demo.html",
-                hasRealCode: true
-            },
+                title: "⚡ HypercubeCore WebGL Framework",
+                description: "High-performance shader system with collapsible interface and 8 unified 4D geometries.",
+                tags: ["webgl", "framework", "4d"],
+                interactive: ["mouse", "geometry-swap"],
+                file: "effects/hypercube-core-webgl-framework.html",
+                hasRealCode: true,
+                status: "✅ OPTIMIZED"
+            }
+        ];
+        
+        // Additional demos (keeping for reference but focusing on fixed demos)
+        const additionalEffects = [
             {
                 id: 13,
                 title: "VIB3CODE - Digital Sovereignty Magazine",
