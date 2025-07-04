@@ -391,16 +391,13 @@
             z-index: -1;
             pointer-events: none;
             
-            /* Reactive energy border */
+            /* Glowing neon border (default) */
             background: 
-                linear-gradient(45deg, transparent 30%, var(--crystal-teal) 50%, transparent 70%),
-                linear-gradient(135deg, transparent 30%, var(--accent-red) 50%, transparent 70%),
-                linear-gradient(225deg, transparent 30%, var(--electric-blue) 50%, transparent 70%),
-                linear-gradient(315deg, transparent 30%, var(--neon-magenta) 50%, transparent 70%);
+                linear-gradient(45deg, var(--crystal-teal), var(--neon-cyan), var(--crystal-teal));
             
-            background-size: 400% 400%;
-            opacity: 0.3;
-            animation: energyFlow 4s ease-in-out infinite;
+            background-size: 200% 200%;
+            opacity: 0.6;
+            animation: neonGlow 3s ease-in-out infinite;
         }
         
         .crystal-wafer:hover {
@@ -468,18 +465,59 @@
             animation: energyBlast 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         
-        @keyframes energyFlow {
+        /* Red/Blue border animation for content changes */
+        .crystal-wafer.content-changing::before {
+            background: 
+                linear-gradient(45deg, var(--accent-red), var(--electric-blue), var(--accent-red)),
+                linear-gradient(135deg, var(--electric-blue), var(--accent-red), var(--electric-blue));
+            background-size: 400% 400%;
+            opacity: 0.9;
+            animation: contentChangeGlow 1.5s ease-in-out;
+        }
+        
+        @keyframes neonGlow {
             0% { 
-                background-position: 0% 50%, 0% 50%, 0% 50%, 0% 50%;
-                opacity: 0.3;
+                background-position: 0% 50%;
+                opacity: 0.4;
+                filter: blur(0px);
             }
             50% { 
-                background-position: 100% 50%, 100% 50%, 100% 50%, 100% 50%;
-                opacity: 0.5;
+                background-position: 100% 50%;
+                opacity: 0.8;
+                filter: blur(1px);
             }
             100% { 
-                background-position: 0% 50%, 0% 50%, 0% 50%, 0% 50%;
-                opacity: 0.3;
+                background-position: 0% 50%;
+                opacity: 0.4;
+                filter: blur(0px);
+            }
+        }
+        
+        @keyframes contentChangeGlow {
+            0% { 
+                background-position: 0% 50%, 0% 50%;
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            25% { 
+                background-position: 50% 0%, 50% 100%;
+                opacity: 1.2;
+                transform: scale(1.02);
+            }
+            50% { 
+                background-position: 100% 50%, 100% 50%;
+                opacity: 1.4;
+                transform: scale(1.01);
+            }
+            75% { 
+                background-position: 50% 100%, 50% 0%;
+                opacity: 1.1;
+                transform: scale(1.01);
+            }
+            100% { 
+                background-position: 0% 50%, 0% 50%;
+                opacity: 0.6;
+                transform: scale(1);
             }
         }
         
@@ -2071,6 +2109,9 @@
                         card.style.filter = 'brightness(1)';
                         card.style.transform = 'scale(1) translateZ(0)';
                         
+                        // Reload canvas if it was previously focused
+                        this.reloadCardCanvas(card);
+                        
                         // Remove inline styles after transition
                         setTimeout(() => {
                             card.style.opacity = '';
@@ -2078,6 +2119,19 @@
                             card.style.transform = '';
                         }, 400);
                     });
+                }
+            }
+            
+            reloadCardCanvas(card) {
+                // Find iframe in this card and reload it if it exists
+                const iframe = card.querySelector('iframe');
+                if (iframe && iframe.src) {
+                    const originalSrc = iframe.src;
+                    // Force reload by changing src temporarily
+                    iframe.src = 'about:blank';
+                    setTimeout(() => {
+                        iframe.src = originalSrc;
+                    }, 100);
                 }
             }
             
@@ -2684,6 +2738,13 @@
                 const wafer = document.getElementById(`crystal-wafer-${waferIndex}`);
                 if (wafer) {
                     wafer.style.display = 'flex';
+                    
+                    // Trigger red/blue border animation for content change
+                    wafer.classList.add('content-changing');
+                    setTimeout(() => {
+                        wafer.classList.remove('content-changing');
+                    }, 1500);
+                    
                     console.log(`✅ Showing wafer ${waferIndex}:`, content.title);
                 } else {
                     console.error(`❌ Wafer element ${waferIndex} not found!`);
