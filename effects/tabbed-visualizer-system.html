@@ -448,10 +448,34 @@
                 
                 // Create visualizers for each strip
                 for (let i = 0; i < 5; i++) {
-                    const canvas = document.getElementById(`${tabId.replace('-', '-canvas-').replace('effects', '').replace('systems', '').replace('basic', '').replace('digital', '').replace('space', '')}${i}`);
+                    // Generate correct canvas ID based on tab
+                    let canvasId;
+                    switch(tabId) {
+                        case 'css-effects':
+                            canvasId = `css-canvas-${i}`;
+                            break;
+                        case 'particle-systems':
+                            canvasId = `particle-canvas-${i}`;
+                            break;
+                        case 'webgl-basic':
+                            canvasId = `webgl-canvas-${i}`;
+                            break;
+                        case 'matrix-digital':
+                            canvasId = `matrix-canvas-${i}`;
+                            break;
+                        case 'cosmic-space':
+                            canvasId = `cosmic-canvas-${i}`;
+                            break;
+                        default:
+                            canvasId = `css-canvas-${i}`;
+                    }
+                    
+                    const canvas = document.getElementById(canvasId);
                     if (canvas) {
                         const config = configs[i % configs.length];
                         this.createVisualizer(tabId, i, canvas, config);
+                    } else {
+                        console.warn(`Canvas not found: ${canvasId}`);
                     }
                 }
                 
@@ -758,5 +782,15 @@
             window.tabbedSystem = system;
         });
     </script>
+    
+    <!-- Add collapsible menu system -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark'
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

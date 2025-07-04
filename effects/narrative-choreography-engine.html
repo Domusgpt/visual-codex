@@ -118,14 +118,16 @@
             border-radius: 6px;
             padding: 15px;
             font-size: 13px;
-            transform: translateY(50px);
+            transform: translateY(50px) scale(0.8);
             opacity: 0;
+            visibility: hidden;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .rapid-sequence-card.visible {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             opacity: 1;
+            visibility: visible;
         }
 
         .hemisphere-left {
@@ -405,6 +407,16 @@
         </div>
     </div>
 
+    <!-- Add collapsible menu system -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark'
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
+
     <div class="scroll-instructions">
         <div><strong>Scroll Controls:</strong></div>
         <div>↓ Scroll down to trigger transformations</div>
@@ -547,13 +559,21 @@
             executeRapidSequence() {
                 console.log('🎭 Rapid Sequence executed');
                 
+                // First ensure all cards are hidden
+                for (let i = 1; i <= 6; i++) {
+                    const card = document.getElementById(`rapid${i}`);
+                    card.classList.remove('visible');
+                }
+                
                 // Show rapid sequence cards in choreographed timing
                 const delays = [100, 250, 400, 600, 800, 1000];
                 
                 delays.forEach((delay, index) => {
                     setTimeout(() => {
                         const card = document.getElementById(`rapid${index + 1}`);
-                        card.classList.add('visible');
+                        if (card) {
+                            card.classList.add('visible');
+                        }
                     }, delay);
                 });
             }

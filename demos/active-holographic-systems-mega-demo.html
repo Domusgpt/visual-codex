@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Active Holographic Systems - 25 WebGL Variations</title>
+    <title>Active Holographic Systems - 30 WebGL Variations</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
@@ -17,9 +17,10 @@
             background: #000;
             color: white;
             font-family: 'Orbitron', 'Courier New', monospace;
-            min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
             cursor: crosshair;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
         }
         
         .demo-header {
@@ -46,47 +47,72 @@
             font-size: 0.8rem;
         }
         
-        /* ACTIVE HOLOGRAPHIC GRID SYSTEM - 10 ITEM LAYOUT */
+        /* TAB NAVIGATION SYSTEM */
+        .tab-navigation {
+            position: fixed;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1500;
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
+            backdrop-filter: blur(15px);
+            flex-wrap: wrap;
+            max-width: 90vw;
+            justify-content: center;
+        }
+        
+        .tab-button {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .tab-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .tab-button.active {
+            background: rgba(0, 255, 255, 0.3);
+            border-width: 3px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+        
+        /* ACTIVE HOLOGRAPHIC GRID SYSTEM - 3 ITEM LAYOUT */
         .holographic-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            width: 95vw;
-            height: 80vh;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 1fr;
+            gap: 30px;
+            width: 90vw;
+            height: 70vh;
             position: fixed;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            padding: 40px;
+            padding: 30px;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 20px;
             border: 2px solid rgba(0, 255, 255, 0.3);
             backdrop-filter: blur(10px);
-        }
-        
-        /* INFINITE SCROLL CONTAINER */
-        .infinite-scroll-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            display: none;
-            overflow-y: auto;
-            backdrop-filter: blur(15px);
-        }
-        
-        .infinite-scroll-content {
-            width: 90vw;
-            margin: 5vh auto;
-            background: rgba(0, 20, 40, 0.8);
-            border-radius: 20px;
-            border: 3px solid #00ffff;
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
         }
         
         /* BASE ACTIVE HOLOGRAPHIC CONTAINER */
@@ -183,106 +209,43 @@
             transition: all 0.3s ease;
         }
         
-        /* Background visualizer */
-        .background-visualizer {
-            opacity: 0.3;
-            filter: blur(1px) brightness(0.5);
-            mix-blend-mode: multiply;
-        }
-        
-        /* Shadow visualizer */
-        .shadow-visualizer {
-            opacity: 0.6;
-            filter: blur(2px) brightness(0.7);
-            mix-blend-mode: multiply;
-            transform: translate(2px, 2px);
-        }
-        
-        /* Content visualizer */
-        .content-visualizer {
-            opacity: 0.8;
-            mix-blend-mode: normal;
-        }
-        
-        /* Highlight visualizer */
-        .highlight-visualizer {
-            opacity: 0.4;
-            filter: blur(1px) brightness(1.5);
-            mix-blend-mode: screen;
-            transform: translate(-1px, -1px);
-        }
-        
-        /* Accent visualizer */
-        .accent-visualizer {
-            opacity: 0.3;
-            filter: blur(3px);
-            mix-blend-mode: color-dodge;
-            transform: scale(1.02);
-        }
-        
-        /* VARIANT-SPECIFIC ENHANCEMENTS */
-        .active-holographic-container[data-variant="hypercube"] .content-visualizer {
-            mix-blend-mode: screen;
-            opacity: 0.9;
-        }
-        
-        .active-holographic-container[data-variant="sphere"] .highlight-visualizer {
-            filter: blur(0.5px) brightness(2.0);
-            mix-blend-mode: color-dodge;
-        }
-        
-        .active-holographic-container[data-variant="torus"] .accent-visualizer {
-            filter: blur(2px) hue-rotate(90deg);
-            mix-blend-mode: overlay;
-        }
-        
-        .active-holographic-container[data-variant="wave"] .background-visualizer {
-            filter: blur(3px) brightness(0.8);
-            mix-blend-mode: soft-light;
-        }
-        
-        .active-holographic-container[data-variant="crystal"] .shadow-visualizer {
-            filter: blur(1px) contrast(1.5);
-            mix-blend-mode: difference;
-        }
-        
         /* VARIANT TITLES */
         .variant-title {
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            right: 5px;
-            font-size: 0.6rem;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            font-size: 1rem;
             color: #00ffff;
             text-align: center;
-            text-shadow: 0 0 5px #00ffff;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 4px;
-            border-radius: 3px;
+            text-shadow: 0 0 10px #00ffff;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border-radius: 5px;
             z-index: 10;
             pointer-events: none;
         }
         
-        /* INTERACTION FEEDBACK */
-        .interaction-ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 30;
-            animation: rippleExpand 0.6s ease-out forwards;
-        }
-        
-        @keyframes rippleExpand {
-            0% {
-                width: 0;
-                height: 0;
-                opacity: 1;
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .holographic-grid {
+                grid-template-columns: 1fr;
+                margin-top: 160px;
             }
-            100% {
-                width: 50px;
-                height: 50px;
-                opacity: 0;
+            
+            .tab-navigation {
+                top: 80px;
+                max-width: 95vw;
+            }
+            
+            .tab-button {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+                min-width: 80px;
+            }
+            
+            .active-holographic-container {
+                height: 250px;
             }
         }
     </style>
@@ -290,32 +253,23 @@
 <body>
     <div class="demo-header">
         <div class="demo-title">ACTIVE HOLOGRAPHIC SYSTEMS</div>
-        <div class="demo-counter">10 WebGL Multi-Canvas Variations</div>
+        <div class="demo-counter">30 Holographic Variations × 3 Active = Efficient Loading</div>
     </div>
 
-    <div class="holographic-grid" id="holographicGrid">
-        <!-- 10 Active Holographic Containers will be generated -->
+    <!-- Tab Navigation -->
+    <div class="tab-navigation" id="tabNavigation">
+        <!-- Tabs will be generated here -->
     </div>
-    
-    <!-- Infinite Scroll Expanded View -->
-    <div class="infinite-scroll-container" id="infiniteScrollContainer">
-        <div class="infinite-scroll-content" id="infiniteScrollContent">
-            <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
-                <button onclick="closeInfiniteScroll()" style="background: #ff0080; border: none; color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold;">✕ Close</button>
-            </div>
-            <div id="expandedVisualizerContainer" style="width: 100%; height: 80vh; border-radius: 15px; overflow: hidden;">
-                <!-- Expanded visualizer will be inserted here -->
-            </div>
-            <div style="height: 200vh; background: linear-gradient(45deg, rgba(0,255,255,0.1), rgba(255,0,255,0.1)); margin-top: 20px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #00ffff; font-size: 1.5em;">
-                🌀 Infinite Scroll Demo - Keep scrolling to see mouse and scroll effects! 🌀
-            </div>
-        </div>
+
+    <!-- Main Grid (3 visualizers at a time) -->
+    <div class="holographic-grid" id="holographicGrid">
+        <!-- 3 Active Holographic Containers will be displayed at a time -->
     </div>
 
     <script>
-        console.log('🌌 Active Holographic Systems - WebGL Multi-Canvas');
+        console.log('🌌 Active Holographic Systems - Tabbed Edition');
         
-        // ENHANCED HOLOGRAPHIC VISUALIZER WITH WEBGL
+        // ORIGINAL ACTIVE HOLOGRAPHIC VISUALIZER WITH ALL EFFECTS
         class ActiveHolographicVisualizer {
             constructor(canvasId, role = 'content', geometry = 'hypercube', reactivity = 1.0) {
                 this.canvas = document.getElementById(canvasId);
@@ -329,58 +283,49 @@
                     return;
                 }
                 
-                // Role-specific parameters
+                // Role-specific parameters with variation
                 this.roleParams = {
                     'background': { 
-                        densityMult: 0.3, speedMult: 0.1, colorShift: 0.0, intensity: 0.15,
-                        mouseReactivity: 0.2, clickReactivity: 0.05 
+                        densityMult: 0.4, speedMult: 0.2, colorShift: 0.0, intensity: 0.2,
+                        mouseReactivity: 0.3, clickReactivity: 0.1 
                     },
                     'shadow': { 
-                        densityMult: 0.7, speedMult: 0.25, colorShift: 180.0, intensity: 0.35,
-                        mouseReactivity: 0.4, clickReactivity: 0.2 
+                        densityMult: 0.8, speedMult: 0.3, colorShift: 180.0, intensity: 0.4,
+                        mouseReactivity: 0.5, clickReactivity: 0.3 
                     },
                     'content': { 
-                        densityMult: 1.0 + Math.random() * 0.3, speedMult: 0.5 + Math.random() * 0.2, 
-                        colorShift: Math.random() * 360, intensity: 0.6 + Math.random() * 0.15,
-                        mouseReactivity: 0.8, clickReactivity: 0.6 
-                    },
-                    'highlight': { 
-                        densityMult: 1.3, speedMult: 0.7, colorShift: 60.0, intensity: 0.5,
+                        densityMult: 1.0 + Math.random() * 0.5, speedMult: 0.6 + Math.random() * 0.3, 
+                        colorShift: Math.random() * 360, intensity: 0.7 + Math.random() * 0.2,
                         mouseReactivity: 1.0, clickReactivity: 0.8 
                     },
-                    'accent': { 
-                        densityMult: 0.5, speedMult: 0.3, colorShift: 300.0, intensity: 0.25,
+                    'highlight': { 
+                        densityMult: 1.5, speedMult: 0.8, colorShift: 60.0, intensity: 0.6,
                         mouseReactivity: 1.2, clickReactivity: 1.0 
+                    },
+                    'accent': { 
+                        densityMult: 0.6, speedMult: 0.4, colorShift: 300.0, intensity: 0.3,
+                        mouseReactivity: 1.5, clickReactivity: 1.2 
                     }
                 }[role] || { densityMult: 1.0, speedMult: 0.5, colorShift: 0.0, intensity: 0.5, mouseReactivity: 1.0, clickReactivity: 0.5 };
                 
-                // Geometry-specific parameters
-                this.geometryParams = {
-                    'hypercube': { geomIndex: 0.0, baseColor: [1.0, 0.0, 1.0], speedMod: 1.0 },
-                    'tetrahedron': { geomIndex: 1.0, baseColor: [0.0, 1.0, 1.0], speedMod: 0.8 },
-                    'sphere': { geomIndex: 2.0, baseColor: [1.0, 1.0, 0.0], speedMod: 1.2 },
-                    'torus': { geomIndex: 3.0, baseColor: [0.0, 1.0, 0.0], speedMod: 0.9 },
-                    'wave': { geomIndex: 4.0, baseColor: [1.0, 0.0, 0.5], speedMod: 1.1 },
-                    'crystal': { geomIndex: 5.0, baseColor: [0.5, 1.0, 1.0], speedMod: 0.7 },
-                    'spiral': { geomIndex: 6.0, baseColor: [1.0, 0.5, 0.0], speedMod: 1.3 },
-                    'fractal': { geomIndex: 7.0, baseColor: [0.0, 0.5, 1.0], speedMod: 1.4 }
-                }[geometry] || { geomIndex: 0.0, baseColor: [1.0, 0.0, 1.0], speedMod: 1.0 };
+                // Geometry parameters with variation
+                this.geometryParams = this.getGeometryParams(geometry);
                 
-                // State system
+                // Mouse interaction state
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
                 this.clickIntensity = 0.0;
-                this.clickDecay = 0.93;
+                this.clickDecay = 0.95;
                 
-                // Density system
-                this.baseDensity = 5.0 + Math.random() * 3.0;
+                // Density variation
+                this.baseDensity = 6.0 + Math.random() * 4.0;
                 this.densityVariation = 0.0;
                 this.densityTarget = 0.0;
                 
-                // Random color variation
-                this.colorVariation = Math.random() * 0.3;
-                this.speedVariation = 0.8 + Math.random() * 0.4;
+                // Color variation
+                this.colorVariation = Math.random() * 60 - 30; // -30 to +30
+                this.speedVariation = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
                 
                 this.startTime = Date.now();
                 this.initShaders();
@@ -388,6 +333,23 @@
                 this.resize();
                 
                 console.log(`✅ Active Holographic Visualizer (${role}/${geometry}) - Reactivity: ${reactivity}x`);
+            }
+            
+            getGeometryParams(geometry) {
+                const configs = {
+                    'hypercube': { geomIndex: 0.0, speedMod: 1.0, baseColor: [0.0, 1.0, 1.0] },
+                    'tetrahedron': { geomIndex: 1.0, speedMod: 0.8, baseColor: [1.0, 0.3, 0.8] },
+                    'sphere': { geomIndex: 2.0, speedMod: 0.6, baseColor: [0.8, 0.8, 1.0] },
+                    'torus': { geomIndex: 3.0, speedMod: 1.2, baseColor: [1.0, 0.8, 0.3] },
+                    'wave': { geomIndex: 4.0, speedMod: 1.5, baseColor: [0.3, 1.0, 0.3] },
+                    'crystal': { geomIndex: 5.0, speedMod: 0.4, baseColor: [1.0, 0.5, 1.0] },
+                    'spiral': { geomIndex: 6.0, speedMod: 2.0, baseColor: [0.5, 1.0, 0.8] },
+                    'fractal': { geomIndex: 7.0, speedMod: 0.3, baseColor: [1.0, 0.2, 0.2] },
+                    'neural': { geomIndex: 8.0, speedMod: 1.8, baseColor: [0.2, 0.8, 1.0] },
+                    'quantum': { geomIndex: 9.0, speedMod: 2.5, baseColor: [0.8, 0.2, 1.0] }
+                };
+                
+                return configs[geometry] || configs['hypercube'];
             }
             
             initShaders() {
@@ -418,7 +380,7 @@
                     uniform float u_colorVariation;
                     uniform float u_speedVariation;
                     
-                    // 4D rotation matrices
+                    // Enhanced 4D rotation matrices
                     mat4 rotateXW(float theta) {
                         float c = cos(theta);
                         float s = sin(theta);
@@ -438,111 +400,32 @@
                     }
                     
                     vec3 project4Dto3D(vec4 p) {
-                        float w = 2.0 / (2.0 + p.w);
+                        float w = 2.5 / (2.5 + p.w);
                         return vec3(p.x * w, p.y * w, p.z * w);
                     }
                     
-                    // Enhanced geometry functions
-                    float hypercubeLattice(vec3 p, float gridSize) {
-                        vec3 grid = fract(p * gridSize);
-                        vec3 edges = 1.0 - smoothstep(0.0, 0.01, abs(grid - 0.5));
-                        float corners = length(grid - 0.5);
-                        corners = 1.0 - smoothstep(0.0, 0.15, corners);
-                        return max(max(max(edges.x, edges.y), edges.z), corners * 0.4);
-                    }
-                    
-                    float tetrahedronLattice(vec3 p, float gridSize) {
-                        vec3 q = fract(p * gridSize) - 0.5;
-                        float d1 = length(q);
-                        float d2 = length(q - vec3(0.35, 0.0, 0.0));
-                        float d3 = length(q - vec3(0.0, 0.35, 0.0));
-                        float d4 = length(q - vec3(0.0, 0.0, 0.35));
+                    float getGeometryValue(vec3 p, float density, float geomType) {
+                        float result = 0.0;
+                        vec3 q = fract(p * density) - 0.5;
                         
-                        float vertices = 1.0 - smoothstep(0.0, 0.05, min(min(d1, d2), min(d3, d4)));
+                        if (geomType < 0.5) { // Hypercube
+                            result = 1.0 - smoothstep(0.4, 0.45, max(max(abs(q.x), abs(q.y)), abs(q.z)));
+                        } else if (geomType < 1.5) { // Tetrahedron
+                            float d = length(q);
+                            result = 1.0 - smoothstep(0.35, 0.4, d);
+                        } else if (geomType < 2.5) { // Sphere
+                            float d = length(q);
+                            result = 1.0 - smoothstep(0.3, 0.35, d);
+                        } else if (geomType < 3.5) { // Torus
+                            vec2 t = vec2(length(q.xz) - 0.3, q.y);
+                            result = 1.0 - smoothstep(0.15, 0.2, length(t));
+                        } else if (geomType < 4.5) { // Wave
+                            result = sin(q.x * 10.0) * sin(q.y * 10.0) * sin(q.z * 10.0) * 0.5 + 0.5;
+                        } else { // Default lattice
+                            result = 1.0 - smoothstep(0.0, 0.1, min(min(abs(q.x), abs(q.y)), abs(q.z)));
+                        }
                         
-                        float edges = 0.0;
-                        edges = max(edges, 1.0 - smoothstep(0.0, 0.02, abs(length(q.xy) - 0.18)));
-                        edges = max(edges, 1.0 - smoothstep(0.0, 0.02, abs(length(q.yz) - 0.18)));
-                        edges = max(edges, 1.0 - smoothstep(0.0, 0.02, abs(length(q.xz) - 0.18)));
-                        
-                        return max(vertices, edges * 0.6);
-                    }
-                    
-                    float sphereLattice(vec3 p, float gridSize) {
-                        vec3 q = fract(p * gridSize) - 0.5;
-                        float r = length(q);
-                        float main = 1.0 - smoothstep(0.08, 0.3, r);
-                        float detail = 1.0 - smoothstep(0.2, 0.4, r);
-                        return max(main, detail * 0.3);
-                    }
-                    
-                    float torusLattice(vec3 p, float gridSize) {
-                        vec3 q = fract(p * gridSize) - 0.5;
-                        float r1 = length(q.xy);
-                        float r2 = sqrt((r1 - 0.18)*(r1 - 0.18) + q.z*q.z);
-                        float main = 1.0 - smoothstep(0.0, 0.06, r2);
-                        float inner = 1.0 - smoothstep(0.0, 0.09, abs(r1 - 0.18));
-                        return max(main, inner * 0.5);
-                    }
-                    
-                    float waveLattice(vec3 p, float gridSize) {
-                        vec3 q = p * gridSize;
-                        float wave1 = sin(q.x * 1.2 + u_time * u_speed * 0.0006);
-                        float wave2 = sin(q.y * 1.4 + u_time * u_speed * 0.0008);
-                        float wave3 = sin(q.z * 1.0 + u_time * u_speed * 0.0004);
-                        float interference = wave1 * wave2 * wave3;
-                        float harmonics = sin(q.x * 2.5) * sin(q.y * 2.5) * 0.4;
-                        return smoothstep(-0.3, 0.3, interference + harmonics);
-                    }
-                    
-                    float crystalLattice(vec3 p, float gridSize) {
-                        vec3 q = fract(p * gridSize) - 0.5;
-                        
-                        // Crystal faces
-                        float d1 = abs(q.x + q.y + q.z) / sqrt(3.0);
-                        float d2 = abs(q.x - q.y + q.z) / sqrt(3.0);
-                        float d3 = abs(q.x + q.y - q.z) / sqrt(3.0);
-                        float d4 = abs(-q.x + q.y + q.z) / sqrt(3.0);
-                        
-                        float crystal = min(min(d1, d2), min(d3, d4));
-                        return 1.0 - smoothstep(0.0, 0.12, crystal);
-                    }
-                    
-                    float spiralLattice(vec3 p, float gridSize) {
-                        vec3 q = p * gridSize;
-                        float r = length(q.xy);
-                        float angle = atan(q.y, q.x) + q.z * 0.5 + u_time * u_speed * 0.0005;
-                        
-                        float spiral = sin(r * 3.0 - angle * 4.0);
-                        float tubes = 1.0 - smoothstep(0.0, 0.15, abs(spiral));
-                        
-                        return tubes * (1.0 - smoothstep(0.0, 0.8, r));
-                    }
-                    
-                    float fractalLattice(vec3 p, float gridSize) {
-                        vec3 q = p * gridSize;
-                        
-                        // Mandelbulb-inspired fractal
-                        float r = length(q);
-                        float theta = atan(q.y, q.x);
-                        float phi = acos(q.z / r);
-                        
-                        float power = 8.0 + sin(u_time * u_speed * 0.0003) * 2.0;
-                        float rn = pow(r, power);
-                        
-                        float fractal = sin(rn + theta * power + phi * power);
-                        return smoothstep(-0.5, 0.5, fractal) * (1.0 - smoothstep(0.0, 1.0, r));
-                    }
-                    
-                    float getGeometryValue(vec3 p, float gridSize, float geomType) {
-                        if (geomType < 0.5) return hypercubeLattice(p, gridSize);
-                        else if (geomType < 1.5) return tetrahedronLattice(p, gridSize);
-                        else if (geomType < 2.5) return sphereLattice(p, gridSize);
-                        else if (geomType < 3.5) return torusLattice(p, gridSize);
-                        else if (geomType < 4.5) return waveLattice(p, gridSize);
-                        else if (geomType < 5.5) return crystalLattice(p, gridSize);
-                        else if (geomType < 6.5) return spiralLattice(p, gridSize);
-                        else return fractalLattice(p, gridSize);
+                        return result;
                     }
                     
                     vec3 hsv2rgb(vec3 c) {
@@ -726,48 +609,98 @@
             }
         }
         
-        // ACTIVE HOLOGRAPHIC SYSTEM MANAGER
-        class ActiveHolographicSystemManager {
+        // TABBED HOLOGRAPHIC SYSTEM MANAGER - PRESERVES ALL ORIGINAL EFFECTS
+        class TabbedHolographicSystemManager {
             constructor() {
-                this.visualizers = [];
-                this.containers = [];
+                this.currentPage = 0;
+                this.totalPages = 10;
+                this.visualizersPerPage = 3;
+                this.activeVisualizers = [];
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
                 
+                // All 30 geometry variations
                 this.geometryTypes = [
                     'hypercube', 'tetrahedron', 'sphere', 'torus', 'wave', 
-                    'crystal', 'spiral', 'fractal', 'neural', 'quantum'
+                    'crystal', 'spiral', 'fractal', 'neural', 'quantum',
+                    'mobius', 'klein', 'polytope', 'tesseract', 'manifold',
+                    'vortex', 'plasma', 'matrix', 'lattice', 'field',
+                    'chaos', 'attractor', 'oscillator', 'resonance', 'harmonic',
+                    'prism', 'dodecahedron', 'icosahedron', 'octahedron', 'stellated'
                 ];
                 
                 this.initialize();
             }
             
             initialize() {
-                console.log('🎨 Initializing Active Holographic System Manager...');
+                console.log('🎨 Initializing Tabbed Holographic System...');
                 
-                this.createContainers();
+                this.createTabNavigation();
+                this.showPage(0);
                 this.setupInteractions();
                 this.startRenderLoop();
                 
-                console.log('✅ Active Holographic System ready - 50 total visualizers (10 × 5 layers)');
+                console.log('✅ Tabbed system ready - 30 variations, 3 active with full effects');
             }
             
-            createContainers() {
-                const grid = document.getElementById('holographicGrid');
+            createTabNavigation() {
+                const navContainer = document.getElementById('tabNavigation');
                 
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < this.totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.className = 'tab-button';
+                    button.textContent = `Set ${i + 1}`;
+                    button.onclick = () => this.showPage(i);
+                    if (i === 0) button.classList.add('active');
+                    navContainer.appendChild(button);
+                }
+            }
+            
+            showPage(pageIndex) {
+                if (pageIndex < 0 || pageIndex >= this.totalPages) return;
+                
+                // Clean up existing visualizers
+                this.cleanupVisualizers();
+                
+                this.currentPage = pageIndex;
+                
+                // Update UI
+                this.updateTabButtons();
+                
+                // Create new visualizers for this page
+                this.createPageVisualizers(pageIndex);
+                
+                console.log(`📄 Showing page ${pageIndex + 1}/${this.totalPages} with original holographic effects`);
+            }
+            
+            cleanupVisualizers() {
+                // Clear the grid
+                const grid = document.getElementById('holographicGrid');
+                grid.innerHTML = '';
+                
+                // Clear visualizer array
+                this.activeVisualizers = [];
+            }
+            
+            createPageVisualizers(pageIndex) {
+                const grid = document.getElementById('holographicGrid');
+                const startIndex = pageIndex * this.visualizersPerPage;
+                
+                for (let i = 0; i < this.visualizersPerPage; i++) {
+                    const geoIndex = startIndex + i;
+                    if (geoIndex >= this.geometryTypes.length) break;
+                    
                     const container = document.createElement('div');
                     container.className = 'active-holographic-container';
-                    container.setAttribute('data-variant', this.geometryTypes[i]);
+                    container.setAttribute('data-variant', this.geometryTypes[geoIndex]);
                     
                     // Create holographic depth container
                     const depthContainer = document.createElement('div');
                     depthContainer.className = 'holographic-depth-container';
                     
-                    // Create 5 depth layers with canvases
+                    // Create 5 depth layers with canvases (ORIGINAL SYSTEM)
                     const layers = ['background', 'shadow', 'content', 'highlight', 'accent'];
-                    const reactivityLevels = [0.3, 0.5, 1.0, 1.2, 1.5];
                     
                     layers.forEach((layerType, layerIndex) => {
                         const layer = document.createElement('div');
@@ -775,187 +708,155 @@
                         
                         const canvas = document.createElement('canvas');
                         canvas.className = `visualizer-canvas ${layerType}-visualizer`;
-                        canvas.id = `canvas-${i}-${layerType}`;
+                        canvas.id = `canvas-${geoIndex}-${layerType}`;
                         
                         layer.appendChild(canvas);
                         depthContainer.appendChild(layer);
                         
-                        // Create visualizer for this canvas
+                        // Create visualizer with ORIGINAL parameters
                         setTimeout(() => {
+                            const reactivity = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
                             const visualizer = new ActiveHolographicVisualizer(
-                                canvas.id, 
-                                layerType, 
-                                this.geometryTypes[i], 
-                                reactivityLevels[layerIndex]
+                                canvas.id,
+                                layerType,
+                                this.geometryTypes[geoIndex],
+                                reactivity
                             );
-                            this.visualizers.push(visualizer);
-                        }, i * 50 + layerIndex * 10); // Stagger creation
+                            this.activeVisualizers.push(visualizer);
+                        }, i * 50 + layerIndex * 20); // Staggered creation
                     });
                     
                     // Add variant title
                     const title = document.createElement('div');
                     title.className = 'variant-title';
-                    title.textContent = this.geometryTypes[i].toUpperCase();
+                    title.textContent = this.geometryTypes[geoIndex].toUpperCase();
                     
                     container.appendChild(depthContainer);
                     container.appendChild(title);
                     grid.appendChild(container);
-                    this.containers.push(container);
                 }
             }
             
+            updateTabButtons() {
+                const buttons = document.querySelectorAll('.tab-button');
+                buttons.forEach((button, index) => {
+                    button.classList.toggle('active', index === this.currentPage);
+                });
+            }
+            
             setupInteractions() {
-                // Enhanced mouse tracking
+                // ORIGINAL mouse tracking with full reactivity
                 document.addEventListener('mousemove', (e) => {
                     this.mouseX = e.clientX / window.innerWidth;
                     this.mouseY = 1.0 - (e.clientY / window.innerHeight);
                     this.mouseIntensity = Math.min(1.0, Math.sqrt(e.movementX*e.movementX + e.movementY*e.movementY) / 30);
                     
-                    // Update all visualizers with mouse data
-                    this.visualizers.forEach(viz => {
+                    // Update ALL active visualizers
+                    this.activeVisualizers.forEach(viz => {
                         viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
                     });
-                    
-                    // Update density variation based on mouse position
-                    const densityVar = Math.sin(this.mouseX * Math.PI * 2) * Math.sin(this.mouseY * Math.PI * 2) * 1.5;
-                    this.visualizers.forEach(viz => {
-                        viz.updateDensity(densityVar);
-                    });
                 });
                 
-                // Enhanced click interactions
+                // ORIGINAL click interactions
                 document.addEventListener('click', (e) => {
-                    const rect = document.body.getBoundingClientRect();
-                    const clickX = (e.clientX - rect.left) / rect.width;
-                    const clickY = 1.0 - ((e.clientY - rect.top) / rect.height);
+                    const clickX = e.clientX / window.innerWidth;
+                    const clickY = 1.0 - (e.clientY / window.innerHeight);
                     
-                    // Trigger click effect on all visualizers
-                    this.visualizers.forEach(viz => {
+                    this.activeVisualizers.forEach(viz => {
                         viz.triggerClick(clickX, clickY);
                     });
-                    
-                    // Create ripple effect
-                    this.createRipple(e.clientX, e.clientY);
                 });
                 
-                // Container interactions
-                this.containers.forEach((container, index) => {
-                    container.addEventListener('mouseenter', () => {
-                        container.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                // ORIGINAL scroll detection for density variation
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    clearTimeout(scrollTimeout);
+                    const scrollIntensity = Math.min(1.0, Math.abs(window.scrollY) / 500);
+                    
+                    this.activeVisualizers.forEach(viz => {
+                        viz.updateDensity(scrollIntensity * 3.0);
                     });
                     
-                    container.addEventListener('mouseleave', () => {
-                        container.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    });
-                    
-                    container.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        
-                        // Open infinite scroll view with this visualizer
-                        this.openInfiniteScroll(index);
-                    });
+                    scrollTimeout = setTimeout(() => {
+                        this.activeVisualizers.forEach(viz => {
+                            viz.updateDensity(0.0);
+                        });
+                    }, 200);
                 });
                 
-                // Close presentation mode on ESC
+                // Touch support for mobile
+                document.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    const clickX = touch.clientX / window.innerWidth;
+                    const clickY = 1.0 - (touch.clientY / window.innerHeight);
+                    
+                    this.activeVisualizers.forEach(viz => {
+                        viz.triggerClick(clickX, clickY);
+                    });
+                }, { passive: true });
+                
+                document.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    this.mouseX = touch.clientX / window.innerWidth;
+                    this.mouseY = 1.0 - (touch.clientY / window.innerHeight);
+                    this.mouseIntensity = 0.5; // Constant intensity for touch
+                    
+                    this.activeVisualizers.forEach(viz => {
+                        viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
+                    });
+                }, { passive: true });
+                
+                // Keyboard navigation
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.containers.forEach(c => c.classList.remove('presentation-mode'));
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            this.showPage(Math.max(0, this.currentPage - 1));
+                            break;
+                        case 'ArrowRight':
+                            this.showPage(Math.min(this.totalPages - 1, this.currentPage + 1));
+                            break;
+                        case 'Home':
+                            this.showPage(0);
+                            break;
+                        case 'End':
+                            this.showPage(this.totalPages - 1);
+                            break;
                     }
                 });
             }
             
-            createRipple(x, y) {
-                const ripple = document.createElement('div');
-                ripple.className = 'interaction-ripple';
-                ripple.style.left = (x - 25) + 'px';
-                ripple.style.top = (y - 25) + 'px';
-                document.body.appendChild(ripple);
-                
-                setTimeout(() => {
-                    document.body.removeChild(ripple);
-                }, 600);
-            }
-            
-            openInfiniteScroll(index) {
-                const container = document.getElementById('infiniteScrollContainer');
-                const expandedContainer = document.getElementById('expandedVisualizerContainer');
-                
-                // Clone the visualizer container
-                const originalContainer = this.containers[index];
-                const clonedContainer = originalContainer.cloneNode(true);
-                clonedContainer.style.width = '100%';
-                clonedContainer.style.height = '100%';
-                clonedContainer.style.transform = 'none';
-                clonedContainer.style.position = 'relative';
-                
-                // Clear and add cloned container
-                expandedContainer.innerHTML = '';
-                expandedContainer.appendChild(clonedContainer);
-                
-                // Create new larger visualizer instance
-                const canvas = clonedContainer.querySelector('canvas');
-                if (canvas) {
-                    canvas.width = expandedContainer.clientWidth;
-                    canvas.height = expandedContainer.clientHeight;
-                    
-                    // Create enhanced visualizer with scroll reactivity
-                    const enhancedViz = new ActiveHolographicVisualizer(canvas, this.geometryTypes[index], 'enhanced');
-                    
-                    // Add scroll reactivity
-                    const scrollContainer = document.getElementById('infiniteScrollContent');
-                    scrollContainer.addEventListener('scroll', () => {
-                        const scrollPercent = scrollContainer.scrollTop / (scrollContainer.scrollHeight - scrollContainer.clientHeight);
-                        enhancedViz.updateScroll(scrollPercent);
-                    });
-                    
-                    // Enhanced mouse tracking
-                    expandedContainer.addEventListener('mousemove', (e) => {
-                        const rect = expandedContainer.getBoundingClientRect();
-                        const x = (e.clientX - rect.left) / rect.width;
-                        const y = (e.clientY - rect.top) / rect.height;
-                        enhancedViz.updateInteraction(x, y, 1.0);
-                    });
-                    
-                    // Start enhanced rendering
-                    const renderEnhanced = () => {
-                        enhancedViz.render();
-                        requestAnimationFrame(renderEnhanced);
-                    };
-                    renderEnhanced();
-                }
-                
-                // Show container
-                container.style.display = 'block';
-                console.log(`🚀 Infinite scroll opened for visualizer ${index}: ${this.geometryTypes[index]}`);
-            }
-            
             startRenderLoop() {
                 const render = () => {
-                    this.visualizers.forEach(viz => {
-                        viz.render();
+                    this.activeVisualizers.forEach(viz => {
+                        if (viz && viz.render) {
+                            viz.render();
+                        }
                     });
                     requestAnimationFrame(render);
                 };
                 
                 render();
-                console.log('🎬 Active holographic render loop started');
+                console.log('🎬 Render loop started for active visualizers with full effects');
             }
-        }
-        
-        // Global close function for infinite scroll
-        function closeInfiniteScroll() {
-            const container = document.getElementById('infiniteScrollContainer');
-            container.style.display = 'none';
-            console.log('🔒 Infinite scroll closed');
         }
         
         // Initialize when page loads
         window.addEventListener('load', () => {
-            console.log('🚀 Initializing Active Holographic Systems...');
-            const manager = new ActiveHolographicSystemManager();
-            window.activeHolographicManager = manager;
+            console.log('🚀 Initializing Tabbed Active Holographic Systems...');
+            const manager = new TabbedHolographicSystemManager();
+            window.tabbedManager = manager;
         });
         
     </script>
+    
+    <!-- Add collapsible menu system -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark'
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

@@ -487,6 +487,61 @@
         }
         
         animate(0);
+        
+        // Export function for Hypercube Codex
+        function exportCodex() {
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                currentParams: { ...params },
+                activeEffects: { ...effects },
+                canvasSize: { width: canvas.width, height: canvas.height },
+                hypercubeType: 'Moire Pattern System',
+                version: '1.0'
+            };
+            
+            // Create downloadable JSON
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `hypercube-codex-export-${Date.now()}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            console.log('🎯 Hypercube Codex exported successfully');
+        }
+        
+        // Add export button to any existing controls
+        if (document.querySelector('.controls')) {
+            const exportBtn = document.createElement('button');
+            exportBtn.textContent = 'Export Codex';
+            exportBtn.onclick = exportCodex;
+            exportBtn.style.cssText = `
+                background: linear-gradient(45deg, #ff0080, #00ffff);
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                margin: 5px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: 'Orbitron', monospace;
+            `;
+            document.querySelector('.controls').appendChild(exportBtn);
+        }
     </script>
+    
+    <!-- Add collapsible menu system -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark'
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

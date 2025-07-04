@@ -866,5 +866,16 @@
         // Initialize Working 4D HyperAV
         window.working4dHyperAV = new Working4DHyperAV();
     </script>
+    
+    <!-- Add collapsible menu system for multiple menus -->
+    <script>
+        window.COLLAPSIBLE_MENU_CONFIG = {
+            startCollapsed: true,
+            position: 'top-right',
+            theme: 'dark',
+            multipleMenus: true // Special flag for handling multiple menus
+        };
+    </script>
+    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>
