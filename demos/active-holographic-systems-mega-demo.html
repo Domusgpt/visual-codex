@@ -15,6 +15,8 @@
             height: 100vh;
             cursor: crosshair;
             background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
+            touch-action: none; /* Prevent default touch behaviors */
+            user-select: none; /* Prevent text selection */
         }
         
         /* SINGLE HOLOGRAPHIC DISPLAY */
@@ -28,6 +30,9 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform-style: preserve-3d;
+            /* Enable infinite scroll capture */
+            touch-action: none;
+            overscroll-behavior: none;
             
             /* Neoskeuomorphic shadow system */
             box-shadow: 
@@ -127,6 +132,9 @@
             left: 0;
             width: 100%;
             height: 100%;
+            /* Infinite scroll and touch support */
+            touch-action: none;
+            overscroll-behavior: none;
         }
         
         /* EXPANDED VIEW */
@@ -303,12 +311,27 @@
                 this.transitionProgress = 1.0;
                 this.chaosIntensity = 0.0;
                 
-                // EXACT mouse interaction system
+                // ENHANCED INTERACTION SYSTEM - Mouse, Touch, and Scroll
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
                 this.clickIntensity = 0.0;
                 this.clickDecay = 0.95;
+                
+                // Touch interaction system
+                this.touchX = 0.5;
+                this.touchY = 0.5;
+                this.touchActive = false;
+                this.touchMorph = 0.0; // X-axis controls morph
+                this.touchChaos = 0.0; // Y-axis controls chaos
+                
+                // Scroll parallax system
+                this.scrollPosition = 0.0;
+                this.scrollVelocity = 0.0;
+                this.scrollDecay = 0.92;
+                this.parallaxDepth = 0.0;
+                this.gridDensityShift = 0.0;
+                this.colorScrollShift = 0.0;
                 
                 // EXACT density system with variations
                 this.baseDensity = 6.0 + Math.random() * 4.0;
@@ -431,6 +454,11 @@
                     uniform float u_geometryType;
                     uniform float u_chaos;
                     uniform float u_morph;
+                    uniform float u_touchMorph;
+                    uniform float u_touchChaos;
+                    uniform float u_scrollParallax;
+                    uniform float u_gridDensityShift;
+                    uniform float u_colorScrollShift;
                     
                     // EXACT 4D rotation matrices from tech-layout
                     mat4 rotateXW(float theta) {
@@ -596,41 +624,54 @@
                         uv.x *= aspectRatio;
                         uv -= 0.5;
                         
-                        // EXACT 4D space with mouse reactivity from tech-layout
+                        // ENHANCED 4D space with mouse, touch, and scroll reactivity
                         float time = u_time * 0.0004 * u_speed * u_roleSpeed;
                         
                         // Mouse influence on rotation
                         float mouseInfluence = u_mouseIntensity * 0.5;
                         vec2 mouseOffset = (u_mouse - 0.5) * mouseInfluence;
                         
-                        vec4 p4d = vec4(uv + mouseOffset * 0.1, 
-                                       sin(time * 0.1) * 0.15, 
-                                       cos(time * 0.08) * 0.15);
+                        // Scroll parallax influence on depth
+                        float parallaxOffset = u_scrollParallax * 0.2;
+                        vec2 scrollOffset = vec2(parallaxOffset * 0.1, parallaxOffset * 0.05);
                         
-                        // EXACT 4D rotations with mouse reactivity from tech-layout
-                        p4d = rotateXW(time * 0.2 + mouseOffset.y * 0.5) * p4d;
-                        p4d = rotateYW(time * 0.15 + mouseOffset.x * 0.5) * p4d;
-                        p4d = rotateZW(time * 0.25 + u_clickIntensity * 0.3) * p4d;
+                        // Touch morph influence on 4D position
+                        float morphOffset = u_touchMorph * 0.3;
+                        
+                        vec4 p4d = vec4(uv + mouseOffset * 0.1 + scrollOffset, 
+                                       sin(time * 0.1 + morphOffset) * 0.15, 
+                                       cos(time * 0.08 + morphOffset * 0.5) * 0.15);
+                        
+                        // ENHANCED 4D rotations with mouse, touch, and scroll reactivity
+                        float scrollRotation = u_scrollParallax * 0.1;
+                        float touchRotation = u_touchMorph * 0.2;
+                        
+                        p4d = rotateXW(time * 0.2 + mouseOffset.y * 0.5 + scrollRotation) * p4d;
+                        p4d = rotateYW(time * 0.15 + mouseOffset.x * 0.5 + touchRotation) * p4d;
+                        p4d = rotateZW(time * 0.25 + u_clickIntensity * 0.3 + u_touchChaos * 0.4) * p4d;
                         
                         vec3 p = project4Dto3D(p4d);
                         
-                        // EXACT dynamic density with variation from tech-layout
-                        float roleDensity = (u_density + u_densityVariation) * u_roleDensity;
+                        // ENHANCED dynamic density with scroll and touch variations
+                        float scrollDensityMod = 1.0 + u_gridDensityShift * 0.3;
+                        float roleDensity = ((u_density + u_densityVariation) * u_roleDensity) * scrollDensityMod;
                         
-                        // Get dynamic geometry based on variant type
-                        float lattice = getDynamicGeometry(p, roleDensity, u_geometryType);
+                        // Get dynamic geometry with touch morph influence
+                        float morphedGeometry = u_geometryType + u_touchMorph * 2.0;
+                        float lattice = getDynamicGeometry(p, roleDensity, morphedGeometry);
                         
-                        // EXACT coloring with mouse reactivity from tech-layout
-                        float hue = atan(u_color.r, u_color.g) + u_colorShift * 0.017453 + u_mouseIntensity * 0.2;
-                        float saturation = 0.8 + lattice * 0.2 + u_clickIntensity * 0.1;
-                        float brightness = 0.2 + lattice * 0.8 + u_intensity * 0.2 + u_mouseIntensity * 0.15;
+                        // ENHANCED coloring with mouse, touch, and scroll reactivity
+                        float hue = atan(u_color.r, u_color.g) + u_colorShift * 0.017453 + u_mouseIntensity * 0.2 + u_colorScrollShift;
+                        float saturation = 0.8 + lattice * 0.2 + u_clickIntensity * 0.1 + u_touchChaos * 0.15;
+                        float brightness = 0.2 + lattice * 0.8 + u_intensity * 0.2 + u_mouseIntensity * 0.15 + u_touchMorph * 0.1;
                         
                         vec3 color = hsv2rgb(vec3(hue, saturation, brightness));
                         
-                        // Add EXACT holographic effects from tech-layout
-                        color += vec3(moirePattern(uv, u_chaosIntensity));
-                        color += vec3(gridOverlay(uv, u_mouseIntensity));
-                        color = rgbGlitch(color, uv, u_chaosIntensity);
+                        // Add ENHANCED holographic effects with touch and scroll
+                        float enhancedChaos = u_chaosIntensity + u_touchChaos * 0.3;
+                        color += vec3(moirePattern(uv + scrollOffset, enhancedChaos));
+                        color += vec3(gridOverlay(uv, u_mouseIntensity + u_scrollParallax * 0.1));
+                        color = rgbGlitch(color, uv, enhancedChaos);
                         
                         // EXACT mouse interaction glow from tech-layout
                         float mouseDist = length(uv - (u_mouse - 0.5) * vec2(aspectRatio, 1.0));
@@ -664,7 +705,12 @@
                     densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation'),
                     geometryType: this.gl.getUniformLocation(this.program, 'u_geometryType'),
                     chaos: this.gl.getUniformLocation(this.program, 'u_chaos'),
-                    morph: this.gl.getUniformLocation(this.program, 'u_morph')
+                    morph: this.gl.getUniformLocation(this.program, 'u_morph'),
+                    touchMorph: this.gl.getUniformLocation(this.program, 'u_touchMorph'),
+                    touchChaos: this.gl.getUniformLocation(this.program, 'u_touchChaos'),
+                    scrollParallax: this.gl.getUniformLocation(this.program, 'u_scrollParallax'),
+                    gridDensityShift: this.gl.getUniformLocation(this.program, 'u_gridDensityShift'),
+                    colorScrollShift: this.gl.getUniformLocation(this.program, 'u_colorScrollShift')
                 };
             }
             
@@ -730,6 +776,43 @@
                 this.densityTarget = variation;
             }
             
+            // NEW TOUCH INTERACTION METHODS
+            updateTouch(touchX, touchY, active) {
+                this.touchX = touchX;
+                this.touchY = touchY;
+                this.touchActive = active;
+                
+                // X-axis controls morph (horizontal swipe)
+                this.touchMorph = (touchX - 0.5) * 2.0; // -1 to 1 range
+                
+                // Y-axis controls chaos (vertical swipe)
+                this.touchChaos = Math.abs(touchY - 0.5) * 2.0; // 0 to 1 range
+            }
+            
+            // NEW SCROLL INTERACTION METHODS
+            updateScroll(deltaY) {
+                // Accumulate scroll for continuous parallax
+                this.scrollVelocity += deltaY * 0.001; // Scale scroll input
+                this.scrollVelocity = Math.max(-2.0, Math.min(2.0, this.scrollVelocity)); // Clamp velocity
+            }
+            
+            updateScrollPhysics() {
+                // Apply scroll velocity to position
+                this.scrollPosition += this.scrollVelocity;
+                
+                // Apply decay to velocity
+                this.scrollVelocity *= this.scrollDecay;
+                
+                // Update parallax depth based on scroll position
+                this.parallaxDepth = Math.sin(this.scrollPosition * 0.1) * 0.5;
+                
+                // Update grid density shift (subtle)
+                this.gridDensityShift = Math.sin(this.scrollPosition * 0.05) * 0.3;
+                
+                // Update color scroll shift (gradual hue rotation)
+                this.colorScrollShift = (this.scrollPosition * 0.02) % (Math.PI * 2);
+            }
+            
             render() {
                 if (!this.program) return;
                 
@@ -738,6 +821,9 @@
                 
                 this.densityVariation += (this.densityTarget - this.densityVariation) * 0.05;
                 this.clickIntensity *= this.clickDecay;
+                
+                // Update scroll physics
+                this.updateScrollPhysics();
                 
                 const time = Date.now() - this.startTime;
                 
@@ -760,6 +846,13 @@
                 this.gl.uniform1f(this.uniforms.geometryType, this.variant);
                 this.gl.uniform1f(this.uniforms.chaos, this.variantParams.chaos || 0.0);
                 this.gl.uniform1f(this.uniforms.morph, this.variantParams.morph || 0.0);
+                
+                // Set touch and scroll uniforms
+                this.gl.uniform1f(this.uniforms.touchMorph, this.touchMorph);
+                this.gl.uniform1f(this.uniforms.touchChaos, this.touchChaos);
+                this.gl.uniform1f(this.uniforms.scrollParallax, this.parallaxDepth);
+                this.gl.uniform1f(this.uniforms.gridDensityShift, this.gridDensityShift);
+                this.gl.uniform1f(this.uniforms.colorScrollShift, this.colorScrollShift);
                 
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
             }
@@ -951,6 +1044,63 @@
                     // Create ripple effect
                     this.createRipple(e.clientX, e.clientY);
                 });
+                
+                // TOUCH INTERACTION SYSTEM
+                let currentTouch = null;
+                
+                document.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (e.touches.length > 0) {
+                        currentTouch = e.touches[0];
+                        const touchX = currentTouch.clientX / window.innerWidth;
+                        const touchY = 1.0 - (currentTouch.clientY / window.innerHeight);
+                        
+                        this.visualizers.forEach(visualizer => {
+                            visualizer.updateTouch(touchX, touchY, true);
+                        });
+                    }
+                }, { passive: false });
+                
+                document.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    if (e.touches.length > 0 && currentTouch) {
+                        const touch = e.touches[0];
+                        const touchX = touch.clientX / window.innerWidth;
+                        const touchY = 1.0 - (touch.clientY / window.innerHeight);
+                        
+                        this.visualizers.forEach(visualizer => {
+                            visualizer.updateTouch(touchX, touchY, true);
+                        });
+                        
+                        currentTouch = touch;
+                    }
+                }, { passive: false });
+                
+                document.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.visualizers.forEach(visualizer => {
+                        visualizer.updateTouch(0.5, 0.5, false);
+                    });
+                    currentTouch = null;
+                }, { passive: false });
+                
+                // SCROLL PARALLAX SYSTEM
+                document.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    
+                    // Update scroll on all visualizers
+                    this.visualizers.forEach(visualizer => {
+                        visualizer.updateScroll(e.deltaY);
+                    });
+                    
+                    // Subtle grid overlay response to scroll
+                    const gridOverlay = document.getElementById('gridOverlay');
+                    gridOverlay.style.transform = `translateY(${e.deltaY * 0.1}px)`;
+                    setTimeout(() => {
+                        gridOverlay.style.transform = 'translateY(0px)';
+                    }, 100);
+                    
+                }, { passive: false });
                 
                 // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
