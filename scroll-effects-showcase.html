@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Infinite Scroll Effects Showcase</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: white;
+            font-family: 'Orbitron', 'Courier New', monospace;
+            overflow-x: hidden;
+            /* Make the body very tall to enable scrolling */
+            height: 500vh; 
+            position: relative;
+        }
+        /* Hide scrollbar for a cleaner look */
+        body::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari, and Opera */
+        }
+        body {
+            -ms-overflow-style: none;  /* For IE and Edge */
+            scrollbar-width: none;  /* For Firefox */
+        }
+
+        .visual-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1; /* Ensure it's behind other content */
+        }
+
+        .scroll-progress-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 255, 0.2);
+            height: 5px;
+            width: 80%;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+
+        .scroll-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            border-radius: 5px;
+        }
+
+        .effect-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #00ffff;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress-indicator">
+        <div class="scroll-progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="effect-info">
+        Scroll Progress: <span id="scrollProgress">0%</span><br>
+        Active Effect: <span id="activeEffect">None</span>
+    </div>
+
+    <canvas id="glCanvas"></canvas>
+
+    <script>
+        const progressBar = document.getElementById('progressBar');
+        const scrollProgressDisplay = document.getElementById('scrollProgress');
+        const activeEffectDisplay = document.getElementById('activeEffect');
+        const glCanvas = document.getElementById('glCanvas');
+        const gl = glCanvas.getContext('webgl');
+
+        if (!gl) {
+            alert('WebGL not supported');
+        }
+
+        let scrollPercentage = 0;
+        let u_time = 0;
+
+        // Shader sources
+        const vertexShaderSource = `
+            attribute vec2 a_position;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision highp float;
+            uniform float u_time;
+            uniform vec2 u_resolution;
+            uniform float u_scroll_progress;
+            
+            // Utility functions (HSV to RGB, 4D rotations, 4D projection)
+            vec3 hsv2rgb(vec3 c) {
+                vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+                vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+                return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+            }
+
+            mat4 rotateXW(float theta) {
+                float c = cos(theta); float s = sin(theta);
+                return mat4(c, 0, 0, -s, 0, 1, 0, 0, 0, 0, 1, 0, s, 0, 0, c);
+            }
+            mat4 rotateYW(float theta) {
+                float c = cos(theta); float s = sin(theta);
+                return mat4(1, 0, 0, 0, 0, c, 0, -s, 0, 0, 1, 0, 0, s, 0, c);
+            }
+            mat4 rotateZW(float theta) {
+                float c = cos(theta); float s = sin(theta);
+                return mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, c, -s, 0, 0, s, c);
+            }
+            vec3 project4Dto3D(vec4 p) {
+                float w = 2.5 / (2.5 + p.w);
+                return vec3(p.x * w, p.y * w, p.z * w);
+            }
+
+            // Hypercube Lattice function (simplified from demos/hypercube-lattice-visualizer-demo.html)
+            float hypercubeLattice(vec3 p, float gridSize, float morphFactor) {
+                vec4 p4d = vec4(p * gridSize, sin(u_time * 0.5) * morphFactor);
+                p4d = rotateXW(u_time * 0.2) * p4d;
+                p4d = rotateYW(u_time * 0.15) * p4d;
+                p4d = rotateZW(u_time * 0.25) * p4d;
+                
+                vec4 latticePos = fract(p4d) - 0.5;
+                float dist = max(max(abs(latticePos.x), abs(latticePos.y)), 
+                               max(abs(latticePos.z), abs(latticePos.w)));
+                return 1.0 - smoothstep(0.4, 0.5, dist);
+            }
+
+            // Moiré Pattern function (simplified from effects/mvep-moire-hypercube.html)
+            float generateMoire(vec3 p, float morphFactor, float gridDensity, float moireScale) {
+                float grid1 = hypercubeLattice(p, gridDensity, morphFactor);
+                float grid2 = hypercubeLattice(p, gridDensity * moireScale, morphFactor);
+                return abs(grid1 - grid2) * 0.5;
+            }
+            
+            void main() {
+                vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+                float aspectRatio = u_resolution.x / u_resolution.y;
+                uv.x *= aspectRatio;
+                uv -= 0.5;
+                
+                vec3 color = vec3(0.0);
+                float effect_mix = 0.0;
+
+                // Effect 1: Simple Gradient (0.0 - 0.2)
+                if (u_scroll_progress < 0.2) {
+                    effect_mix = u_scroll_progress / 0.2;
+                    color = mix(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.5, 1.0), uv.x);
+                } 
+                // Effect 2: Pulsing Grid (0.2 - 0.4)
+                else if (u_scroll_progress < 0.4) {
+                    effect_mix = (u_scroll_progress - 0.2) / 0.2;
+                    float grid_density = 10.0 + effect_mix * 20.0;
+                    float grid_pattern = fract(uv.x * grid_density) + fract(uv.y * grid_density);
+                    color = mix(vec3(0.0, 0.5, 1.0), vec3(1.0, 0.0, 0.5), sin(u_time * 5.0) * 0.5 + 0.5);
+                    color *= (0.5 + grid_pattern * 0.5);
+                }
+                // Effect 3: Hypercube Lattice (0.4 - 0.6)
+                else if (u_scroll_progress < 0.6) {
+                    effect_mix = (u_scroll_progress - 0.4) / 0.2;
+                    vec3 rayDir = normalize(vec3(uv, 1.0));
+                    float lattice = hypercubeLattice(rayDir, 8.0 + effect_mix * 10.0, effect_mix);
+                    color = mix(vec3(0.0, 1.0, 0.5), vec3(1.0, 0.5, 0.0), lattice);
+                }
+                // Effect 4: Moiré Pattern (0.6 - 0.8)
+                else if (u_scroll_progress < 0.8) {
+                    effect_mix = (u_scroll_progress - 0.6) / 0.2;
+                    vec3 rayDir = normalize(vec3(uv, 1.0));
+                    float moire = generateMoire(rayDir, 0.5 + effect_mix * 0.5, 15.0, 1.01 + effect_mix * 0.02);
+                    color = mix(vec3(0.5, 0.0, 1.0), vec3(0.0, 1.0, 1.0), moire);
+                }
+                // Effect 5: Psychedelic Mix (0.8 - 1.0)
+                else {
+                    effect_mix = (u_scroll_progress - 0.8) / 0.2;
+                    float psychedelic_factor = effect_mix * 5.0;
+                    color = vec3(
+                        sin(uv.x * 20.0 + u_time * 3.0 + psychedelic_factor) * 0.5 + 0.5,
+                        cos(uv.y * 25.0 + u_time * 4.0 + psychedelic_factor) * 0.5 + 0.5,
+                        sin((uv.x + uv.y) * 30.0 + u_time * 5.0 + psychedelic_factor) * 0.5 + 0.5
+                    );
+                    color = fract(color * 1.5);
+                    color = hsv2rgb(vec3(fract(u_time * 0.1 + effect_mix * 0.5), 1.0, 1.0)) * color;
+                }
+
+                gl_FragColor = vec4(color, 1.0);
+            }
+        `;
+
+        // Create shaders
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+        // Create program
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('Program link error:', gl.getProgramInfoLog(program));
+        }
+
+        gl.useProgram(program);
+
+        // Create buffer
+        const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Get uniform locations
+        const u_time_location = gl.getUniformLocation(program, 'u_time');
+        const u_resolution_location = gl.getUniformLocation(program, 'u_resolution');
+        const u_scroll_progress_location = gl.getUniformLocation(program, 'u_scroll_progress');
+
+        function render() {
+            glCanvas.width = window.innerWidth;
+            glCanvas.height = window.innerHeight;
+            gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+
+            gl.uniform1f(u_time_location, u_time);
+            gl.uniform2f(u_resolution_location, glCanvas.width, glCanvas.height);
+            gl.uniform1f(u_scroll_progress_location, scrollPercentage);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            requestAnimationFrame(render);
+        }
+
+        function updateScrollProgress() {
+            const scrollY = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            scrollPercentage = (scrollY / maxScroll) || 0;
+
+            progressBar.style.width = `${scrollPercentage * 100}%`;
+            scrollProgressDisplay.textContent = `${(scrollPercentage * 100).toFixed(0)}%`;
+
+            // Update active effect display
+            if (scrollPercentage < 0.2) {
+                activeEffectDisplay.textContent = 'Simple Gradient';
+            } else if (scrollPercentage < 0.4) {
+                activeEffectDisplay.textContent = 'Pulsing Grid';
+            } else if (scrollPercentage < 0.6) {
+                activeEffectDisplay.textContent = 'Color Shift';
+            } else if (scrollPercentage < 0.8) {
+                activeEffectDisplay.textContent = 'Glitch Effect';
+            } else {
+                activeEffectDisplay.textContent = 'Psychedelic Mix';
+            }
+        }
+
+        let lastTime = 0;
+        function animate(currentTime) {
+            u_time += (currentTime - lastTime) * 0.001; // Convert to seconds
+            lastTime = currentTime;
+            render();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('scroll', updateScrollProgress);
+        window.addEventListener('resize', updateScrollProgress);
+        
+        updateScrollProgress(); // Initial call
+        animate(0); // Start animation loop
+    </script>
+</body>
+</html>

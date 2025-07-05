@@ -45,6 +45,43 @@
             color: #ff00ff;
             font-size: 0.8rem;
         }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+            max-height: 500px; /* Sufficiently large value */
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
+        }
         
         /* TAB NAVIGATION */
         .tab-navigation {
@@ -286,14 +323,24 @@
     </style>
 </head>
 <body>
-    <div class="demo-header">
-        <div class="demo-title">ACTIVE HOLOGRAPHIC SYSTEMS</div>
-        <div class="demo-counter">3 Active Canvases × 10 Pages = 30 Variations</div>
+    <div class="demo-header controls" id="demo-header-panel">
+        <div class="controls-header">
+            <div class="demo-title">ACTIVE HOLOGRAPHIC SYSTEMS</div>
+            <button class="controls-toggle" onclick="togglePanel('demo-header-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div class="demo-counter">3 Active Canvases × 10 Pages = 30 Variations</div>
+        </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="tab-navigation" id="tabNavigation">
-        <!-- Tabs will be generated here -->
+    <div class="tab-navigation controls" id="tabNavigation">
+        <div class="controls-header">
+            <h3 style="color: #00ffff; margin: 0;">PAGE NAVIGATION</h3>
+            <button class="controls-toggle" onclick="togglePanel('tabNavigation')">▲</button>
+        </div>
+        <div class="controls-content">
+            <!-- Tabs will be generated here -->
+        </div>
     </div>
 
     <!-- Main Grid (3 visualizers) -->
@@ -313,130 +360,7 @@
     <script>
         console.log('🌌 Active Holographic Systems - Tabbed Edition');
         
-        // Copy the ActiveHolographicVisualizer class from the original
-        class ActiveHolographicVisualizer {
-            // ... (same implementation as original)
-            constructor(canvasId, role = 'content', geometry = 'hypercube', reactivity = 1.0) {
-                this.canvas = document.getElementById(canvasId);
-                this.role = role;
-                this.geometry = geometry;
-                this.reactivity = reactivity;
-                this.gl = this.canvas.getContext('webgl');
-                
-                if (!this.gl) {
-                    console.error(`WebGL not supported for ${canvasId}`);
-                    return;
-                }
-                
-                this.startTime = Date.now();
-                this.initShaders();
-                this.initBuffers();
-                this.resize();
-                
-                console.log(`✅ Active Holographic Visualizer (${role}/${geometry})`);
-            }
-            
-            initShaders() {
-                // Simplified shader implementation
-                const vertexShaderSource = `
-                    attribute vec2 a_position;
-                    void main() {
-                        gl_Position = vec4(a_position, 0.0, 1.0);
-                    }
-                `;
-                
-                const fragmentShaderSource = `
-                    precision highp float;
-                    uniform vec2 u_resolution;
-                    uniform float u_time;
-                    uniform vec2 u_mouse;
-                    
-                    void main() {
-                        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-                        float time = u_time * 0.001;
-                        
-                        // Create holographic pattern
-                        vec3 color = vec3(
-                            sin(uv.x * 10.0 + time) * 0.5 + 0.5,
-                            sin(uv.y * 10.0 + time * 1.3) * 0.5 + 0.5,
-                            sin((uv.x + uv.y) * 10.0 + time * 0.7) * 0.5 + 0.5
-                        );
-                        
-                        gl_FragColor = vec4(color, 1.0);
-                    }
-                `;
-                
-                this.program = this.createProgram(vertexShaderSource, fragmentShaderSource);
-                this.uniforms = {
-                    resolution: this.gl.getUniformLocation(this.program, 'u_resolution'),
-                    time: this.gl.getUniformLocation(this.program, 'u_time'),
-                    mouse: this.gl.getUniformLocation(this.program, 'u_mouse')
-                };
-            }
-            
-            createProgram(vertexSource, fragmentSource) {
-                const vertexShader = this.createShader(this.gl.VERTEX_SHADER, vertexSource);
-                const fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, fragmentSource);
-                
-                const program = this.gl.createProgram();
-                this.gl.attachShader(program, vertexShader);
-                this.gl.attachShader(program, fragmentShader);
-                this.gl.linkProgram(program);
-                
-                if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
-                    console.error('Program linking failed');
-                    return null;
-                }
-                
-                return program;
-            }
-            
-            createShader(type, source) {
-                const shader = this.gl.createShader(type);
-                this.gl.shaderSource(shader, source);
-                this.gl.compileShader(shader);
-                
-                if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-                    console.error('Shader compilation failed');
-                    return null;
-                }
-                
-                return shader;
-            }
-            
-            initBuffers() {
-                const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
-                
-                this.buffer = this.gl.createBuffer();
-                this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
-                this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
-                
-                const positionLocation = this.gl.getAttribLocation(this.program, 'a_position');
-                this.gl.enableVertexAttribArray(positionLocation);
-                this.gl.vertexAttribPointer(positionLocation, 2, this.gl.FLOAT, false, 0, 0);
-            }
-            
-            resize() {
-                this.canvas.width = this.canvas.clientWidth;
-                this.canvas.height = this.canvas.clientHeight;
-                this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-            }
-            
-            render() {
-                if (!this.program) return;
-                
-                this.resize();
-                this.gl.useProgram(this.program);
-                
-                const time = Date.now() - this.startTime;
-                
-                this.gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
-                this.gl.uniform1f(this.uniforms.time, time);
-                this.gl.uniform2f(this.uniforms.mouse, 0.5, 0.5);
-                
-                this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
-            }
-        }
+        
         
         // TABBED SYSTEM MANAGER
         class TabbedHolographicSystemManager {
@@ -468,6 +392,7 @@
                 this.startRenderLoop();
                 
                 console.log('✅ Tabbed system ready - 3 active canvases at a time');
+                document.querySelector('.demo-counter').textContent = `${this.visualizersPerPage} Active Canvases × ${this.totalPages} Pages = ${this.geometryTypes.length} Variations`;
             }
             
             createTabNavigation() {
@@ -628,6 +553,19 @@
                 render();
                 console.log('🎬 Render loop started for active visualizers');
             }
+
+            setupParallax() {
+                const holographicGrid = document.getElementById('holographicGrid');
+                document.body.addEventListener('mousemove', (e) => {
+                    const x = (e.clientX / window.innerWidth) - 0.5;
+                    const y = (e.clientY / window.innerHeight) - 0.5;
+
+                    const rotateY = x * 5; // Max 5 degrees rotation
+                    const rotateX = -y * 5; // Max 5 degrees rotation
+
+                    holographicGrid.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+            }
         }
         
         // Global navigation function
@@ -636,6 +574,18 @@
                 window.tabbedManager.navigatePage(direction);
             }
         }
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
+        });
         
         // Initialize when page loads
         window.addEventListener('load', () => {
@@ -644,15 +594,5 @@
             window.tabbedManager = manager;
         });
     </script>
-    
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
 </body>
 </html>

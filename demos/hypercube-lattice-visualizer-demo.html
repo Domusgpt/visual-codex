@@ -39,12 +39,15 @@
         }
         
         .controls-content {
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+            max-height: 500px; /* Sufficiently large value */
         }
         
         .controls.collapsed .controls-content {
-            opacity: 0;
-            pointer-events: none;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
         }
         .slider { width: 200px; margin: 10px 0; }
         .slider-label { margin-bottom: 5px; }
@@ -468,14 +471,6 @@
         }
     </script>
     
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 </body>
 </html>

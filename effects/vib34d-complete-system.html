@@ -81,54 +81,101 @@
         .status-rhythmic { background: #ffff00; }
         .status-intense { background: #ff8800; }
         .status-precise { background: #ff00ff; }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
     
-    <div class="hud">
-        <h3 style="margin: 0 0 10px 0; color: #ff00ff;">VIB34D INTERACTION ANALYSIS</h3>
-        <div>Pattern: <span class="status-indicator" id="patternIndicator"></span><span id="patternType">CASUAL</span></div>
-        <div>Scroll: <span id="scrollIntensity">0.0</span></div>
-        <div>Click: <span id="clickIntensity">0.0</span></div>
-        <div>Mouse: <span id="mouseIntensity">0.0</span></div>
-        <div>Energy: <span id="energy">0.0</span></div>
-        <div>Focus: <span id="focus">0.0</span></div>
-        <div>Exploration: <span id="exploration">0.0</span></div>
-        <div style="margin-top: 10px; font-size: 10px; color: #888;">
-            Interact with mouse, scroll, click to drive the visualization
+    <div class="hud controls" id="hud-panel">
+        <div class="controls-header">
+            <h3 style="margin: 0 0 10px 0; color: #ff00ff;">VIB34D INTERACTION ANALYSIS</h3>
+            <button class="controls-toggle" onclick="togglePanel('hud-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div>Pattern: <span class="status-indicator" id="patternIndicator"></span><span id="patternType">CASUAL</span></div>
+            <div>Scroll: <span id="scrollIntensity">0.0</span></div>
+            <div>Click: <span id="clickIntensity">0.0</span></div>
+            <div>Mouse: <span id="mouseIntensity">0.0</span></div>
+            <div>Energy: <span id="energy">0.0</span></div>
+            <div>Focus: <span id="focus">0.0</span></div>
+            <div>Exploration: <span id="exploration">0.0</span></div>
+            <div style="margin-top: 10px; font-size: 10px; color: #888;">
+                Interact with mouse, scroll, click to drive the visualization
+            </div>
         </div>
     </div>
     
-    <div class="controls">
-        <div class="control-group">
-            <label>Geometry:</label>
-            <div>
-                <button class="geometry-btn active" data-geometry="hypercube">CUBE</button>
-                <button class="geometry-btn" data-geometry="tetrahedron">TETRA</button>
-                <button class="geometry-btn" data-geometry="sphere">SPHERE</button>
-                <button class="geometry-btn" data-geometry="torus">TORUS</button>
-                <button class="geometry-btn" data-geometry="klein">KLEIN</button>
-                <button class="geometry-btn" data-geometry="fractal">FRACTAL</button>
-                <button class="geometry-btn" data-geometry="wave">WAVE</button>
-                <button class="geometry-btn" data-geometry="crystal">CRYSTAL</button>
+    <div class="controls" id="main-controls-panel">
+        <div class="controls-header">
+            <h3 style="margin: 0 0 10px 0; color: #00ffff;">VISUAL PARAMETERS</h3>
+            <button class="controls-toggle" onclick="togglePanel('main-controls-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div class="control-group">
+                <label>Geometry:</label>
+                <div>
+                    <button class="geometry-btn active" data-geometry="hypercube">CUBE</button>
+                    <button class="geometry-btn" data-geometry="tetrahedron">TETRA</button>
+                    <button class="geometry-btn" data-geometry="sphere">SPHERE</button>
+                    <button class="geometry-btn" data-geometry="torus">TORUS</button>
+                    <button class="geometry-btn" data-geometry="klein">KLEIN</button>
+                    <button class="geometry-btn" data-geometry="fractal">FRACTAL</button>
+                    <button class="geometry-btn" data-geometry="wave">WAVE</button>
+                    <button class="geometry-btn" data-geometry="crystal">CRYSTAL</button>
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <label>Dimension: <span class="value-display" id="dimensionValue">4.0</span></label>
-            <input type="range" id="dimension" min="3.0" max="5.0" step="0.1" value="4.0">
-        </div>
-        <div class="control-group">
-            <label>Morph Factor: <span class="value-display" id="morphValue">0.5</span></label>
-            <input type="range" id="morphFactor" min="0.0" max="2.0" step="0.1" value="0.5">
-        </div>
-        <div class="control-group">
-            <label>Grid Density: <span class="value-display" id="gridValue">8.0</span></label>
-            <input type="range" id="gridDensity" min="3.0" max="20.0" step="0.5" value="8.0">
-        </div>
-        <div class="control-group">
-            <label>Rotation Speed: <span class="value-display" id="rotationValue">1.0</span></label>
-            <input type="range" id="rotationSpeed" min="0.0" max="3.0" step="0.1" value="1.0">
+            <div class="control-group">
+                <label>Dimension: <span class="value-display" id="dimensionValue">4.0</span></label>
+                <input type="range" id="dimension" min="3.0" max="5.0" step="0.1" value="4.0">
+            </div>
+            <div class="control-group">
+                <label>Morph Factor: <span class="value-display" id="morphValue">0.5</span></label>
+                <input type="range" id="morphFactor" min="0.0" max="2.0" step="0.1" value="0.5">
+            </div>
+            <div class="control-group">
+                <label>Grid Density: <span class="value-display" id="gridValue">8.0</span></label>
+                <input type="range" id="gridDensity" min="3.0" max="20.0" step="0.5" value="8.0">
+            </div>
+            <div class="control-group">
+                <label>Rotation Speed: <span class="value-display" id="rotationValue">1.0</span></label>
+                <input type="range" id="rotationSpeed" min="0.0" max="3.0" step="0.1" value="1.0">
+            </div>
         </div>
     </div>
 
@@ -661,16 +708,20 @@
         
         // Initialize the system
         const vib34dSystem = new VIB34DCompleteSystem();
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
+        });
     </script>
     
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 </body>
 </html>

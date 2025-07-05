@@ -614,9 +614,9 @@
                         const deltaY = (e.clientY - centerY) / (rect.height / 2);
                         
                         // Apply dynamic 2D-like rotation and skew based on mouse position
-                        const rotateZ = deltaX * 10 * this.params.bendIntensity;
-                        const skewX = -deltaY * 5 * this.params.bendIntensity;
-                        const skewY = deltaX * 5 * this.params.bendIntensity;
+                        const rotateZ = deltaX * 10;
+                        const skewX = -deltaY * 5;
+                        const skewY = deltaX * 5;
                         
                         card.style.setProperty('--rotation-z', rotateZ + 'deg');
                         card.style.setProperty('--skew-x', skewX + 'deg');
@@ -718,14 +718,6 @@
         });
     </script>
     
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 </body>
 </html>

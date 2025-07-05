@@ -75,102 +75,77 @@
             font-size: 10px;
             box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
         }
-        .control-group {
-            margin-bottom: 12px;
-        }
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        input[type="range"] {
-            width: 100%;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            outline: none;
-            border-radius: 2px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: currentColor;
-            cursor: pointer;
-            box-shadow: 0 0 8px currentColor;
-        }
-        .value-display {
-            color: #ffff00;
-            font-weight: bold;
-            text-shadow: 0 0 8px currentColor;
-        }
-        .hyperav-btn {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(255, 16, 240, 0.2));
-            border: 1px solid #00d4ff;
-            color: #00d4ff;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: bold;
-            margin: 3px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        .hyperav-btn:hover {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(255, 16, 240, 0.4));
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
-        }
-        .interaction-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-        .indicator-active { background: #00ff00; }
-        .indicator-moderate { background: #ffaa00; }
-        .indicator-intense { background: #ff3300; }
-        .indicator-transcendent { background: #ff10f0; }
-        h3 {
-            margin: 0 0 15px 0;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .metric-row {
+        .controls-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 10px;
-        }
-        .polytopal-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
+            align-items: center;
             margin-bottom: 15px;
         }
-        .polytopal-btn {
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid #00ff88;
-            color: #00ff88;
-            padding: 6px;
-            border-radius: 4px;
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 9px;
-            text-align: center;
-            transition: all 0.3s ease;
+            font-size: 10px;
+            transition: all 0.2s ease;
         }
-        .polytopal-btn:hover, .polytopal-btn.active {
-            background: rgba(0, 255, 136, 0.4);
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
+        }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
         }
     </style>
 </head>
@@ -178,117 +153,149 @@
     <canvas id="canvas"></canvas>
     
     <div class="hyperav-hud controls" id="hyperav-hud-panel">
-        <h3 style="color: #00d4ff;">WORKING 4D HYPERAV</h3>
-        <div>HyperAV Core: <span class="value-display">v3.2.1</span> STABLE</div>
-        <div>Polytopal Engine: <span class="interaction-indicator" id="polytopIndicator"></span><span id="polytopState">ACTIVE</span></div>
-        <div>Interaction Matrix: <span class="value-display" id="interactionCount">7</span> channels</div>
-        <div>4D Projection: <span class="value-display" id="projectionMethod">ORTHOGRAPHIC</span></div>
-        <div>Temporal Sync: <span class="value-display" id="temporalSync">60.0</span> Hz</div>
-        <div>Reality Index: <span class="value-display" id="realityIndex">98.7</span>%</div>
-        <div>Dimensional Lock: <span class="value-display" id="dimensionalLock">STABLE</span></div>
-        <div style="margin-top: 15px; font-size: 10px; color: rgba(0, 212, 255, 0.7); line-height: 1.4;">
-            <strong>PROVEN INTERACTION SYSTEMS:</strong><br>
-            • Mouse tracking with 4D influence mapping<br>
-            • Scroll-driven temporal modulation<br>
-            • Click-based reality distortion fields<br>
-            • Keyboard shortcuts for instant navigation<br>
-            • Multi-touch polytopal manipulation
+        <div class="controls-header">
+            <h3 style="color: #00d4ff;">WORKING 4D HYPERAV</h3>
+            <button class="controls-toggle" onclick="togglePanel('hyperav-hud-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div>HyperAV Core: <span class="value-display">v3.2.1</span> STABLE</div>
+            <div>Polytopal Engine: <span class="interaction-indicator" id="polytopIndicator"></span><span id="polytopState">ACTIVE</span></div>
+            <div>Interaction Matrix: <span class="value-display" id="interactionCount">7</span> channels</div>
+            <div>4D Projection: <span class="value-display" id="projectionMethod">ORTHOGRAPHIC</span></div>
+            <div>Temporal Sync: <span class="value-display" id="temporalSync">60.0</span> Hz</div>
+            <div>Reality Index: <span class="value-display" id="realityIndex">98.7</span>%</div>
+            <div>Dimensional Lock: <span class="value-display" id="dimensionalLock">STABLE</span></div>
+            <div style="margin-top: 15px; font-size: 10px; color: rgba(0, 212, 255, 0.7); line-height: 1.4;">
+                <strong>PROVEN INTERACTION SYSTEMS:</strong><br>
+                • Mouse tracking with 4D influence mapping<br>
+                • Scroll-driven temporal modulation<br>
+                • Click-based reality distortion fields<br>
+                • Keyboard shortcuts for instant navigation<br>
+                • Multi-touch polytopal manipulation
+            </div>
         </div>
     </div>
     
     <div class="interaction-panel controls" id="interaction-panel">
-        <h3 style="color: #ff10f0;">INTERACTION ANALYSIS</h3>
-        <div class="metric-row">
-            <span>Mouse Influence:</span>
-            <span class="value-display" id="mouseInfluence">0.0</span>
+        <div class="controls-header">
+            <h3 style="color: #ff10f0;">INTERACTION ANALYSIS</h3>
+            <button class="controls-toggle" onclick="togglePanel('interaction-panel')">▲</button>
         </div>
-        <div class="metric-row">
-            <span>Scroll Momentum:</span>
-            <span class="value-display" id="scrollMomentum">0.0</span>
-        </div>
-        <div class="metric-row">
-            <span>Click Energy:</span>
-            <span class="value-display" id="clickEnergy">0.0</span>
-        </div>
-        <div class="metric-row">
-            <span>Interaction State:</span>
-            <span class="interaction-indicator" id="interactionIndicator"></span><span class="value-display" id="interactionState">PASSIVE</span>
-        </div>
-        <div class="metric-row">
-            <span>Flow Direction:</span>
-            <span class="value-display" id="flowDirection">NEUTRAL</span>
-        </div>
-        <div class="metric-row">
-            <span>Engagement Level:</span>
-            <span class="value-display" id="engagementLevel">0%</span>
-        </div>
-        <div style="margin-top: 15px;">
-            <button class="hyperav-btn" onclick="toggleInteractionMode()">TOGGLE MODE</button>
-            <button class="hyperav-btn" onclick="resetInteractions()">RESET</button>
-            <button class="hyperav-btn" onclick="calibrateSystem()">CALIBRATE</button>
-        </div>
-        <div style="margin-top: 10px; font-size: 9px; color: rgba(255, 16, 240, 0.6);">
-            Real-time interaction analysis with proven algorithms from successful HyperAV deployments.
+        <div class="controls-content">
+            <div class="metric-row">
+                <span>Mouse Influence:</span>
+                <span class="value-display" id="mouseInfluence">0.0</span>
+            </div>
+            <div class="metric-row">
+                <span>Scroll Momentum:</span>
+                <span class="value-display" id="scrollMomentum">0.0</span>
+            </div>
+            <div class="metric-row">
+                <span>Click Energy:</span>
+                <span class="value-display" id="clickEnergy">0.0</span>
+            </div>
+            <div class="metric-row">
+                <span>Interaction State:</span>
+                <span class="interaction-indicator" id="interactionIndicator"></span><span class="value-display" id="interactionState">PASSIVE</span>
+            </div>
+            <div class="metric-row">
+                <span>Flow Direction:</span>
+                <span class="value-display" id="flowDirection">NEUTRAL</span>
+            </div>
+            <div class="metric-row">
+                <span>Engagement Level:</span>
+                <span class="value-display" id="engagementLevel">0%</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="hyperav-btn" onclick="toggleInteractionMode()">TOGGLE MODE</button>
+                <button class="hyperav-btn" onclick="resetInteractions()">RESET</button>
+                <button class="hyperav-btn" onclick="calibrateSystem()">CALIBRATE</button>
+            </div>
+            <div style="margin-top: 10px; font-size: 9px; color: rgba(255, 16, 240, 0.6);">
+                Real-time interaction analysis with proven algorithms from successful HyperAV deployments.
+            </div>
         </div>
     </div>
     
     <div class="polytopal-controls controls" id="polytopal-controls-panel">
-        <h3 style="color: #00ff88;">POLYTOPAL PROJECTION</h3>
-        <div class="polytopal-selector">
-            <button class="polytopal-btn active" data-polytop="hypercube">HYPERCUBE</button>
-            <button class="polytopal-btn" data-polytop="hyperoctahedron">HYPEROCTAHEDRON</button>
-            <button class="polytopal-btn" data-polytop="hyperdodecahedron">HYPERDODECAHEDRON</button>
-            <button class="polytopal-btn" data-polytop="hypertetrahedron">HYPERTETRAHEDRON</button>
-            <button class="polytopal-btn" data-polytop="hyperprism">HYPERPRISM</button>
-            <button class="polytopal-btn" data-polytop="hyperpyramid">HYPERPYRAMID</button>
+        <div class="controls-header">
+            <h3 style="color: #00ff88;">POLYTOPAL PROJECTION</h3>
+            <button class="controls-toggle" onclick="togglePanel('polytopal-controls-panel')">▲</button>
         </div>
-        <div class="control-group">
-            <label>4D Rotation Speed: <span class="value-display" id="rotationSpeedValue">1.2</span></label>
-            <input type="range" id="rotationSpeed" min="0.0" max="5.0" step="0.1" value="1.2">
-        </div>
-        <div class="control-group">
-            <label>Projection Distance: <span class="value-display" id="projectionDistValue">3.5</span></label>
-            <input type="range" id="projectionDistance" min="1.0" max="8.0" step="0.1" value="3.5">
-        </div>
-        <div class="control-group">
-            <label>Polytopal Complexity: <span class="value-display" id="complexityValue">2.0</span></label>
-            <input type="range" id="polytopComplexity" min="0.5" max="5.0" step="0.1" value="2.0">
-        </div>
-        <div class="control-group">
-            <label>Interaction Sensitivity: <span class="value-display" id="sensitivityValue">0.8</span></label>
-            <input type="range" id="interactionSensitivity" min="0.1" max="2.0" step="0.1" value="0.8">
+        <div class="controls-content">
+            <div class="polytopal-selector">
+                <button class="polytopal-btn active" data-polytop="hypercube">HYPERCUBE</button>
+                <button class="polytopal-btn" data-polytop="hyperoctahedron">HYPEROCTAHEDRON</button>
+                <button class="polytopal-btn" data-polytop="hyperdodecahedron">HYPERDODECAHEDRON</button>
+                <button class="polytopal-btn" data-polytop="hypertetrahedron">HYPERTETRAHEDRON</button>
+                <button class="polytopal-btn" data-polytop="hyperprism">HYPERPRISM</button>
+                <button class="polytopal-btn" data-polytop="hyperpyramid">HYPERPYRAMID</button>
+            </div>
+            <div class="control-group">
+                <label>4D Rotation Speed: <span class="value-display" id="rotationSpeedValue">1.2</span></label>
+                <input type="range" id="rotationSpeed" min="0.0" max="5.0" step="0.1" value="1.2">
+            </div>
+            <div class="control-group">
+                <label>Projection Distance: <span class="value-display" id="projectionDistValue">3.5</span></label>
+                <input type="range" id="projectionDistance" min="1.0" max="8.0" step="0.1" value="3.5">
+            </div>
+            <div class="control-group">
+                <label>Polytopal Complexity: <span class="value-display" id="complexityValue">2.0</span></label>
+                <input type="range" id="polytopComplexity" min="0.5" max="5.0" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Interaction Sensitivity: <span class="value-display" id="sensitivityValue">0.8</span></label>
+                <input type="range" id="interactionSensitivity" min="0.1" max="2.0" step="0.1" value="0.8">
+            </div>
         </div>
     </div>
     
     <div class="performance-monitor controls" id="performance-monitor-panel">
-        <h3 style="color: #ffaa00;">PERFORMANCE MONITOR</h3>
-        <div class="metric-row">
-            <span>Render FPS:</span>
-            <span class="value-display" id="renderFps">60.0</span>
+        <div class="controls-header">
+            <h3 style="color: #ffaa00;">PERFORMANCE MONITOR</h3>
+            <button class="controls-toggle" onclick="togglePanel('performance-monitor-panel')">▲</button>
         </div>
-        <div class="metric-row">
-            <span>Frame Time:</span>
-            <span class="value-display" id="frameTimeMs">16.7</span> ms
-        </div>
-        <div class="metric-row">
-            <span>GPU Usage:</span>
-            <span class="value-display" id="gpuUsage">45%</span>
-        </div>
-        <div class="metric-row">
-            <span>Memory:</span>
-            <span class="value-display" id="memoryUsage">28.3</span> MB
-        </div>
-        <div class="metric-row">
-            <span>Optimization:</span>
-            <span class="value-display" id="optimizationStatus">OPTIMAL</span>
-        </div>
-        <div class="metric-row">
-            <span>Stability:</span>
-            <span class="value-display" id="stabilityIndex">99.8%</span>
+        <div class="controls-content">
+            <div class="metric-row">
+                <span>Render FPS:</span>
+                <span class="value-display" id="renderFps">60.0</span>
+            </div>
+            <div class="metric-row">
+                <span>Frame Time:</span>
+                <span class="value-display" id="frameTimeMs">16.7</span> ms
+            </div>
+            <div class="metric-row">
+                <span>GPU Usage:</span>
+                <span class="value-display" id="gpuUsage">45%</span>
+            </div>
+            <div class="metric-row">
+                <span>Memory:</span>
+                <span class="value-display" id="memoryUsage">28.3</span> MB
+            </div>
+            <div class="metric-row">
+                <span>Optimization:</span>
+                <span class="value-display" id="optimizationStatus">OPTIMAL</span>
+            </div>
+            <div class="metric-row">
+                <span>Stability:</span>
+                <span class="value-display" id="stabilityIndex">99.8%</span>
+            </div>
         </div>
     </div>
 
     <script>
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
+        });
+
         class Working4DHyperAV {
             constructor() {
                 this.canvas = document.getElementById('canvas');
@@ -865,17 +872,20 @@
         
         // Initialize Working 4D HyperAV
         window.working4dHyperAV = new Working4DHyperAV();
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
+        });
     </script>
     
-    <!-- Add collapsible menu system for multiple menus -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark',
-            multipleMenus: true // Special flag for handling multiple menus
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 </body>
 </html>

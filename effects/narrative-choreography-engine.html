@@ -153,6 +153,44 @@
             z-index: 1000;
             width: 300px;
             box-shadow: 0 8px 32px rgba(144, 202, 249, 0.1);
+            transition: all 0.3s ease;
+        }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+            max-height: 500px; /* Sufficiently large value */
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
         }
 
         .control-group {
@@ -381,41 +419,38 @@
         </div>
     </div>
 
-    <div class="controls">
-        <h3 style="margin-top: 0; color: #9c27b0;">Narrative Choreography Engine</h3>
-        <div class="control-group">
-            <button class="control-button" onclick="triggerMagnitudeReveal()">Trigger Magnitude Reveal</button>
+    <div class="controls controls-panel" id="main-controls-panel">
+        <div class="controls-header">
+            <h3 style="margin-top: 0; color: #9c27b0;">Narrative Choreography Engine</h3>
+            <button class="controls-toggle" onclick="togglePanel('main-controls-panel')">▲</button>
         </div>
-        <div class="control-group">
-            <button class="control-button" onclick="triggerConceptSplit()">Trigger Concept Split</button>
-        </div>
-        <div class="control-group">
-            <button class="control-button" onclick="triggerRapidSequence()">Trigger Rapid Sequence</button>
-        </div>
-        <div class="control-group">
-            <button class="control-button" onclick="triggerConceptMerge()">Trigger Concept Merge</button>
-        </div>
-        <div class="control-group">
-            <button class="control-button" onclick="resetNarrative()">Reset Narrative</button>
-        </div>
-        <div class="control-group">
-            <div style="font-size: 12px; color: rgba(144, 202, 249, 0.7); margin-top: 15px;">
-                <div>Scroll Progress: <span id="scrollProgress">0%</span></div>
-                <div>Active Transformations: <span id="activeTransformations">0</span></div>
-                <div>Current Section: <span id="currentSection">1</span></div>
+        <div class="controls-content">
+            <div class="control-group">
+                <button class="control-button" onclick="triggerMagnitudeReveal()">Trigger Magnitude Reveal</button>
+            </div>
+            <div class="control-group">
+                <button class="control-button" onclick="triggerConceptSplit()">Trigger Concept Split</button>
+            </div>
+            <div class="control-group">
+                <button class="control-button" onclick="triggerRapidSequence()">Trigger Rapid Sequence</button>
+            </div>
+            <div class="control-group">
+                <button class="control-button" onclick="triggerConceptMerge()">Trigger Concept Merge</button>
+            </div>
+            <div class="control-group">
+                <button class="control-button" onclick="resetNarrative()">Reset Narrative</button>
+            </div>
+            <div class="control-group">
+                <div style="font-size: 12px; color: rgba(144, 202, 249, 0.7); margin-top: 15px;">
+                    <div>Scroll Progress: <span id="scrollProgress">0%</span></div>
+                    <div>Active Transformations: <span id="activeTransformations">0</span></div>
+                    <div>Current Section: <span id="currentSection">1</span></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 
     <div class="scroll-instructions">
         <div><strong>Scroll Controls:</strong></div>
@@ -700,6 +735,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             narrativeEngine = new NarrativeChoreographyEngine();
             console.log('🎭 Narrative Choreography Engine Demo Initialized!');
+        });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls-panel').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
         });
     </script>
 </body>

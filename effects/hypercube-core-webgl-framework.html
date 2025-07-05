@@ -217,156 +217,210 @@
             font-weight: 500;
             text-align: center;
         }
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .controls-toggle {
+            background: none;
+            border: 1px solid currentColor;
+            color: currentColor;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .controls-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .controls-content {
+            transition: all 0.3s ease-out;
+            overflow: hidden;
+            max-height: 1000px; /* Sufficiently large value */
+        }
+        .controls.collapsed .controls-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+        }
+        .controls.collapsed {
+            padding: 10px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <canvas id="glCanvas"></canvas>
     
-    <div class="framework-info">
-        <h3>HypercubeCore Framework</h3>
-        <div class="info-row">
-            <span class="info-label">Status:</span>
-            <span class="info-value">
-                <span class="status-indicator status-running" id="statusIndicator"></span>
-                <span id="statusText">Running</span>
-            </span>
+    <div class="framework-info controls" id="framework-info-panel">
+        <div class="controls-header">
+            <h3>HypercubeCore Framework</h3>
+            <button class="controls-toggle" onclick="togglePanel('framework-info-panel')">▲</button>
         </div>
-        <div class="info-row">
-            <span class="info-label">Geometry:</span>
-            <span class="info-value" id="currentGeometry">Hypercube</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Projection:</span>
-            <span class="info-value" id="currentProjection">Perspective</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Shader Program:</span>
-            <span class="info-value" id="currentShader">maleficarumViz</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">WebGL Version:</span>
-            <span class="info-value" id="webglVersion">1.0</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Uniforms Dirty:</span>
-            <span class="info-value" id="dirtyUniforms">0</span>
-        </div>
-    </div>
-
-    <div class="framework-controls">
-        <div class="control-section">
-            <div class="section-title">Core Parameters</div>
-            <div class="control-group">
-                <label class="control-label">Dimension: <span class="value-display" id="dimensionValue">4.0</span></label>
-                <input type="range" class="control-input" id="dimension" min="3.0" max="5.0" step="0.1" value="4.0">
+        <div class="controls-content">
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="info-value">
+                    <span class="status-indicator status-running" id="statusIndicator"></span>
+                    <span id="statusText">Running</span>
+                </span>
             </div>
-            <div class="control-group">
-                <label class="control-label">Morph Factor: <span class="value-display" id="morphFactorValue">0.5</span></label>
-                <input type="range" class="control-input" id="morphFactor" min="0.0" max="1.0" step="0.05" value="0.5">
+            <div class="info-row">
+                <span class="info-label">Geometry:</span>
+                <span class="info-value" id="currentGeometry">Hypercube</span>
             </div>
-            <div class="control-group">
-                <label class="control-label">Rotation Speed: <span class="value-display" id="rotationSpeedValue">0.2</span></label>
-                <input type="range" class="control-input" id="rotationSpeed" min="0.0" max="2.0" step="0.1" value="0.2">
+            <div class="info-row">
+                <span class="info-label">Projection:</span>
+                <span class="info-value" id="currentProjection">Perspective</span>
             </div>
-            <div class="control-group">
-                <label class="control-label">Grid Density: <span class="value-display" id="gridDensityValue">8.0</span></label>
-                <input type="range" class="control-input" id="gridDensity" min="1.0" max="20.0" step="0.5" value="8.0">
+            <div class="info-row">
+                <span class="info-label">Shader Program:</span>
+                <span class="info-value" id="currentShader">maleficarumViz</span>
             </div>
-        </div>
-
-        <div class="control-section">
-            <div class="section-title">Geometry & Projection</div>
-            <div class="control-group">
-                <label class="control-label">Geometry Type:</label>
-                <select class="control-select" id="geometryType">
-                    <option value="hypercube">Hypercube</option>
-                    <option value="hypersphere">Hypersphere</option>
-                    <option value="hypertetrahedron">Hypertetrahedron</option>
-                </select>
+            <div class="info-row">
+                <span class="info-label">WebGL Version:</span>
+                <span class="info-value" id="webglVersion">1.0</span>
             </div>
-            <div class="control-group">
-                <label class="control-label">Projection Method:</label>
-                <select class="control-select" id="projectionMethod">
-                    <option value="perspective">Perspective</option>
-                    <option value="orthographic">Orthographic</option>
-                    <option value="stereographic">Stereographic</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="control-section">
-            <div class="section-title">Visual Properties</div>
-            <div class="control-group">
-                <label class="control-label">Line Thickness: <span class="value-display" id="lineThicknessValue">0.03</span></label>
-                <input type="range" class="control-input" id="lineThickness" min="0.005" max="0.1" step="0.005" value="0.03">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Shell Width: <span class="value-display" id="shellWidthValue">0.025</span></label>
-                <input type="range" class="control-input" id="shellWidth" min="0.005" max="0.1" step="0.005" value="0.025">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Tetra Thickness: <span class="value-display" id="tetraThicknessValue">0.035</span></label>
-                <input type="range" class="control-input" id="tetraThickness" min="0.005" max="0.1" step="0.005" value="0.035">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Pattern Intensity: <span class="value-display" id="patternIntensityValue">1.0</span></label>
-                <input type="range" class="control-input" id="patternIntensity" min="0.0" max="2.0" step="0.1" value="1.0">
-            </div>
-        </div>
-
-        <div class="control-section">
-            <div class="section-title">Effects</div>
-            <div class="control-group">
-                <label class="control-label">Glitch Intensity: <span class="value-display" id="glitchIntensityValue">0.0</span></label>
-                <input type="range" class="control-input" id="glitchIntensity" min="0.0" max="1.0" step="0.05" value="0.0">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Color Shift: <span class="value-display" id="colorShiftValue">0.0</span></label>
-                <input type="range" class="control-input" id="colorShift" min="-1.0" max="1.0" step="0.05" value="0.0">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Universe Modifier: <span class="value-display" id="universeModifierValue">1.0</span></label>
-                <input type="range" class="control-input" id="universeModifier" min="0.1" max="3.0" step="0.1" value="1.0">
-            </div>
-        </div>
-
-        <div class="control-section">
-            <div class="section-title">Audio Levels (Simulated)</div>
-            <div class="control-group">
-                <label class="control-label">Bass: <span class="value-display" id="audioBassValue">0.0</span></label>
-                <input type="range" class="control-input" id="audioBass" min="0.0" max="1.0" step="0.05" value="0.0">
-            </div>
-            <div class="control-group">
-                <label class="control-label">Mid: <span class="value-display" id="audioMidValue">0.0</span></label>
-                <input type="range" class="control-input" id="audioMid" min="0.0" max="1.0" step="0.05" value="0.0">
-            </div>
-            <div class="control-group">
-                <label class="control-label">High: <span class="value-display" id="audioHighValue">0.0</span></label>
-                <input type="range" class="control-input" id="audioHigh" min="0.0" max="1.0" step="0.05" value="0.0">
-            </div>
-        </div>
-
-        <div class="control-section">
-            <div class="section-title">Framework Control</div>
-            <button class="framework-button" onclick="toggleRendering()" id="toggleBtn">Stop</button>
-            <button class="framework-button" onclick="resetParameters()">Reset</button>
-            <button class="framework-button" onclick="randomizeParameters()">Randomize</button>
-            <button class="framework-button" onclick="exportState()">Export</button>
-            
-            <div class="preset-grid">
-                <button class="framework-button" onclick="loadPreset('classic')">Classic</button>
-                <button class="framework-button" onclick="loadPreset('intense')">Intense</button>
-                <button class="framework-button" onclick="loadPreset('minimal')">Minimal</button>
-                <button class="framework-button" onclick="loadPreset('chaos')">Chaos</button>
+            <div class="info-row">
+                <span class="info-label">Uniforms Dirty:</span>
+                <span class="info-value" id="dirtyUniforms">0</span>
             </div>
         </div>
     </div>
 
-    <div class="performance-monitor">
-        <div class="fps-display" id="fpsDisplay">60 FPS</div>
-        <div>Frame Time: <span id="frameTime">16.7ms</span></div>
-        <div>Render Calls: <span id="renderCalls">1</span></div>
-        <div>Memory Usage: <span id="memoryUsage">~50MB</span></div>
+    <div class="framework-controls controls" id="framework-controls-panel">
+        <div class="controls-header">
+            <h3 style="margin: 0 0 15px 0; color: #9c27b0;">CONTROLS</h3>
+            <button class="controls-toggle" onclick="togglePanel('framework-controls-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div class="control-section">
+                <div class="section-title">Core Parameters</div>
+                <div class="control-group">
+                    <label class="control-label">Dimension: <span class="value-display" id="dimensionValue">4.0</span></label>
+                    <input type="range" class="control-input" id="dimension" min="3.0" max="5.0" step="0.1" value="4.0">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Morph Factor: <span class="value-display" id="morphFactorValue">0.5</span></label>
+                    <input type="range" class="control-input" id="morphFactor" min="0.0" max="1.0" step="0.05" value="0.5">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Rotation Speed: <span class="value-display" id="rotationSpeedValue">0.2</span></label>
+                    <input type="range" class="control-input" id="rotationSpeed" min="0.0" max="2.0" step="0.1" value="0.2">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Grid Density: <span class="value-display" id="gridDensityValue">8.0</span></label>
+                    <input type="range" class="control-input" id="gridDensity" min="1.0" max="20.0" step="0.5" value="8.0">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Geometry & Projection</div>
+                <div class="control-group">
+                    <label class="control-label">Geometry Type:</label>
+                    <select class="control-select" id="geometryType">
+                        <option value="hypercube">Hypercube</option>
+                        <option value="hypersphere">Hypersphere</option>
+                        <option value="hypertetrahedron">Hypertetrahedron</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Projection Method:</label>
+                    <select class="control-select" id="projectionMethod">
+                        <option value="perspective">Perspective</option>
+                        <option value="orthographic">Orthographic</option>
+                        <option value="stereographic">Stereographic</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Visual Properties</div>
+                <div class="control-group">
+                    <label class="control-label">Line Thickness: <span class="value-display" id="lineThicknessValue">0.03</span></label>
+                    <input type="range" class="control-input" id="lineThickness" min="0.005" max="0.1" step="0.005" value="0.03">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Shell Width: <span class="value-display" id="shellWidthValue">0.025</span></label>
+                    <input type="range" class="control-input" id="shellWidth" min="0.005" max="0.1" step="0.005" value="0.025">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Tetra Thickness: <span class="value-display" id="tetraThicknessValue">0.035</span></label>
+                    <input type="range" class="control-input" id="tetraThickness" min="0.005" max="0.1" step="0.005" value="0.035">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Pattern Intensity: <span class="value-display" id="patternIntensityValue">1.0</span></label>
+                    <input type="range" class="control-input" id="patternIntensity" min="0.0" max="2.0" step="0.1" value="1.0">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Effects</div>
+                <div class="control-group">
+                    <label class="control-label">Glitch Intensity: <span class="value-display" id="glitchIntensityValue">0.0</span></label>
+                    <input type="range" class="control-input" id="glitchIntensity" min="0.0" max="1.0" step="0.05" value="0.0">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Color Shift: <span class="value-display" id="colorShiftValue">0.0</span></label>
+                    <input type="range" class="control-input" id="colorShift" min="-1.0" max="1.0" step="0.05" value="0.0">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Universe Modifier: <span class="value-display" id="universeModifierValue">1.0</span></label>
+                    <input type="range" class="control-input" id="universeModifier" min="0.1" max="3.0" step="0.1" value="1.0">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Audio Levels (Simulated)</div>
+                <div class="control-group">
+                    <label class="control-label">Bass: <span class="value-display" id="audioBassValue">0.0</span></label>
+                    <input type="range" class="control-input" id="audioBass" min="0.0" max="1.0" step="0.05" value="0.0">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Mid: <span class="value-display" id="audioMidValue">0.0</span></label>
+                    <input type="range" class="control-input" id="audioMid" min="0.0" max="1.0" step="0.05" value="0.0">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">High: <span class="value-display" id="audioHighValue">0.0</span></label>
+                    <input type="range" class="control-input" id="audioHigh" min="0.0" max="1.0" step="0.05" value="0.0">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Framework Control</div>
+                <button class="framework-button" onclick="toggleRendering()" id="toggleBtn">Stop</button>
+                <button class="framework-button" onclick="resetParameters()">Reset</button>
+                <button class="framework-button" onclick="randomizeParameters()">Randomize</button>
+                <button class="framework-button" onclick="exportState()">Export</button>
+                
+                <div class="preset-grid">
+                    <button class="framework-button" onclick="loadPreset('classic')">Classic</button>
+                    <button class="framework-button" onclick="loadPreset('intense')">Intense</button>
+                    <button class="framework-button" onclick="loadPreset('minimal')">Minimal</button>
+                    <button class="framework-button" onclick="loadPreset('chaos')">Chaos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="performance-monitor controls" id="performance-monitor-panel">
+        <div class="controls-header">
+            <h3 style="margin: 0 0 15px 0; color: #90caf9;">PERFORMANCE</h3>
+            <button class="controls-toggle" onclick="togglePanel('performance-monitor-panel')">▲</button>
+        </div>
+        <div class="controls-content">
+            <div class="fps-display" id="fpsDisplay">60 FPS</div>
+            <div>Frame Time: <span id="frameTime">16.7ms</span></div>
+            <div>Render Calls: <span id="renderCalls">1</span></div>
+            <div>Memory Usage: <span id="memoryUsage">~50MB</span></div>
+        </div>
     </div>
 
     <script>
@@ -1235,16 +1289,20 @@
                 document.getElementById('statusIndicator').className = 'status-indicator status-stopped';
             }
         });
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        // Ensure panels are expanded by default on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.controls').forEach(panel => {
+                panel.classList.remove('collapsed');
+            });
+        });
     </script>
     
-    <!-- Add collapsible menu system -->
-    <script>
-        window.COLLAPSIBLE_MENU_CONFIG = {
-            startCollapsed: true,
-            position: 'top-right',
-            theme: 'dark'
-        };
-    </script>
-    <script src="../js/inject-collapsible-menu.js"></script>
+    
 </body>
 </html>
