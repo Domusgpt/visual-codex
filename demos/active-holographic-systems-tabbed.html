@@ -26,12 +26,13 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 2000;
-            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000; /* Reduced z-index */
+            background: rgba(0, 0, 0, 0.9);
             padding: 15px;
             border-radius: 15px;
             border: 1px solid #00ffff;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            min-width: 280px;
         }
         
         .demo-title {
@@ -50,70 +51,78 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
         }
+        
         .controls-toggle {
-            background: none;
-            border: 1px solid currentColor;
-            color: currentColor;
-            padding: 3px 8px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 6px 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 10px;
-            transition: all 0.2s ease;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            min-width: 50px;
+            text-align: center;
         }
+        
         .controls-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
+        
         .controls-content {
-            transition: all 0.3s ease-out;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             overflow: hidden;
-            max-height: 500px; /* Sufficiently large value */
+            max-height: 800px; /* Increased for more content */
+            opacity: 1;
         }
+        
         .controls.collapsed .controls-content {
             max-height: 0;
             opacity: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .controls.collapsed .controls-toggle {
-            transform: rotate(180deg);
-        }
-        .controls.collapsed {
-            padding: 10px;
-            height: auto;
+            margin-top: 0;
+            margin-bottom: 0;
         }
         
-        /* TAB NAVIGATION */
+        .controls.collapsed .controls-toggle {
+            transform: rotate(180deg);
+            background: rgba(255, 0, 255, 0.1);
+            border-color: #ff00ff;
+            color: #ff00ff;
+        }
+        
+        .controls.collapsed {
+            min-width: 200px;
+        }
+        
+        /* TAB NAVIGATION - MOVED TO TOP PANEL */
         .tab-navigation {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1500;
+            background: none;
+            border: none;
+            padding: 0;
+            margin-top: 15px;
             display: flex;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #00ffff;
-            backdrop-filter: blur(10px);
+            gap: 8px;
             flex-wrap: wrap;
-            max-width: 90vw;
-            justify-content: center;
+            justify-content: flex-start;
         }
         
         .tab-button {
             background: rgba(0, 255, 255, 0.1);
             border: 1px solid #00ffff;
             color: #00ffff;
-            padding: 10px 20px;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Orbitron', monospace;
-            font-size: 0.8rem;
-            min-width: 100px;
+            font-size: 0.7rem;
+            min-width: 60px;
             text-align: center;
+            white-space: nowrap;
         }
         
         .tab-button:hover {
@@ -323,23 +332,22 @@
     </style>
 </head>
 <body>
-    <div class="demo-header controls" id="demo-header-panel">
+    <!-- CONSOLIDATED CONTROL PANEL -->
+    <div class="demo-header controls" id="main-control-panel">
         <div class="controls-header">
             <div class="demo-title">ACTIVE HOLOGRAPHIC SYSTEMS</div>
-            <button class="controls-toggle" onclick="togglePanel('demo-header-panel')">▲</button>
+            <button class="controls-toggle" onclick="togglePanel('main-control-panel')">▲</button>
         </div>
         <div class="controls-content">
             <div class="demo-counter">3 Active Canvases × 10 Pages = 30 Variations</div>
-        </div>
-    </div>
-
-    <div class="tab-navigation controls" id="tabNavigation">
-        <div class="controls-header">
-            <h3 style="color: #00ffff; margin: 0;">PAGE NAVIGATION</h3>
-            <button class="controls-toggle" onclick="togglePanel('tabNavigation')">▲</button>
-        </div>
-        <div class="controls-content">
-            <!-- Tabs will be generated here -->
+            
+            <!-- INTEGRATED TAB NAVIGATION -->
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0, 255, 255, 0.3);">
+                <div style="color: #00ffff; font-size: 0.9rem; margin-bottom: 10px; font-weight: bold;">PAGE NAVIGATION</div>
+                <div class="tab-navigation" id="tabNavigation">
+                    <!-- Tabs will be generated here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -577,14 +585,30 @@
 
         function togglePanel(panelId) {
             const panel = document.getElementById(panelId);
-            panel.classList.toggle('collapsed');
+            if (panel) {
+                panel.classList.toggle('collapsed');
+                
+                // Update toggle button text
+                const toggleBtn = panel.querySelector('.controls-toggle');
+                if (toggleBtn) {
+                    if (panel.classList.contains('collapsed')) {
+                        toggleBtn.textContent = '▼';
+                    } else {
+                        toggleBtn.textContent = '▲';
+                    }
+                }
+                
+                console.log(`Panel ${panelId} ${panel.classList.contains('collapsed') ? 'collapsed' : 'expanded'}`);
+            }
         }
 
-        // Ensure panels are expanded by default on load
+        // Ensure panel is expanded by default on load
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.controls').forEach(panel => {
-                panel.classList.remove('collapsed');
-            });
+            const mainPanel = document.getElementById('main-control-panel');
+            if (mainPanel) {
+                mainPanel.classList.remove('collapsed');
+                console.log('✅ Main control panel initialized and expanded');
+            }
         });
         
         // Initialize when page loads
