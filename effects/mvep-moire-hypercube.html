@@ -152,8 +152,8 @@
     </div>
     
     <div class="controls" id="mvep-controls">
-        <button type="button" class="controls-toggle" onclick="toggleMVEPControls()">▼</button>
-        <div class="controls-content">
+        <button type="button" class="controls-toggle" onclick="toggleMVEPControls()">▲</button>
+        <div class="controls-content" style="display: block;">
             <div class="control-group">
                 <label>Dimension: <span class="value-display" id="dimensionValue">3.8</span></label>
                 <input type="range" id="dimension" min="3.0" max="5.0" step="0.1" value="3.8">
@@ -199,18 +199,17 @@
                 return;
             }
             
-            // Check if currently hidden (either display:none or empty)
-            const isHidden = controlsContent.style.display === 'none' || 
-                           window.getComputedStyle(controlsContent).display === 'none';
-            
-            if (isHidden) {
-                controlsContent.style.display = 'block';
-                toggle.textContent = '▲';
-                console.log('🎛️ MVEP controls opened');
-            } else {
+            // Simple toggle based on current arrow direction
+            if (toggle.textContent === '▲') {
+                // Currently open, so close it
                 controlsContent.style.display = 'none';
                 toggle.textContent = '▼';
                 console.log('🎛️ MVEP controls closed');
+            } else {
+                // Currently closed, so open it
+                controlsContent.style.display = 'block';
+                toggle.textContent = '▲';
+                console.log('🎛️ MVEP controls opened');
             }
         }
 
