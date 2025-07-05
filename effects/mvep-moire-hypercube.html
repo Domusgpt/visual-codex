@@ -559,13 +559,23 @@
                 params.forEach(param => {
                     const slider = document.getElementById(param);
                     const display = document.getElementById(param + 'Value');
-                    slider.addEventListener('input', (e) => {
-                        this.params[param] = parseFloat(e.target.value);
-                        display.textContent = e.target.value;
-                    });
+                    if (slider && display) {
+                        slider.addEventListener('input', (e) => {
+                            this.params[param] = parseFloat(e.target.value);
+                            display.textContent = e.target.value;
+                            console.log(`🎛️ ${param}: ${e.target.value}`);
+                        });
+                    } else {
+                        console.error(`Missing slider or display for ${param}`);
+                    }
                 });
 
-                document.getElementById('audioBtn').addEventListener('click', () => this.toggleAudio());
+                const audioBtn = document.getElementById('audioBtn');
+                if (audioBtn) {
+                    audioBtn.addEventListener('click', () => this.toggleAudio());
+                } else {
+                    console.error('Audio button not found');
+                }
             }
             
             async initAudio() {
