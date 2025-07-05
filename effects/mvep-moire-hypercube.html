@@ -199,7 +199,11 @@
                 return;
             }
             
-            if (controlsContent.style.display === 'none') {
+            // Check if currently hidden (either display:none or empty)
+            const isHidden = controlsContent.style.display === 'none' || 
+                           window.getComputedStyle(controlsContent).display === 'none';
+            
+            if (isHidden) {
                 controlsContent.style.display = 'block';
                 toggle.textContent = '▲';
                 console.log('🎛️ MVEP controls opened');
@@ -551,32 +555,18 @@
                     console.log(`🎛️ Parameter scroll: ${(this.scrollParameter * 100).toFixed(1)}% → Grid: ${this.params.gridDensity.toFixed(1)}, Color: ${this.params.colorShift.toFixed(2)} (no page movement)`);
                 }, { passive: false });
                 
-                // Parameter controls - bind to instance
-                const paramMappings = {
-                    'dimension': 'dimension',
-                    'morphFactor': 'morphFactor', 
-                    'glitchIntensity': 'glitchIntensity',
-                    'rotationSpeed': 'rotationSpeed',
-                    'gridDensity': 'gridDensity',
-                    'moireScale': 'moireScale',
-                    'colorShift': 'colorShift'
-                };
-                
-                Object.keys(paramMappings).forEach(param => {
+                // Parameter controls
+                const params = ['dimension', 'morphFactor', 'glitchIntensity', 'rotationSpeed', 'gridDensity', 'moireScale', 'colorShift'];
+                params.forEach(param => {
                     const slider = document.getElementById(param);
                     const display = document.getElementById(param + 'Value');
-                    if (slider && display) {
-                        slider.addEventListener('input', (e) => {
-                            this.params[paramMappings[param]] = parseFloat(e.target.value);
-                            display.textContent = e.target.value;
-                        });
-                    }
+                    slider.addEventListener('input', (e) => {
+                        this.params[param] = parseFloat(e.target.value);
+                        display.textContent = e.target.value;
+                    });
                 });
 
-                const audioBtn = document.getElementById('audioBtn');
-                if (audioBtn) {
-                    audioBtn.addEventListener('click', () => this.toggleAudio());
-                }
+                document.getElementById('audioBtn').addEventListener('click', () => this.toggleAudio());
             }
             
             async initAudio() {
