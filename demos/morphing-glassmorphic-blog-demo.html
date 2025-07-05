@@ -136,15 +136,13 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        /* Card Bending Effect */
+        /* Real Card Bending - Warp and Stretch Effect */
+        .blog-card {
+            transform-origin: 50% 50%;
+            will-change: transform;
+        }
+
         .blog-card:hover {
-            transform: 
-                perspective(1000px)
-                rotateX(calc(var(--bend-intensity) * -15deg))
-                rotateY(calc(var(--bend-intensity) * 10deg))
-                translateY(-20px)
-                translateZ(30px)
-                scale(1.02);
             box-shadow: 
                 0 30px 60px rgba(0, 255, 255, 0.3),
                 inset 0 2px 0 rgba(255, 255, 255, 0.2),
@@ -153,16 +151,53 @@
             border-color: rgba(255, 0, 255, 0.5);
         }
 
-        /* Advanced Card Bending with Mouse Position */
+        /* Extreme Card Bending with Perspective Distortion */
         .blog-card.bending {
             transform: 
-                perspective(1000px)
-                rotateX(calc((var(--mouse-y) - 50) * -0.3deg))
-                rotateY(calc((var(--mouse-x) - 50) * 0.3deg))
-                translateY(-15px)
-                translateZ(25px)
-                scale(1.05);
-            transition: transform 0.1s ease-out;
+                perspective(500px)
+                rotateX(calc((var(--mouse-y) - 50) * -0.8deg))
+                rotateY(calc((var(--mouse-x) - 50) * 0.8deg))
+                rotateZ(calc((var(--mouse-x) - 50) * 0.3deg))
+                scaleX(calc(1 + abs(var(--mouse-x) - 50) * 0.01))
+                scaleY(calc(1 + abs(var(--mouse-y) - 50) * 0.008))
+                translateZ(calc(var(--bend-intensity) * 100px))
+                skewX(calc((var(--mouse-x) - 50) * 0.2deg))
+                skewY(calc((var(--mouse-y) - 50) * 0.15deg));
+            transition: transform 0.05s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        /* Extreme bending when intensity is high - Woah 3D effect */
+        .blog-card.extreme-bend {
+            transform: 
+                perspective(200px)
+                rotateX(calc((var(--mouse-y) - 50) * -2deg))
+                rotateY(calc((var(--mouse-x) - 50) * 1.8deg))
+                rotateZ(calc((var(--mouse-x) - 50) * 0.8deg))
+                scaleX(calc(1 + abs(var(--mouse-x) - 50) * 0.03))
+                scaleY(calc(1 + abs(var(--mouse-y) - 50) * 0.025))
+                translateZ(calc(var(--bend-intensity) * 200px))
+                skewX(calc((var(--mouse-x) - 50) * 0.6deg))
+                skewY(calc((var(--mouse-y) - 50) * 0.5deg));
+            transition: transform 0.02s ease-out;
+            filter: contrast(1.1) brightness(1.05);
+        }
+
+        /* Ultra extreme bending for maximum woah effect */
+        .blog-card.ultra-bend {
+            transform: 
+                perspective(150px)
+                rotateX(calc((var(--mouse-y) - 50) * -3deg))
+                rotateY(calc((var(--mouse-x) - 50) * 2.5deg))
+                rotateZ(calc((var(--mouse-x) - 50) * 1.2deg))
+                scaleX(calc(1 + abs(var(--mouse-x) - 50) * 0.05))
+                scaleY(calc(1 + abs(var(--mouse-y) - 50) * 0.04))
+                translateZ(calc(var(--bend-intensity) * 300px))
+                skewX(calc((var(--mouse-x) - 50) * 1deg))
+                skewY(calc((var(--mouse-y) - 50) * 0.8deg));
+            transition: transform 0.01s linear;
+            filter: contrast(1.2) brightness(1.1) saturate(1.1);
+            border-width: 2px;
         }
 
         /* Holographic Border Animation */
@@ -512,30 +547,57 @@
             }
         });
         
-        // Card interactions
+        // Card interactions with extreme bending
         cards.forEach(card => {
             card.addEventListener('mouseenter', (e) => {
-                if (mouseFollowMode) {
-                    card.classList.add('bending');
+                card.classList.add('bending');
+                
+                // Add extreme bend class if intensity is high
+                const currentIntensity = parseFloat(document.documentElement.style.getPropertyValue('--bend-intensity')) || 0.5;
+                if (currentIntensity > 0.7) {
+                    card.classList.add('extreme-bend');
                 }
             });
             
             card.addEventListener('mouseleave', (e) => {
-                card.classList.remove('bending');
-                if (mouseFollowMode) {
-                    updateBendIntensity(0);
-                }
+                card.classList.remove('bending', 'extreme-bend', 'ultra-bend');
+                // Reset card transform variables
+                card.style.removeProperty('--mouse-x');
+                card.style.removeProperty('--mouse-y');
             });
             
             card.addEventListener('mousemove', (e) => {
-                if (mouseFollowMode && card.classList.contains('bending')) {
+                if (card.classList.contains('bending')) {
                     const rect = card.getBoundingClientRect();
                     const cardX = ((e.clientX - rect.left) / rect.width) * 100;
                     const cardY = ((e.clientY - rect.top) / rect.height) * 100;
                     
-                    // Update CSS variables for this specific card
+                    // Extreme warping based on distance from center
+                    const centerX = 50;
+                    const centerY = 50;
+                    const distanceFromCenter = Math.sqrt(Math.pow(cardX - centerX, 2) + Math.pow(cardY - centerY, 2));
+                    
+                    // Apply different bend levels based on distance and intensity
+                    const currentIntensity = parseFloat(document.documentElement.style.getPropertyValue('--bend-intensity')) || 0.5;
+                    
+                    // Remove all bend classes first
+                    card.classList.remove('extreme-bend', 'ultra-bend');
+                    
+                    if (distanceFromCenter > 40 && currentIntensity > 0.8) {
+                        card.classList.add('ultra-bend');
+                    } else if (distanceFromCenter > 25 && currentIntensity > 0.5) {
+                        card.classList.add('extreme-bend');
+                    }
+                    
+                    // Update CSS variables for this specific card with enhanced values
                     card.style.setProperty('--mouse-x', cardX);
                     card.style.setProperty('--mouse-y', cardY);
+                    
+                    // Dynamic bend intensity based on mouse movement speed
+                    if (mouseFollowMode) {
+                        const movementIntensity = Math.min(1, distanceFromCenter / 50);
+                        updateBendIntensity(movementIntensity);
+                    }
                 }
             });
         });
