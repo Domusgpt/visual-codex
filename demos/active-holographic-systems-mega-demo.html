@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECH LAYOUT - Active Holographic System</title>
+    <title>Active Holographic Systems - 30 Variations Mega Demo</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght @400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
         * {
             margin: 0;
@@ -332,6 +332,150 @@
                 opacity: 0;
             }
         }
+        
+        /* NAVIGATION CONTROLS */
+        .navigation-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            border-radius: 25px;
+            border: 2px solid #00ffff;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-button {
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-button:hover {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 20px #00ffff;
+        }
+        
+        .nav-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        /* VARIANT INDICATOR */
+        .variant-indicator {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 2px solid #ff00ff;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .variant-number {
+            color: #ff00ff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        .variant-name {
+            color: #00ffff;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        
+        /* EXPAND BUTTON */
+        .expand-button {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            background: #ff00ff;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .expand-button:hover {
+            background: #ff00ff;
+            box-shadow: 0 0 30px #ff00ff;
+            transform: scale(1.1);
+        }
+        
+        /* EXPANDED VIEW */
+        .expanded-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+        
+        .expanded-view.active {
+            display: block;
+        }
+        
+        .close-expanded {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff0080;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1001;
+        }
+        
+        /* SCROLL INDICATOR */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ffff;
+            font-size: 0.8rem;
+            text-align: center;
+            z-index: 100;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .scroll-hint {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
@@ -342,115 +486,101 @@
     <div class="state-indicator">
         <div class="state-row">Layout: <span class="state-value">TECH</span></div>
         <div class="state-row">Depth: <span class="state-value">Holographic</span></div>
-        <div class="state-row">Visualizers: <span class="state-value" id="visualizer-count"></span></div>
+        <div class="state-row">Visualizers: <span class="state-value" id="visualizer-count">13</span></div>
         <div class="state-row">Mouse: <span class="state-value" id="mouse-reactive">Active</span></div>
+    </div>
+    
+    <!-- VARIANT INDICATOR -->
+    <div class="variant-indicator">
+        <div class="state-row">Variant</div>
+        <div class="variant-number" id="variant-number">1/30</div>
+        <div class="variant-name" id="variant-name">HYPERCUBE LATTICE</div>
+    </div>
+    
+    <!-- EXPAND BUTTON -->
+    <button class="expand-button" onclick="toggleExpanded()">⚡ EXPAND</button>
+    
+    <!-- NAVIGATION CONTROLS -->
+    <div class="navigation-controls">
+        <button class="nav-button" id="prev-button" onclick="navigateVariant(-1)">◀ PREV</button>
+        <button class="nav-button" onclick="randomVariant()">🎲 RANDOM</button>
+        <button class="nav-button" id="next-button" onclick="navigateVariant(1)">NEXT ▶</button>
+    </div>
+    
+    <!-- SCROLL INDICATOR -->
+    <div class="scroll-indicator">
+        <div class="scroll-hint">↕ SCROLL FOR PARAMETER CONTROL</div>
+        <div>CLICK FOR PULSE • MOVE FOR REACTIVITY</div>
     </div>
 
     <!-- HOLOGRAPHIC CONTAINER -->
     <div class="holographic-container layout-tech" id="holoContainer">
-        
-        <!-- BACKGROUND DEPTH LAYER -->
-        <div class="depth-layer background" id="backgroundLayer">
-            <canvas class="visualizer-canvas" id="background-visualizer"></canvas>
+        <!-- Content will be dynamically generated -->
+    </div>
+    
+    <!-- EXPANDED VIEW -->
+    <div class="expanded-view" id="expandedView">
+        <button class="close-expanded" onclick="toggleExpanded()">✕ Close</button>
+        <div class="holographic-container layout-tech" id="expandedHoloContainer" style="position: relative; width: 100vw; height: 100vh;">
+            <!-- Expanded content will be cloned here -->
         </div>
-        
-        <!-- SHADOW DEPTH LAYER -->
-        <div class="depth-layer midground" id="shadowLayer">
-            <canvas class="visualizer-canvas shadow-visualizer" id="shadow-visualizer"></canvas>
-        </div>
-        
-        <!-- NEOSKEUOMORPHIC CARDS -->
-        <div class="depth-layer foreground" id="cardsLayer">
-            
-            <!-- Header Card -->
-            <div class="neomorphic-card" id="card-1">
-                <canvas class="visualizer-canvas content-visualizer" id="card-visualizer-1"></canvas>
-                <canvas class="visualizer-canvas highlight-visualizer" id="highlight-visualizer-1"></canvas>
-                <div class="card-content">
-                    <div class="card-title">TECH COMMAND</div>
-                    <div class="card-subtitle">GEOMETRIC PRECISION</div>
-                    <div class="card-description">
-                        Primary control interface with neoskeuomorphic depth and holographic projection
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Left Tools -->
-            <div class="neomorphic-card" id="card-2">
-                <canvas class="visualizer-canvas content-visualizer" id="card-visualizer-2"></canvas>
-                <canvas class="visualizer-canvas highlight-visualizer" id="highlight-visualizer-2"></canvas>
-                <div class="card-content">
-                    <div class="card-title">TOOL MATRIX</div>
-                    <div class="card-subtitle">INSTRUMENT PANEL</div>
-                    <div class="card-description">
-                        Precision tools and controls with reactive geometric feedback systems
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Right Workspace -->
-            <div class="neomorphic-card" id="card-3">
-                <canvas class="visualizer-canvas content-visualizer" id="card-visualizer-3"></canvas>
-                <canvas class="visualizer-canvas highlight-visualizer" id="highlight-visualizer-3"></canvas>
-                <div class="card-content">
-                    <div class="card-title">WORKSPACE</div>
-                    <div class="card-subtitle">DIMENSIONAL CANVAS</div>
-                    <div class="card-description">
-                        Primary workspace with multi-dimensional geometric visualization and rendering
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Center Console -->
-            <div class="neomorphic-card" id="card-4">
-                <canvas class="visualizer-canvas content-visualizer" id="card-visualizer-4"></canvas>
-                <canvas class="visualizer-canvas highlight-visualizer" id="highlight-visualizer-4"></canvas>
-                <div class="card-content">
-                    <div class="card-title">CONSOLE</div>
-                    <div class="card-subtitle">PROCESS CONTROL</div>
-                    <div class="card-description">
-                        Central processing console with real-time holographic feedback
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Bottom Monitor -->
-            <div class="neomorphic-card" id="card-5">
-                <canvas class="visualizer-canvas content-visualizer" id="card-visualizer-5"></canvas>
-                <canvas class="visualizer-canvas highlight-visualizer" id="highlight-visualizer-5"></canvas>
-                <div class="card-content">
-                    <div class="card-title">MONITOR</div>
-                    <div class="card-subtitle">STATUS DISPLAY</div>
-                    <div class="card-description">
-                        System monitoring with real-time geometric pattern analysis
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-        
-        <!-- ACCENT DEPTH LAYER -->
-        <div class="depth-layer accent" id="accentLayer">
-            <canvas class="visualizer-canvas accent-visualizer" id="accent-visualizer"></canvas>
-        </div>
-        
     </div>
 
     <script>
-        console.log(' TECH LAYOUT - Active Holographic System');
+        console.log('🌌 Active Holographic Systems - 30 Variations Mega Demo');
         
-        // ENHANCED HOLOGRAPHIC VISUALIZER
+        // ENHANCED HOLOGRAPHIC VISUALIZER WITH ALL 30 VARIATIONS
         class HolographicVisualizer {
-            constructor(canvasId, role = 'content', reactivity = 1.0) {
+            constructor(canvasId, role = 'content', reactivity = 1.0, variantIndex = 0) {
                 this.canvas = document.getElementById(canvasId);
-                this.role = role; // 'background', 'shadow', 'content', 'highlight', 'accent'
-                this.reactivity = reactivity; // 0.5 = subtle, 1.0 = normal, 1.5 = highly reactive
+                this.role = role;
+                this.reactivity = reactivity;
+                this.variantIndex = variantIndex;
                 this.gl = this.canvas.getContext('webgl');
                 
                 if (!this.gl) {
                     console.error(`WebGL not supported for ${canvasId}`);
                     return;
                 }
+                
+                // Define all 30 variations
+                this.variants = [
+                    { name: 'HYPERCUBE LATTICE', geometry: 0, baseColor: [0.0, 1.0, 1.0], speedMod: 1.0, densityMod: 1.0 },
+                    { name: 'TETRAHEDRON MATRIX', geometry: 1, baseColor: [1.0, 0.0, 1.0], speedMod: 0.8, densityMod: 1.2 },
+                    { name: 'SPHERE CLUSTER', geometry: 2, baseColor: [1.0, 1.0, 0.0], speedMod: 1.1, densityMod: 0.9 },
+                    { name: 'TORUS FIELD', geometry: 3, baseColor: [0.0, 1.0, 0.0], speedMod: 0.9, densityMod: 1.1 },
+                    { name: 'WAVE INTERFERENCE', geometry: 4, baseColor: [1.0, 0.5, 0.0], speedMod: 1.3, densityMod: 0.8 },
+                    { name: 'CRYSTAL FORMATION', geometry: 5, baseColor: [0.5, 0.0, 1.0], speedMod: 0.7, densityMod: 1.3 },
+                    { name: 'SPIRAL VORTEX', geometry: 6, baseColor: [0.0, 0.5, 1.0], speedMod: 1.4, densityMod: 1.0 },
+                    { name: 'FRACTAL DIMENSION', geometry: 7, baseColor: [1.0, 0.0, 0.5], speedMod: 0.6, densityMod: 1.5 },
+                    { name: 'QUANTUM MESH', geometry: 8, baseColor: [0.5, 1.0, 0.5], speedMod: 1.2, densityMod: 0.7 },
+                    { name: 'NEURAL NETWORK', geometry: 9, baseColor: [1.0, 0.8, 0.0], speedMod: 1.0, densityMod: 1.2 },
+                    // Variations 11-20
+                    { name: 'HOLOGRAPHIC PRISM', geometry: 0, baseColor: [0.8, 0.2, 1.0], speedMod: 1.1, densityMod: 0.8 },
+                    { name: 'PLASMA FIELD', geometry: 1, baseColor: [1.0, 0.3, 0.3], speedMod: 1.5, densityMod: 0.9 },
+                    { name: 'GEOMETRIC CASCADE', geometry: 2, baseColor: [0.2, 0.8, 1.0], speedMod: 0.8, densityMod: 1.4 },
+                    { name: 'DIMENSIONAL SHIFT', geometry: 3, baseColor: [0.6, 1.0, 0.2], speedMod: 1.3, densityMod: 0.6 },
+                    { name: 'LIGHT MATRIX', geometry: 4, baseColor: [1.0, 1.0, 0.5], speedMod: 0.9, densityMod: 1.1 },
+                    { name: 'VOID WALKER', geometry: 5, baseColor: [0.1, 0.1, 0.9], speedMod: 0.5, densityMod: 1.6 },
+                    { name: 'ENERGY GRID', geometry: 6, baseColor: [1.0, 0.5, 0.8], speedMod: 1.2, densityMod: 0.9 },
+                    { name: 'TIME CRYSTAL', geometry: 7, baseColor: [0.3, 0.9, 0.6], speedMod: 0.7, densityMod: 1.3 },
+                    { name: 'PHASE SHIFT', geometry: 8, baseColor: [0.9, 0.6, 0.1], speedMod: 1.4, densityMod: 0.8 },
+                    { name: 'HYPERBOLIC FLOW', geometry: 9, baseColor: [0.5, 0.3, 0.9], speedMod: 1.1, densityMod: 1.0 },
+                    // Variations 21-30
+                    { name: 'TESSERACT CORE', geometry: 0, baseColor: [0.0, 0.9, 0.9], speedMod: 0.6, densityMod: 1.5 },
+                    { name: 'MOBIUS STRIP', geometry: 1, baseColor: [0.9, 0.0, 0.6], speedMod: 1.3, densityMod: 0.7 },
+                    { name: 'KLEIN BOTTLE', geometry: 2, baseColor: [0.7, 0.7, 0.0], speedMod: 0.9, densityMod: 1.2 },
+                    { name: 'PENROSE TILING', geometry: 3, baseColor: [0.2, 0.6, 0.8], speedMod: 1.0, densityMod: 1.1 },
+                    { name: 'FIBONACCI SPIRAL', geometry: 4, baseColor: [0.8, 0.4, 0.2], speedMod: 1.2, densityMod: 0.9 },
+                    { name: 'MANDELBROT SET', geometry: 5, baseColor: [0.4, 0.0, 0.8], speedMod: 0.8, densityMod: 1.4 },
+                    { name: 'JULIA FRACTAL', geometry: 6, baseColor: [0.0, 0.7, 0.3], speedMod: 1.5, densityMod: 0.6 },
+                    { name: 'LORENZ ATTRACTOR', geometry: 7, baseColor: [0.9, 0.3, 0.5], speedMod: 1.1, densityMod: 1.0 },
+                    { name: 'STRANGE LOOP', geometry: 8, baseColor: [0.6, 0.5, 0.9], speedMod: 0.7, densityMod: 1.3 },
+                    { name: 'INFINITY MATRIX', geometry: 9, baseColor: [1.0, 0.9, 0.8], speedMod: 1.4, densityMod: 0.8 }
+                ];
+                
+                // Get current variant
+                this.currentVariant = this.variants[this.variantIndex];
                 
                 // Role-specific parameters
                 this.roleParams = {
@@ -477,39 +607,28 @@
                     }
                 }[role] || { densityMult: 1.0, speedMult: 0.5, colorShift: 0.0, intensity: 0.5, mouseReactivity: 1.0, clickReactivity: 0.5 };
                 
-                // Enhanced state system - TECH layout locked
-                this.currentState = 1; // TECH
-                this.targetState = 1;
-                this.transitionProgress = 1.0;
-                this.chaosIntensity = 0.0;
-                
-                // Mouse interaction
+                // State system
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
                 this.clickIntensity = 0.0;
                 this.clickDecay = 0.95;
                 
-                // Grid density changes
+                // Grid density changes with scroll
                 this.baseDensity = 6.0 + Math.random() * 4.0;
                 this.densityVariation = 0.0;
                 this.densityTarget = 0.0;
+                this.scrollDensity = 0.0;
                 
-                // TECH state definition
-                this.states = [
-                    { // TECH
-                        geometry: 1.0, density: this.baseDensity * 0.7, speed: 0.3,
-                        color: [0.0, 1.0, 1.0], dimension: 3.2,
-                        name: 'TECH', geometryName: 'Tetrahedron'
-                    }
-                ];
+                // Chaos intensity
+                this.chaosIntensity = 0.0;
                 
                 this.startTime = Date.now();
                 this.initShaders();
                 this.initBuffers();
                 this.resize();
                 
-                console.log(`✅ Holographic Visualizer (${role}) - Reactivity: ${reactivity}x`);
+                console.log(`✅ Holographic Visualizer (${role}/${this.currentVariant.name}) - Reactivity: ${reactivity}x`);
             }
             
             initShaders() {
@@ -538,20 +657,24 @@
                     uniform float u_mouseIntensity;
                     uniform float u_clickIntensity;
                     uniform float u_densityVariation;
+                    uniform float u_scrollDensity;
                     
                     // Enhanced 4D rotation matrices
                     mat4 rotateXW(float theta) {
-                        float c = cos(theta); float s = sin(theta);
+                        float c = cos(theta);
+                        float s = sin(theta);
                         return mat4(c, 0, 0, -s, 0, 1, 0, 0, 0, 0, 1, 0, s, 0, 0, c);
                     }
                     
                     mat4 rotateYW(float theta) {
-                        float c = cos(theta); float s = sin(theta);
+                        float c = cos(theta);
+                        float s = sin(theta);
                         return mat4(1, 0, 0, 0, 0, c, 0, -s, 0, 0, 1, 0, 0, s, 0, c);
                     }
                     
                     mat4 rotateZW(float theta) {
-                        float c = cos(theta); float s = sin(theta);
+                        float c = cos(theta);
+                        float s = sin(theta);
                         return mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, c, -s, 0, 0, s, c);
                     }
                     
@@ -560,7 +683,15 @@
                         return vec3(p.x * w, p.y * w, p.z * w);
                     }
                     
-                    // Tetrahedron lattice for TECH layout
+                    // All geometry functions from tech layout
+                    float hypercubeLattice(vec3 p, float gridSize) {
+                        vec3 grid = fract(p * gridSize);
+                        vec3 edges = 1.0 - smoothstep(0.0, 0.01, abs(grid - 0.5));
+                        float corners = length(grid - 0.5);
+                        corners = 1.0 - smoothstep(0.0, 0.15, corners);
+                        return max(max(max(edges.x, edges.y), edges.z), corners * 0.4);
+                    }
+                    
                     float tetrahedronLattice(vec3 p, float gridSize) {
                         vec3 q = fract(p * gridSize) - 0.5;
                         
@@ -579,6 +710,123 @@
                         edges = max(edges, 1.0 - smoothstep(0.0, 0.02, abs(length(q.xz) - 0.2)));
                         
                         return max(vertices, edges * 0.5);
+                    }
+                    
+                    float sphereLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float r = length(q);
+                        float main = 1.0 - smoothstep(0.08, 0.3, r);
+                        float rings = 1.0 - smoothstep(0.0, 0.02, abs(r - 0.2));
+                        float dots = 1.0 - smoothstep(0.0, 0.05, r) * step(0.8, sin(atan(q.y, q.x) * 8.0));
+                        return max(max(main, rings * 0.5), dots * 0.3);
+                    }
+                    
+                    float torusLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float r1 = length(q.xy);
+                        float r2 = sqrt((r1 - 0.18)*(r1 - 0.18) + q.z*q.z);
+                        float main = 1.0 - smoothstep(0.0, 0.06, r2);
+                        float inner = 1.0 - smoothstep(0.0, 0.09, abs(r1 - 0.18));
+                        return max(main, inner * 0.5);
+                    }
+                    
+                    float waveLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float wave1 = sin(q.x * 1.2 + u_time * 0.0006 * u_speed);
+                        float wave2 = sin(q.y * 1.4 + u_time * 0.0008 * u_speed);
+                        float wave3 = sin(q.z * 1.0 + u_time * 0.0004 * u_speed);
+                        float interference = wave1 * wave2 * wave3;
+                        float harmonics = sin(q.x * 2.5) * sin(q.y * 2.5) * 0.4;
+                        return smoothstep(-0.3, 0.3, interference + harmonics);
+                    }
+                    
+                    float crystalLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        
+                        // Crystal faces
+                        float d1 = abs(q.x + q.y + q.z) / sqrt(3.0);
+                        float d2 = abs(q.x - q.y + q.z) / sqrt(3.0);
+                        float d3 = abs(q.x + q.y - q.z) / sqrt(3.0);
+                        float d4 = abs(-q.x + q.y + q.z) / sqrt(3.0);
+                        
+                        float crystal = min(min(d1, d2), min(d3, d4));
+                        return 1.0 - smoothstep(0.0, 0.12, crystal);
+                    }
+                    
+                    float spiralLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float r = length(q.xy);
+                        float angle = atan(q.y, q.x) + q.z * 0.5 + u_time * 0.0005 * u_speed;
+                        
+                        float spiral = sin(r * 3.0 - angle * 4.0);
+                        float tubes = 1.0 - smoothstep(0.0, 0.15, abs(spiral));
+                        
+                        return tubes * (1.0 - smoothstep(0.0, 0.8, r));
+                    }
+                    
+                    float fractalLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        
+                        // Mandelbulb-inspired fractal
+                        float r = length(q);
+                        float theta = atan(q.y, q.x);
+                        float phi = acos(q.z / r);
+                        
+                        float power = 8.0 + sin(u_time * 0.0003 * u_speed) * 2.0;
+                        float rn = pow(r, power);
+                        
+                        float fractal = sin(rn + theta * power + phi * power);
+                        return smoothstep(-0.5, 0.5, fractal) * (1.0 - smoothstep(0.0, 1.0, r));
+                    }
+                    
+                    float quantumMesh(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        
+                        // Quantum probability clouds
+                        float cloud1 = exp(-length(q) * 3.0);
+                        float cloud2 = exp(-length(q - vec3(0.2, 0.0, 0.0)) * 4.0);
+                        float cloud3 = exp(-length(q + vec3(0.0, 0.2, 0.0)) * 4.0);
+                        
+                        float interference = sin(length(q) * 20.0 - u_time * 0.001 * u_speed);
+                        
+                        return (cloud1 + cloud2 + cloud3) * 0.5 + interference * 0.2;
+                    }
+                    
+                    float neuralNetwork(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        
+                        // Nodes
+                        float nodes = 0.0;
+                        for(float i = 0.0; i < 3.0; i++) {
+                            vec3 nodePos = vec3(
+                                sin(i * 2.1) * 0.3,
+                                cos(i * 2.1) * 0.3,
+                                sin(i * 1.7) * 0.2
+                            );
+                            nodes += 1.0 - smoothstep(0.0, 0.05, length(q - nodePos));
+                        }
+                        
+                        // Connections
+                        float connections = 0.0;
+                        connections += 1.0 - smoothstep(0.0, 0.01, abs(length(q.xy) - 0.2));
+                        connections += 1.0 - smoothstep(0.0, 0.01, abs(length(q.yz) - 0.15));
+                        
+                        return max(nodes, connections * 0.3);
+                    }
+                    
+                    float getGeometryValue(vec3 p, float gridSize, float geomType) {
+                        float geomIndex = mod(geomType, 10.0);
+                        
+                        if (geomIndex < 0.5) return hypercubeLattice(p, gridSize);
+                        else if (geomIndex < 1.5) return tetrahedronLattice(p, gridSize);
+                        else if (geomIndex < 2.5) return sphereLattice(p, gridSize);
+                        else if (geomIndex < 3.5) return torusLattice(p, gridSize);
+                        else if (geomIndex < 4.5) return waveLattice(p, gridSize);
+                        else if (geomIndex < 5.5) return crystalLattice(p, gridSize);
+                        else if (geomIndex < 6.5) return spiralLattice(p, gridSize);
+                        else if (geomIndex < 7.5) return fractalLattice(p, gridSize);
+                        else if (geomIndex < 8.5) return quantumMesh(p, gridSize);
+                        else return neuralNetwork(p, gridSize);
                     }
                     
                     vec3 hsv2rgb(vec3 c) {
@@ -606,7 +854,7 @@
                     
                     // Grid overlay function
                     float gridOverlay(vec2 uv, float intensity) {
-                        vec2 grid = fract(uv * (8.0 + u_densityVariation * 4.0));
+                        vec2 grid = fract(uv * (8.0 + u_densityVariation * 4.0 + u_scrollDensity * 2.0));
                         float lines = 0.0;
                         lines = max(lines, 1.0 - smoothstep(0.0, 0.02, abs(grid.x - 0.5)));
                         lines = max(lines, 1.0 - smoothstep(0.0, 0.02, abs(grid.y - 0.5)));
@@ -631,20 +879,20 @@
                                        cos(time * 0.08) * 0.15);
                         
                         // Enhanced 4D rotations with mouse reactivity
-                        p4d = rotateXW(time * 0.2 + mouseOffset.y * 0.5) * p4d;
+                        p4d = rotateXW(time * 0.2 + mouseOffset.y * 0.5 + u_scrollDensity * 0.1) * p4d;
                         p4d = rotateYW(time * 0.15 + mouseOffset.x * 0.5) * p4d;
                         p4d = rotateZW(time * 0.25 + u_clickIntensity * 0.3) * p4d;
                         
                         vec3 p = project4Dto3D(p4d);
                         
-                        // Dynamic density with variation
-                        float roleDensity = (u_density + u_densityVariation) * u_roleDensity;
+                        // Dynamic density with scroll variation
+                        float roleDensity = (u_density + u_densityVariation + u_scrollDensity) * u_roleDensity;
                         
-                        // Get tetrahedron geometry for TECH layout
-                        float lattice = tetrahedronLattice(p, roleDensity);
+                        // Get geometry value
+                        float lattice = getGeometryValue(p, roleDensity, u_geometry);
                         
                         // Enhanced coloring with mouse reactivity
-                        float hue = atan(u_color.r, u_color.g) + u_colorShift * 0.017453 + u_mouseIntensity * 0.2;
+                        float hue = atan(u_color.r, u_color.g) + u_colorShift * 0.017453 + u_mouseIntensity * 0.2 + u_scrollDensity * 0.1;
                         float saturation = 0.8 + lattice * 0.2 + u_clickIntensity * 0.1;
                         float brightness = 0.2 + lattice * 0.8 + u_intensity * 0.2 + u_mouseIntensity * 0.15;
                         
@@ -684,7 +932,8 @@
                     chaosIntensity: this.gl.getUniformLocation(this.program, 'u_chaosIntensity'),
                     mouseIntensity: this.gl.getUniformLocation(this.program, 'u_mouseIntensity'),
                     clickIntensity: this.gl.getUniformLocation(this.program, 'u_clickIntensity'),
-                    densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation')
+                    densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation'),
+                    scrollDensity: this.gl.getUniformLocation(this.program, 'u_scrollDensity')
                 };
             }
             
@@ -752,6 +1001,17 @@
                 this.densityTarget = variation;
             }
             
+            updateScroll(scrollAmount) {
+                // Scroll affects density and chaos
+                this.scrollDensity = scrollAmount * 4.0 - 2.0; // Range from -2 to +2
+                this.chaosIntensity = Math.abs(scrollAmount - 0.5) * 0.5;
+            }
+            
+            setVariant(variantIndex) {
+                this.variantIndex = variantIndex;
+                this.currentVariant = this.variants[variantIndex];
+            }
+            
             render() {
                 if (!this.program) return;
                 
@@ -764,17 +1024,16 @@
                 // Click intensity decay
                 this.clickIntensity *= this.clickDecay;
                 
-                const currentState = this.states[0]; // TECH state
                 const time = Date.now() - this.startTime;
                 
                 // Set uniforms
                 this.gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
                 this.gl.uniform1f(this.uniforms.time, time);
                 this.gl.uniform2f(this.uniforms.mouse, this.mouseX, this.mouseY);
-                this.gl.uniform1f(this.uniforms.geometry, currentState.geometry);
-                this.gl.uniform1f(this.uniforms.density, currentState.density);
-                this.gl.uniform1f(this.uniforms.speed, currentState.speed);
-                this.gl.uniform3fv(this.uniforms.color, new Float32Array(currentState.color));
+                this.gl.uniform1f(this.uniforms.geometry, this.currentVariant.geometry);
+                this.gl.uniform1f(this.uniforms.density, this.baseDensity * this.currentVariant.densityMod);
+                this.gl.uniform1f(this.uniforms.speed, 0.3 * this.currentVariant.speedMod);
+                this.gl.uniform3fv(this.uniforms.color, new Float32Array(this.currentVariant.baseColor));
                 this.gl.uniform1f(this.uniforms.intensity, this.roleParams.intensity);
                 this.gl.uniform1f(this.uniforms.roleDensity, this.roleParams.densityMult);
                 this.gl.uniform1f(this.uniforms.roleSpeed, this.roleParams.speedMult);
@@ -783,27 +1042,138 @@
                 this.gl.uniform1f(this.uniforms.mouseIntensity, this.mouseIntensity);
                 this.gl.uniform1f(this.uniforms.clickIntensity, this.clickIntensity);
                 this.gl.uniform1f(this.uniforms.densityVariation, this.densityVariation);
+                this.gl.uniform1f(this.uniforms.scrollDensity, this.scrollDensity);
                 
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
             }
         }
         
-        // TECH LAYOUT HOLOGRAPHIC SYSTEM
-        class TechLayoutHolographicSystem {
+        // MEGA DEMO HOLOGRAPHIC SYSTEM
+        class MegaDemoHolographicSystem {
             constructor() {
                 this.visualizers = [];
+                this.expandedVisualizers = [];
+                this.currentVariant = 0;
+                this.totalVariants = 30;
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
+                this.isExpanded = false;
+                this.scrollAmount = 0;
                 
                 this.initialize();
-                this.setupParallax();
             }
             
             initialize() {
-                console.log('🎨 Initializing TECH Layout Holographic System...');
+                console.log('🎨 Initializing Mega Demo Holographic System...');
                 
-                // Create visualizers with different roles and reactivity levels
+                this.createVisualizersForVariant(0);
+                this.setupInteractions();
+                this.setupScrollTracking();
+                this.startRenderLoop();
+                
+                console.log('✅ Mega Demo ready - 30 unique variations');
+            }
+            
+            createVisualizersForVariant(variantIndex) {
+                // Clear existing visualizers
+                this.visualizers = [];
+                const container = document.getElementById('holoContainer');
+                container.innerHTML = '';
+                
+                // Add grid overlay
+                const gridOverlay = document.createElement('div');
+                gridOverlay.className = 'grid-overlay';
+                gridOverlay.id = 'gridOverlay';
+                container.appendChild(gridOverlay);
+                
+                // Create depth layers
+                const layers = [
+                    { name: 'background', class: 'depth-layer background' },
+                    { name: 'midground', class: 'depth-layer midground' },
+                    { name: 'foreground', class: 'depth-layer foreground' },
+                    { name: 'accent', class: 'depth-layer accent' }
+                ];
+                
+                // Background and accent layers
+                layers.forEach(layer => {
+                    if (layer.name === 'background' || layer.name === 'accent') {
+                        const layerDiv = document.createElement('div');
+                        layerDiv.className = layer.class;
+                        layerDiv.id = `${layer.name}Layer`;
+                        
+                        const canvas = document.createElement('canvas');
+                        canvas.className = 'visualizer-canvas';
+                        canvas.id = `${layer.name}-visualizer`;
+                        
+                        layerDiv.appendChild(canvas);
+                        container.appendChild(layerDiv);
+                    }
+                });
+                
+                // Shadow layer
+                const shadowLayer = document.createElement('div');
+                shadowLayer.className = 'depth-layer midground';
+                shadowLayer.id = 'shadowLayer';
+                
+                const shadowCanvas = document.createElement('canvas');
+                shadowCanvas.className = 'visualizer-canvas shadow-visualizer';
+                shadowCanvas.id = 'shadow-visualizer';
+                shadowLayer.appendChild(shadowCanvas);
+                container.appendChild(shadowLayer);
+                
+                // Cards layer
+                const cardsLayer = document.createElement('div');
+                cardsLayer.className = 'depth-layer foreground';
+                cardsLayer.id = 'cardsLayer';
+                
+                // Create 5 neomorphic cards
+                const cardConfigs = [
+                    { title: 'TECH COMMAND', subtitle: 'GEOMETRIC PRECISION', 
+                      description: 'Primary control interface with neoskeuomorphic depth and holographic projection' },
+                    { title: 'TOOL MATRIX', subtitle: 'INSTRUMENT PANEL', 
+                      description: 'Precision tools and controls with reactive geometric feedback systems' },
+                    { title: 'WORKSPACE', subtitle: 'DIMENSIONAL CANVAS', 
+                      description: 'Primary workspace with multi-dimensional geometric visualization and rendering' },
+                    { title: 'CONSOLE', subtitle: 'PROCESS CONTROL', 
+                      description: 'Central processing console with real-time holographic feedback' },
+                    { title: 'MONITOR', subtitle: 'STATUS DISPLAY', 
+                      description: 'System monitoring with real-time geometric pattern analysis' }
+                ];
+                
+                cardConfigs.forEach((config, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'neomorphic-card';
+                    card.id = `card-${index + 1}`;
+                    
+                    // Content visualizer
+                    const contentCanvas = document.createElement('canvas');
+                    contentCanvas.className = 'visualizer-canvas content-visualizer';
+                    contentCanvas.id = `card-visualizer-${index + 1}`;
+                    
+                    // Highlight visualizer
+                    const highlightCanvas = document.createElement('canvas');
+                    highlightCanvas.className = 'visualizer-canvas highlight-visualizer';
+                    highlightCanvas.id = `highlight-visualizer-${index + 1}`;
+                    
+                    // Card content
+                    const cardContent = document.createElement('div');
+                    cardContent.className = 'card-content';
+                    cardContent.innerHTML = `
+                        <div class="card-title">${config.title}</div>
+                        <div class="card-subtitle">${config.subtitle}</div>
+                        <div class="card-description">${config.description}</div>
+                    `;
+                    
+                    card.appendChild(contentCanvas);
+                    card.appendChild(highlightCanvas);
+                    card.appendChild(cardContent);
+                    cardsLayer.appendChild(card);
+                });
+                
+                container.appendChild(cardsLayer);
+                
+                // Create visualizers for all canvases
                 const configs = [
                     { id: 'background-visualizer', role: 'background', reactivity: 0.5 },
                     { id: 'shadow-visualizer', role: 'shadow', reactivity: 0.7 },
@@ -821,28 +1191,13 @@
                 ];
                 
                 configs.forEach(config => {
-                    const visualizer = new HolographicVisualizer(config.id, config.role, config.reactivity);
+                    const visualizer = new HolographicVisualizer(config.id, config.role, config.reactivity, variantIndex);
                     this.visualizers.push(visualizer);
                 });
                 
-                this.setupInteractions();
-                this.startRenderLoop();
-                
-                document.getElementById('visualizer-count').textContent = this.visualizers.length;
-                console.log('✅ TECH Layout Holographic System ready - 13 visualizers with depth layers');
-            }
-
-            setupParallax() {
-                const holoContainer = document.getElementById('holoContainer');
-                document.body.addEventListener('mousemove', (e) => {
-                    const x = (e.clientX / window.innerWidth) - 0.5;
-                    const y = (e.clientY / window.innerHeight) - 0.5;
-
-                    const rotateY = x * 10; // Max 10 degrees rotation
-                    const rotateX = -y * 10; // Max 10 degrees rotation
-
-                    holoContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                });
+                // Update UI
+                document.getElementById('variant-number').textContent = `${variantIndex + 1}/30`;
+                document.getElementById('variant-name').textContent = this.visualizers[0].currentVariant.name;
             }
             
             setupInteractions() {
@@ -853,23 +1208,29 @@
                     this.mouseIntensity = Math.min(1.0, Math.sqrt(e.movementX*e.movementX + e.movementY*e.movementY) / 40);
                     
                     // Update all visualizers with mouse data
-                    this.visualizers.forEach(viz => {
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
                         viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
                     });
                     
                     // Update grid overlay
                     const gridOverlay = document.getElementById('gridOverlay');
-                    if (this.mouseIntensity > 0.3) {
+                    if (gridOverlay && this.mouseIntensity > 0.3) {
                         gridOverlay.classList.add('active');
-                    } else {
+                    } else if (gridOverlay) {
                         gridOverlay.classList.remove('active');
                     }
                     
                     // Update density variation based on mouse position
                     const densityVar = Math.sin(this.mouseX * Math.PI) * Math.sin(this.mouseY * Math.PI) * 2.0;
-                    this.visualizers.forEach(viz => {
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
                         viz.updateDensity(densityVar);
                     });
+                    
+                    // 3D parallax effect
+                    const container = document.getElementById(this.isExpanded ? 'expandedHoloContainer' : 'holoContainer');
+                    const x = (e.clientX / window.innerWidth - 0.5) * 10;
+                    const y = (e.clientY / window.innerHeight - 0.5) * 10;
+                    container.style.transform = `rotateX(${-y}deg) rotateY(${x}deg)`;
                 });
                 
                 // Enhanced click interactions
@@ -879,7 +1240,7 @@
                     const clickY = 1.0 - ((e.clientY - rect.top) / rect.height);
                     
                     // Trigger click effect on all visualizers
-                    this.visualizers.forEach(viz => {
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
                         viz.triggerClick(clickX, clickY);
                     });
                     
@@ -888,23 +1249,67 @@
                 });
                 
                 // Card interactions
-                document.querySelectorAll('.neomorphic-card').forEach(card => {
-                    card.addEventListener('mouseenter', () => {
-                        card.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    });
-                    
-                    card.addEventListener('mouseleave', () => {
-                        card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                    });
-                    
-                    card.addEventListener('click', (e) => {
+                document.addEventListener('click', (e) => {
+                    const card = e.target.closest('.neomorphic-card');
+                    if (card) {
                         e.stopPropagation();
                         card.classList.add('clicked');
                         setTimeout(() => {
                             card.classList.remove('clicked');
                         }, 300);
-                    });
+                    }
                 });
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') navigateVariant(-1);
+                    if (e.key === 'ArrowRight') navigateVariant(1);
+                    if (e.key === ' ') randomVariant();
+                    if (e.key === 'Enter') toggleExpanded();
+                });
+            }
+            
+            setupScrollTracking() {
+                // Main scroll tracking
+                let scrollTimeout;
+                window.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    
+                    // Update scroll amount
+                    this.scrollAmount = Math.max(0, Math.min(1, this.scrollAmount + e.deltaY * 0.001));
+                    
+                    // Update all visualizers with scroll data
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
+                        viz.updateScroll(this.scrollAmount);
+                    });
+                    
+                    // Clear existing timeout
+                    clearTimeout(scrollTimeout);
+                    
+                    // Reset scroll after delay
+                    scrollTimeout = setTimeout(() => {
+                        this.scrollAmount = 0.5;
+                        [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
+                            viz.updateScroll(this.scrollAmount);
+                        });
+                    }, 2000);
+                }, { passive: false });
+                
+                // Touch support
+                let touchStartY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touchDelta = touchStartY - e.touches[0].clientY;
+                    this.scrollAmount = Math.max(0, Math.min(1, this.scrollAmount + touchDelta * 0.001));
+                    
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
+                        viz.updateScroll(this.scrollAmount);
+                    });
+                }, { passive: false });
             }
             
             createRipple(x, y) {
@@ -919,24 +1324,99 @@
                 }, 600);
             }
             
+            switchVariant(index) {
+                this.currentVariant = index;
+                this.createVisualizersForVariant(index);
+                
+                // Update navigation buttons
+                document.getElementById('prev-button').disabled = index === 0;
+                document.getElementById('next-button').disabled = index === this.totalVariants - 1;
+            }
+            
+            createExpandedView() {
+                const expandedContainer = document.getElementById('expandedHoloContainer');
+                const mainContainer = document.getElementById('holoContainer');
+                
+                // Clone the entire structure
+                expandedContainer.innerHTML = mainContainer.innerHTML;
+                
+                // Create new visualizers for expanded view
+                this.expandedVisualizers = [];
+                const configs = [
+                    { id: 'background-visualizer', role: 'background', reactivity: 0.5 },
+                    { id: 'shadow-visualizer', role: 'shadow', reactivity: 0.7 },
+                    { id: 'card-visualizer-1', role: 'content', reactivity: 1.0 },
+                    { id: 'highlight-visualizer-1', role: 'highlight', reactivity: 1.2 },
+                    { id: 'card-visualizer-2', role: 'content', reactivity: 1.1 },
+                    { id: 'highlight-visualizer-2', role: 'highlight', reactivity: 1.3 },
+                    { id: 'card-visualizer-3', role: 'content', reactivity: 0.9 },
+                    { id: 'highlight-visualizer-3', role: 'highlight', reactivity: 1.1 },
+                    { id: 'card-visualizer-4', role: 'content', reactivity: 1.2 },
+                    { id: 'highlight-visualizer-4', role: 'highlight', reactivity: 1.4 },
+                    { id: 'card-visualizer-5', role: 'content', reactivity: 0.8 },
+                    { id: 'highlight-visualizer-5', role: 'highlight', reactivity: 1.0 },
+                    { id: 'accent-visualizer', role: 'accent', reactivity: 1.5 }
+                ];
+                
+                // Get all canvases in expanded view
+                configs.forEach(config => {
+                    const canvas = expandedContainer.querySelector(`#${config.id}`);
+                    if (canvas) {
+                        canvas.id = `expanded-${config.id}`;
+                        const visualizer = new HolographicVisualizer(canvas.id, config.role, config.reactivity * 1.5, this.currentVariant);
+                        this.expandedVisualizers.push(visualizer);
+                    }
+                });
+            }
+            
+            toggleExpanded() {
+                this.isExpanded = !this.isExpanded;
+                const expandedView = document.getElementById('expandedView');
+                
+                if (this.isExpanded) {
+                    expandedView.classList.add('active');
+                    this.createExpandedView();
+                } else {
+                    expandedView.classList.remove('active');
+                    this.expandedVisualizers = [];
+                }
+            }
+            
             startRenderLoop() {
                 const render = () => {
-                    this.visualizers.forEach(viz => {
+                    [...this.visualizers, ...this.expandedVisualizers].forEach(viz => {
                         viz.render();
                     });
                     requestAnimationFrame(render);
                 };
                 
                 render();
-                console.log(' TECH Layout holographic render loop started');
+                console.log('🎬 Mega demo holographic render loop started');
             }
+        }
+        
+        // Global functions
+        let system;
+        
+        function navigateVariant(direction) {
+            const newIndex = Math.max(0, Math.min(29, system.currentVariant + direction));
+            system.switchVariant(newIndex);
+        }
+        
+        function randomVariant() {
+            const randomIndex = Math.floor(Math.random() * 30);
+            system.switchVariant(randomIndex);
+        }
+        
+        function toggleExpanded() {
+            system.toggleExpanded();
         }
         
         // Initialize when page loads
         window.addEventListener('load', () => {
-            console.log(' Initializing TECH Layout Holographic System...');
-            const system = new TechLayoutHolographicSystem();
-            window.techLayoutSystem = system;
+            console.log('🚀 Initializing Active Holographic Mega Demo...');
+            system = new MegaDemoHolographicSystem();
+            window.megaDemoSystem = system;
         });
         
     </script>
