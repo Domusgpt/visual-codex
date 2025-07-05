@@ -677,22 +677,65 @@
         const mvepVisualizer = new MVEPMoireHypercube();
         window.mvepVisualizer = mvepVisualizer;
 
-        // Simple touch handling only for canvas area - NOT blocking controls
+        // Touch reactions for mobile - NO RIPPLE ANIMATION, NO preventDefault
         function setupTouchReactions() {
-            const canvas = document.getElementById('canvas');
-            if (!canvas) return;
+            let touchIntensity = 0;
+            let touchX = 0.5;
+            let touchY = 0.5;
             
-            canvas.addEventListener('touchmove', (e) => {
+            // Touch start - trigger intense reaction (NO preventDefault, NO ripple)
+            document.addEventListener('touchstart', (e) => {
                 const touch = e.touches[0];
-                const touchX = touch.clientX / window.innerWidth;
-                const touchY = touch.clientY / window.innerHeight;
+                touchX = touch.clientX / window.innerWidth;
+                touchY = touch.clientY / window.innerHeight;
+                touchIntensity = 1.0;
                 
-                // Update MVEP visualizer with touch data (only for canvas)
+                console.log('🔥 Touch reaction triggered');
+            }, { passive: true });
+            
+            // Touch move - continuous reaction (NO preventDefault)
+            document.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                touchX = touch.clientX / window.innerWidth;
+                touchY = touch.clientY / window.innerHeight;
+                touchIntensity = 0.8;
+                
+                // Update MVEP visualizer with touch data
                 if (mvepVisualizer) {
                     mvepVisualizer.mouseX = touchX;
                     mvepVisualizer.mouseY = 1.0 - touchY;
+                    mvepVisualizer.interactionIntensity = touchIntensity;
                 }
             }, { passive: true });
+            
+            // Touch end - decay reaction
+            document.addEventListener('touchend', (e) => {
+                touchIntensity *= 0.5;
+                setTimeout(() => {
+                    touchIntensity = 0;
+                }, 300);
+                
+                console.log('🌊 Touch reaction ending');
+            });
+            
+            // Multi-touch support
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 1) {
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    const distance = Math.sqrt(
+                        Math.pow(touch2.clientX - touch1.clientX, 2) +
+                        Math.pow(touch2.clientY - touch1.clientY, 2)
+                    );
+                    
+                    // Multi-touch creates chaos effect
+                    if (mvepVisualizer) {
+                        mvepVisualizer.chaosIntensity = Math.min(1.0, distance / 200);
+                    }
+                    
+                    console.log('⚡ Multi-touch chaos effect activated');
+                }
+            });
         }
         
         // Initialize touch reactions when DOM is ready
