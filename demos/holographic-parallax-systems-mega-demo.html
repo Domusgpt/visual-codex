@@ -20,6 +20,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             cursor: crosshair;
+            /* Enhanced scroll support */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         
         .demo-header {
@@ -44,6 +47,12 @@
         .demo-counter {
             color: #ff00ff;
             font-size: 0.8rem;
+        }
+        
+        /* Touch optimization for containers */
+        .parallax-container {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 255, 255, 0.1);
         }
         
         /* AGGRESSIVE BRIGHTNESS ENHANCEMENT */
@@ -78,6 +87,10 @@
             border-radius: 20px;
             border: 2px solid rgba(0, 255, 255, 0.3);
             backdrop-filter: blur(10px);
+            /* Touch scroll optimization */
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         
         /* INFINITE SCROLL CONTAINER */
@@ -88,6 +101,10 @@
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.95);
+            /* Enhanced touch scroll */
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
             z-index: 2000;
             display: none;
             overflow-y: auto;
@@ -384,9 +401,34 @@
                     container.appendChild(layer);
                 }
                 
-                // Add click interaction for presentation mode
+                // Add enhanced interaction for presentation mode
+                let touchStartTime = 0;
+                let touchMoved = false;
+                
+                container.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                    touchMoved = false;
+                }, { passive: true });
+                
+                container.addEventListener('touchmove', (e) => {
+                    touchMoved = true;
+                }, { passive: true });
+                
+                container.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    // Only trigger presentation mode for quick taps without movement
+                    if (!touchMoved && touchDuration < 300) {
+                        e.preventDefault();
+                        enterPresentationMode(container);
+                    }
+                }, { passive: false });
+                
+                // Desktop click interaction
                 container.addEventListener('click', (e) => {
-                    e.stopPropagation();
+                    // Only stop propagation for mouse clicks, not touch events
+                    if (e.pointerType !== 'touch') {
+                        e.stopPropagation();
+                    }
                     enterPresentationMode(container);
                 });
                 
@@ -425,8 +467,14 @@
             console.log('Exited presentation mode');
         }
         
-        // Click overlay to exit presentation mode
+        // Enhanced overlay interaction to exit presentation mode
         presentationOverlay.addEventListener('click', exitPresentationMode);
+        
+        // Touch-friendly exit for mobile
+        presentationOverlay.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            exitPresentationMode();
+        }, { passive: false });
         
         // ESC key to exit presentation mode
         document.addEventListener('keydown', (e) => {
