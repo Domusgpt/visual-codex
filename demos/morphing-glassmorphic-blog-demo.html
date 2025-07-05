@@ -159,11 +159,11 @@
         .blog-card.wall-breaking {
             transform: 
                 perspective(800px)
-                rotateY(calc(85deg * var(--bend-intensity)))
-                rotateX(calc(10deg * (var(--mouse-y) - 50) / 50))
-                translateZ(calc(var(--bend-intensity) * 50px));
-            transition: transform 0.3s ease-out;
-            filter: brightness(1.2) contrast(1.1);
+                rotateY(calc(25deg * var(--bend-intensity)))
+                rotateX(calc(5deg * (var(--mouse-y) - 50) / 50))
+                translateZ(calc(var(--bend-intensity) * 20px));
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: brightness(1.1) contrast(1.05);
         }
 
         /* Corner stretching effect - corners pull toward viewer */
@@ -193,38 +193,38 @@
         /* Edge stretching - sides of card stretch unnaturally */
         .blog-card.edge-stretch {
             transform: 
-                perspective(400px)
-                rotateY(calc(45deg + (var(--mouse-x) - 50) * 0.5deg))
-                rotateX(calc((var(--mouse-y) - 50) * -0.3deg))
-                scaleX(calc(1 + abs(var(--mouse-x) - 50) * 0.02))
-                scaleY(calc(1 + abs(var(--mouse-y) - 50) * 0.015))
-                skewX(calc((var(--mouse-x) - 50) * 0.8deg))
-                skewY(calc((var(--mouse-y) - 50) * 0.5deg))
-                translateZ(calc(var(--bend-intensity) * 100px));
-            transition: transform 0.05s linear;
-            filter: contrast(1.15) brightness(1.1);
+                perspective(600px)
+                rotateY(calc(15deg + (var(--mouse-x) - 50) * 0.2deg))
+                rotateX(calc((var(--mouse-y) - 50) * -0.15deg))
+                scaleX(calc(1 + abs(var(--mouse-x) - 50) * 0.008))
+                scaleY(calc(1 + abs(var(--mouse-y) - 50) * 0.006))
+                skewX(calc((var(--mouse-x) - 50) * 0.3deg))
+                skewY(calc((var(--mouse-y) - 50) * 0.2deg))
+                translateZ(calc(var(--bend-intensity) * 40px));
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: contrast(1.08) brightness(1.05);
         }
 
         /* Ultimate 4th wall break - card tears out of screen */
         .blog-card.screen-tear {
             transform: 
-                perspective(200px)
-                rotateY(calc(70deg + (var(--mouse-x) - 50) * 1deg))
-                rotateX(calc((var(--mouse-y) - 50) * -1.5deg))
-                rotateZ(calc((var(--mouse-x) - 50) * 0.5deg))
-                scaleX(calc(1.2 + abs(var(--mouse-x) - 50) * 0.03))
-                scaleY(calc(0.8 + abs(var(--mouse-y) - 50) * 0.02))
-                skewX(calc((var(--mouse-x) - 50) * 1.5deg))
-                skewY(calc((var(--mouse-y) - 50) * 1deg))
-                translateZ(calc(var(--bend-intensity) * 300px))
-                translateX(calc((var(--mouse-x) - 50) * 2px))
-                translateY(calc((var(--mouse-y) - 50) * 1px));
-            transition: transform 0.02s linear;
-            filter: contrast(1.3) brightness(1.2) saturate(1.2);
+                perspective(400px)
+                rotateY(calc(35deg + (var(--mouse-x) - 50) * 0.4deg))
+                rotateX(calc((var(--mouse-y) - 50) * -0.6deg))
+                rotateZ(calc((var(--mouse-x) - 50) * 0.2deg))
+                scaleX(calc(1.05 + abs(var(--mouse-x) - 50) * 0.01))
+                scaleY(calc(0.95 + abs(var(--mouse-y) - 50) * 0.008))
+                skewX(calc((var(--mouse-x) - 50) * 0.6deg))
+                skewY(calc((var(--mouse-y) - 50) * 0.4deg))
+                translateZ(calc(var(--bend-intensity) * 80px))
+                translateX(calc((var(--mouse-x) - 50) * 0.8px))
+                translateY(calc((var(--mouse-y) - 50) * 0.5px));
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: contrast(1.15) brightness(1.1) saturate(1.1);
             box-shadow: 
-                0 0 50px rgba(255, 0, 255, 0.8),
-                inset 0 0 20px rgba(255, 255, 255, 0.3);
-            border-width: 3px;
+                0 0 30px rgba(255, 0, 255, 0.4),
+                inset 0 0 10px rgba(255, 255, 255, 0.15);
+            border-width: 2px;
             z-index: 100;
         }
 
@@ -603,14 +603,17 @@
         // 4th Wall Breaking Card Interactions
         cards.forEach(card => {
             let clickCount = 0;
+            let touchStartTime = 0;
+            let touchHoldTimeout = null;
+            let isDragging = false;
             
             card.addEventListener('mouseenter', (e) => {
                 const currentIntensity = parseFloat(document.documentElement.style.getPropertyValue('--bend-intensity')) || 0.5;
                 
-                // Start breaking the 4th wall based on intensity
-                if (currentIntensity < 0.3) {
+                // Start breaking the 4th wall based on intensity (more subtle)
+                if (currentIntensity < 0.4) {
                     card.classList.add('wall-breaking');
-                } else if (currentIntensity < 0.6) {
+                } else if (currentIntensity < 0.7) {
                     card.classList.add('edge-stretch');
                 } else {
                     card.classList.add('screen-tear');
@@ -691,6 +694,76 @@
                 
                 console.log(`💥 Card exploded! Click ${clickCount}`);
             });
+            
+            // Enhanced touch handling for mobile
+            card.addEventListener('touchstart', (e) => {
+                touchStartTime = Date.now();
+                isDragging = false;
+                
+                const touch = e.touches[0];
+                const rect = card.getBoundingClientRect();
+                const cardX = ((touch.clientX - rect.left) / rect.width) * 100;
+                const cardY = ((touch.clientY - rect.top) / rect.height) * 100;
+                
+                card.style.setProperty('--mouse-x', cardX);
+                card.style.setProperty('--mouse-y', cardY);
+                
+                // Start with gentle bending
+                card.classList.add('wall-breaking');
+                
+                // Set up progressive bending for held touch
+                touchHoldTimeout = setTimeout(() => {
+                    if (!isDragging) {
+                        card.classList.remove('wall-breaking');
+                        card.classList.add('edge-stretch');
+                        
+                        // Even more intense after longer hold
+                        setTimeout(() => {
+                            if (!isDragging) {
+                                card.classList.remove('edge-stretch');
+                                card.classList.add('screen-tear');
+                            }
+                        }, 800);
+                    }
+                }, 500);
+            }, { passive: true });
+            
+            card.addEventListener('touchmove', (e) => {
+                isDragging = true;
+                const touch = e.touches[0];
+                const rect = card.getBoundingClientRect();
+                const cardX = ((touch.clientX - rect.left) / rect.width) * 100;
+                const cardY = ((touch.clientY - rect.top) / rect.height) * 100;
+                
+                card.style.setProperty('--mouse-x', cardX);
+                card.style.setProperty('--mouse-y', cardY);
+                
+                // Increase bending based on drag duration
+                const holdTime = Date.now() - touchStartTime;
+                if (holdTime > 1000) {
+                    card.classList.remove('wall-breaking', 'edge-stretch');
+                    card.classList.add('screen-tear');
+                } else if (holdTime > 500) {
+                    card.classList.remove('wall-breaking');
+                    card.classList.add('edge-stretch');
+                }
+            }, { passive: true });
+            
+            card.addEventListener('touchend', (e) => {
+                if (touchHoldTimeout) {
+                    clearTimeout(touchHoldTimeout);
+                }
+                
+                // Gradual return to normal state
+                setTimeout(() => {
+                    card.classList.remove('wall-breaking', 'edge-stretch', 'screen-tear', 'corner-stretch');
+                    card.style.removeProperty('--mouse-x');
+                    card.style.removeProperty('--mouse-y');
+                }, 200);
+                
+                touchStartTime = 0;
+                isDragging = false;
+            }, { passive: true });
         });
         
         // Initialize
