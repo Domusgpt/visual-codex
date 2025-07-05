@@ -68,7 +68,7 @@
             border-radius: 15px;
             border: 1px solid #00ffff;
             font-family: 'Orbitron', monospace;
-            z-index: 2000;
+            z-index: 2500; /* Higher than buttons */
             backdrop-filter: blur(25px);
             box-shadow: 
                 0 10px 30px rgba(0, 0, 0, 0.6),
@@ -77,6 +77,8 @@
             /* Ensure UI controls work normally */
             touch-action: manipulation;
             pointer-events: auto;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .variant-display {
@@ -111,6 +113,12 @@
             pointer-events: auto;
             min-height: 44px; /* iOS touch target requirement */
             min-width: 44px;
+            /* Force higher z-index and better mobile handling */
+            position: relative;
+            z-index: 3000;
+            -webkit-tap-highlight-color: rgba(0, 255, 255, 0.3);
+            -webkit-touch-callout: none;
+            user-select: none;
             font-family: 'Orbitron', monospace;
             font-size: 0.8rem;
             transition: all 0.3s ease;
@@ -1053,38 +1061,78 @@
                     this.createRipple(e.clientX, e.clientY);
                 });
                 
-                // SELECTIVE TOUCH INTERACTION SYSTEM
+                // ENHANCED TOUCH INTERACTION SYSTEM
                 let currentTouch = null;
+                let touchStartTime = 0;
                 
                 // Only apply touch effects to the holographic display area, not UI controls
                 const holographicDisplay = document.getElementById('holographicDisplay');
                 
                 const isOverHolographicArea = (e) => {
                     const touch = e.touches[0] || e.changedTouches[0];
+                    if (!touch) return false;
+                    
                     const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                    return holographicDisplay.contains(element) || element.tagName === 'CANVAS';
+                    if (!element) return false;
+                    
+                    // More robust detection - check if it's canvas, holographic display, or grid overlay
+                    return element.tagName === 'CANVAS' || 
+                           element.id === 'holographicDisplay' ||
+                           element.id === 'gridOverlay' ||
+                           holographicDisplay.contains(element);
+                };
+                
+                const isOverUIControl = (e) => {
+                    const touch = e.touches[0] || e.changedTouches[0];
+                    if (!touch) return false;
+                    
+                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (!element) return false;
+                    
+                    // Check if touching UI controls
+                    return element.closest('.control-panel') || 
+                           element.closest('.control-btn') ||
+                           element.classList.contains('control-btn') ||
+                           element.classList.contains('control-panel');
                 };
                 
                 document.addEventListener('touchstart', (e) => {
+                    // Always allow UI controls to work normally
+                    if (isOverUIControl(e)) {
+                        return; // Let the UI handle this normally
+                    }
+                    
                     if (isOverHolographicArea(e) && e.touches.length > 0) {
                         e.preventDefault(); // Only prevent default for holographic area
                         currentTouch = e.touches[0];
+                        touchStartTime = Date.now();
                         const touchX = currentTouch.clientX / window.innerWidth;
                         const touchY = 1.0 - (currentTouch.clientY / window.innerHeight);
                         
+                        // IMMEDIATE TOUCH FEEDBACK - Trigger click effect instantly
                         this.visualizers.forEach(visualizer => {
+                            visualizer.triggerClick(touchX, touchY);
                             visualizer.updateTouch(touchX, touchY, true);
                         });
+                        
+                        // Create immediate ripple effect
+                        this.createRipple(currentTouch.clientX, currentTouch.clientY);
                     }
                 }, { passive: false });
                 
                 document.addEventListener('touchmove', (e) => {
+                    // Always allow UI controls to work normally
+                    if (isOverUIControl(e)) {
+                        return;
+                    }
+                    
                     if (isOverHolographicArea(e) && e.touches.length > 0 && currentTouch) {
                         e.preventDefault(); // Only prevent default for holographic area
                         const touch = e.touches[0];
                         const touchX = touch.clientX / window.innerWidth;
                         const touchY = 1.0 - (touch.clientY / window.innerHeight);
                         
+                        // Update touch morphing during move
                         this.visualizers.forEach(visualizer => {
                             visualizer.updateTouch(touchX, touchY, true);
                         });
@@ -1095,8 +1143,16 @@
                 
                 document.addEventListener('touchend', (e) => {
                     if (currentTouch) {
-                        // Only prevent default if we were tracking a touch in the holographic area
-                        e.preventDefault();
+                        const touchDuration = Date.now() - touchStartTime;
+                        
+                        // Quick touch (< 150ms) gets extra click intensity
+                        if (touchDuration < 150) {
+                            this.visualizers.forEach(visualizer => {
+                                visualizer.clickIntensity = Math.min(1.0, visualizer.clickIntensity + 0.3);
+                            });
+                        }
+                        
+                        // Reset touch state
                         this.visualizers.forEach(visualizer => {
                             visualizer.updateTouch(0.5, 0.5, false);
                         });
@@ -1106,9 +1162,17 @@
                 
                 // SELECTIVE SCROLL PARALLAX SYSTEM
                 document.addEventListener('wheel', (e) => {
-                    // Only capture scroll when over the holographic display area
+                    // Check if scroll is over UI controls first
                     const element = document.elementFromPoint(e.clientX, e.clientY);
-                    const isOverHolographic = holographicDisplay.contains(element) || element.tagName === 'CANVAS';
+                    const isOverUI = element && (element.closest('.control-panel') || element.closest('.control-btn'));
+                    
+                    // Only capture scroll when over the holographic display area
+                    const isOverHolographic = !isOverUI && (element && (
+                        element.tagName === 'CANVAS' ||
+                        element.id === 'holographicDisplay' ||
+                        element.id === 'gridOverlay' ||
+                        holographicDisplay.contains(element)
+                    ));
                     
                     if (isOverHolographic) {
                         e.preventDefault(); // Only prevent default for holographic area
@@ -1178,28 +1242,40 @@
             }
         }
         
-        // Global control functions
+        // Global control functions with mobile debugging
         function nextVariant() {
+            console.log('🔄 Next variant clicked');
             if (window.holographicSystem) {
                 window.holographicSystem.nextVariant();
+            } else {
+                console.error('❌ holographicSystem not found');
             }
         }
         
         function previousVariant() {
+            console.log('🔄 Previous variant clicked');
             if (window.holographicSystem) {
                 window.holographicSystem.previousVariant();
+            } else {
+                console.error('❌ holographicSystem not found');
             }
         }
         
         function randomVariant() {
+            console.log('🎲 Random variant clicked');
             if (window.holographicSystem) {
                 window.holographicSystem.randomVariant();
+            } else {
+                console.error('❌ holographicSystem not found');
             }
         }
         
         function toggleAutoCycle() {
+            console.log('⏸ Auto cycle toggled');
             if (window.holographicSystem) {
                 window.holographicSystem.toggleAutoCycle();
+            } else {
+                console.error('❌ holographicSystem not found');
             }
         }
         
@@ -1208,6 +1284,39 @@
             console.log('🚀 Initializing Active Holographic Systems - Cycling Demo...');
             const system = new HolographicCyclingSystem();
             window.holographicSystem = system;
+            
+            // Add explicit button event listeners for mobile compatibility
+            console.log('📱 Setting up mobile button handlers...');
+            
+            // Find all control buttons and add multiple event types
+            const buttons = document.querySelectorAll('.control-btn');
+            buttons.forEach((button, index) => {
+                const buttonText = button.textContent.trim();
+                console.log(`🔘 Setting up button: ${buttonText}`);
+                
+                // Add both click and touchend events
+                const handleButtonPress = (e) => {
+                    e.stopPropagation();
+                    console.log(`🔥 Button pressed: ${buttonText}`);
+                    
+                    if (buttonText.includes('PREV')) {
+                        previousVariant();
+                    } else if (buttonText.includes('NEXT')) {
+                        nextVariant();
+                    } else if (buttonText.includes('RANDOM')) {
+                        randomVariant();
+                    } else if (buttonText.includes('AUTO')) {
+                        toggleAutoCycle();
+                    }
+                };
+                
+                // Add multiple event types for maximum compatibility
+                button.addEventListener('click', handleButtonPress, false);
+                button.addEventListener('touchend', handleButtonPress, false);
+                button.addEventListener('pointerup', handleButtonPress, false);
+            });
+            
+            console.log('✅ Mobile button handlers setup complete');
         });
         
     </script>
