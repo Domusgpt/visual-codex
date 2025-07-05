@@ -152,7 +152,7 @@
     </div>
     
     <div class="controls" id="mvep-controls">
-        <button class="controls-toggle" onclick="toggleMVEPControls()">▼</button>
+        <button type="button" class="controls-toggle" onclick="toggleMVEPControls()">▼</button>
         <div class="controls-content">
             <div class="control-group">
                 <label>Dimension: <span class="value-display" id="dimensionValue">3.8</span></label>
@@ -182,24 +182,31 @@
                 <label>Color Shift: <span class="value-display" id="colorValue">0.0</span></label>
                 <input type="range" id="colorShift" min="-1.0" max="1.0" step="0.1" value="0.0">
             </div>
-            <button class="audio-btn" id="audioBtn">Enable Audio</button>
+            <button type="button" class="audio-btn" id="audioBtn">Enable Audio</button>
         </div>
     </div>
 
     <script>
         
 
-        // Custom toggle function for MVEP controls
-        function toggleMVEPControls() {
+        // Custom toggle function for MVEP controls (global scope)
+        window.toggleMVEPControls = function() {
             const controlsContent = document.querySelector('#mvep-controls .controls-content');
             const toggle = document.querySelector('#mvep-controls .controls-toggle');
+            
+            if (!controlsContent || !toggle) {
+                console.error('Controls elements not found');
+                return;
+            }
             
             if (controlsContent.style.display === 'none') {
                 controlsContent.style.display = 'block';
                 toggle.textContent = '▲';
+                console.log('🎛️ MVEP controls opened');
             } else {
                 controlsContent.style.display = 'none';
                 toggle.textContent = '▼';
+                console.log('🎛️ MVEP controls closed');
             }
         }
 
@@ -549,13 +556,28 @@
                 params.forEach(param => {
                     const slider = document.getElementById(param);
                     const display = document.getElementById(param + 'Value');
-                    slider.addEventListener('input', (e) => {
-                        this.params[param] = parseFloat(e.target.value);
-                        display.textContent = e.target.value;
-                    });
+                    if (slider && display) {
+                        slider.addEventListener('input', (e) => {
+                            this.params[param] = parseFloat(e.target.value);
+                            display.textContent = e.target.value;
+                        });
+                        slider.addEventListener('change', (e) => {
+                            this.params[param] = parseFloat(e.target.value);
+                            display.textContent = e.target.value;
+                        });
+                    }
                 });
 
                 document.getElementById('audioBtn').addEventListener('click', () => this.toggleAudio());
+                
+                // Add touch event listeners for better mobile support
+                const toggleBtn = document.querySelector('.controls-toggle');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        window.toggleMVEPControls();
+                    }, { passive: false });
+                }
             }
             
             async initAudio() {
