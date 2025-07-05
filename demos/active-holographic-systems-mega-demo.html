@@ -133,16 +133,17 @@
     <div class="holographic-grid" id="holographicGrid"></div>
 
     <script>
-        // Base HolographicVisualizer class from tech-layout-active-holographic-demo.html
+        // ENHANCED HOLOGRAPHIC VISUALIZER (Copied from tech-layout-active-holographic-demo.html)
         class HolographicVisualizer {
             constructor(canvas, config) {
                 this.canvas = canvas;
                 this.gl = this.canvas.getContext('webgl');
+                
                 if (!this.gl) {
                     console.error("WebGL not supported");
                     return;
                 }
-
+                
                 this.config = config;
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
@@ -157,7 +158,7 @@
                 this.initBuffers();
                 this.resize();
             }
-
+            
             initShaders() {
                 const vertexShaderSource = `
                     attribute vec2 a_position;
@@ -315,7 +316,7 @@
                 this.gl.bufferData(this.gl.ARRAY_BUFFER, positions, this.gl.STATIC_DRAW);
                 const positionLocation = this.gl.getAttribLocation(this.program, 'a_position');
                 this.gl.enableVertexAttribArray(positionLocation);
-                this.gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+                this.gl.vertexAttribPointer(positionLocation, 2, this.gl.FLOAT, false, 0, 0);
             }
 
             resize() {
@@ -359,7 +360,7 @@
                 this.gl.uniform1f(this.uniforms.densityVariation, this.densityVariation);
                 this.gl.uniform1f(this.uniforms.geometryType, this.config.geometryType);
                 
-                this.gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
             }
         }
 

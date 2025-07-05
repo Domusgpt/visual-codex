@@ -65,7 +65,7 @@
     // Handle demos with multiple menus
     function handleMultipleMenus() {
         // Find all control panels
-        const menus = document.querySelectorAll('.controls, .control-panel, .menu-panel');
+        const menus = document.querySelectorAll('.controls'); // Target elements with class 'controls'
         if (menus.length > 1) {
             console.log(`📊 Found ${menus.length} menus to collapse`);
             
@@ -80,25 +80,33 @@
             tabContent.className = 'ucm-tab-content';
 
             menus.forEach((menu, index) => {
-                const title = menu.querySelector('h3, h4, .title')?.textContent || `Menu ${index + 1}`;
+                // Get title from h3 or h4 within the menu, or use a default
+                const titleElement = menu.querySelector('h3, h4');
+                const title = titleElement ? titleElement.textContent : `Menu ${index + 1}`;
+                
                 const tabButton = document.createElement('button');
                 tabButton.className = 'ucm-tab';
                 tabButton.dataset.tab = index;
                 tabButton.textContent = title;
                 
                 tabButton.addEventListener('click', () => {
-                    // Update active tab
+                    // Update active tab button
                     tabButtons.querySelectorAll('.ucm-tab').forEach(t => t.classList.remove('active'));
                     tabButton.classList.add('active');
                     
-                    // Show corresponding menu
+                    // Show corresponding menu and hide others
                     menus.forEach((m, i) => {
-                        m.style.display = i === index ? 'block' : 'none';
+                        m.style.display = (i === index) ? 'block' : 'none';
                     });
+
+                    // Sync values after showing the menu
+                    if (window.collapsibleMenu) {
+                        window.collapsibleMenu.syncWithOriginalControls();
+                    }
                 });
                 
                 tabButtons.appendChild(tabButton);
-                tabContent.appendChild(menu);
+                tabContent.appendChild(menu); // Move the original menu element
             });
             
             tabContainer.appendChild(tabButtons);
