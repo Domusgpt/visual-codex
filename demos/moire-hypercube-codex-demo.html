@@ -9,13 +9,38 @@
         canvas { display: block; width: 100vw; height: 100vh; }
         .control-panel { 
             position: fixed; top: 20px; left: 20px; 
-            background: rgba(0,0,0,0.8); padding: 20px; 
-            border: 2px solid #00ffff; color: #00ffff; 
-            border-radius: 10px; backdrop-filter: blur(15px);
-            z-index: 100; max-width: 300px;
+            background: rgba(0,0,0,0.9); padding: 12px; 
+            border: 1px solid #00ffff; color: #00ffff; 
+            border-radius: 8px; backdrop-filter: blur(15px);
+            z-index: 100; max-width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
-        .slider-group { margin: 15px 0; }
-        .slider-label { margin-bottom: 8px; font-size: 14px; }
+        .panel-toggle {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: rgba(0,255,255,0.8);
+            border: 1px solid #00ffff;
+            color: #000;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 101;
+            touch-action: manipulation;
+        }
+        .panel-content {
+            transition: all 0.3s ease;
+        }
+        .slider-group { margin: 8px 0; }
+        .slider-label { margin-bottom: 4px; font-size: 12px; }
         input[type="range"] { 
             width: 100%; 
             min-height: 44px;
@@ -41,8 +66,8 @@
         }
         .preset-btn { 
             background: rgba(255,0,255,0.2); border: 1px solid #ff00ff; 
-            color: #ff00ff; padding: 12px 16px; margin: 5px 5px 5px 0; 
-            cursor: pointer; border-radius: 5px; font-size: 12px;
+            color: #ff00ff; padding: 8px 12px; margin: 3px 3px 3px 0; 
+            cursor: pointer; border-radius: 4px; font-size: 10px;
             /* Mobile touch target compliance */
             min-height: 44px;
             min-width: 44px;
@@ -57,8 +82,8 @@
         }
         .toggle-btn {
             background: rgba(255,255,0,0.2); border: 1px solid #ffff00;
-            color: #ffff00; padding: 12px 16px; margin: 3px;
-            cursor: pointer; border-radius: 5px; font-size: 11px;
+            color: #ffff00; padding: 6px 10px; margin: 2px;
+            cursor: pointer; border-radius: 4px; font-size: 9px;
             /* Mobile touch target compliance */
             min-height: 44px;
             min-width: 44px;
@@ -94,7 +119,9 @@
     <div class="moire-overlay" id="moireOverlay"></div>
     
     <div class="control-panel">
-        <h3 style="margin: 0 0 15px 0;">MOIRÉ HYPERCUBE CODEX</h3>
+        <button class="panel-toggle" onclick="toggleControlPanel()">▲</button>
+        <div class="panel-content">
+            <h3 style="margin: 0 0 10px 0; font-size: 14px;">MOIRÉ HYPERCUBE CODEX</h3>
         
         <div class="slider-group">
             <div class="slider-label">Grid Density: <span id="densityVal">1.0</span></div>
@@ -144,6 +171,7 @@
             <button class="toggle-btn" id="rgbToggle" onclick="toggleEffect('rgb')">RGB GLITCH</button>
             <button class="toggle-btn active" id="moireToggle" onclick="toggleEffect('moire')">MOIRÉ</button>
             <button class="toggle-btn" id="pulseToggle" onclick="toggleEffect('pulse')">PULSE</button>
+        </div>
         </div>
     </div>
 
@@ -498,6 +526,20 @@
                 }
             });
         }
+
+        // Control panel toggle
+        window.toggleControlPanel = function() {
+            const content = document.querySelector('.panel-content');
+            const toggle = document.querySelector('.panel-toggle');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '▼';
+            }
+        };
 
         // Effect toggles
         window.toggleEffect = function(effect) {
