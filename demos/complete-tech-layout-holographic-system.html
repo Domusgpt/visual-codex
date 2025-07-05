@@ -3,123 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Active Holographic Systems - 30 Variations Mega Demo</title>
+    <title>COMPLETE TECH LAYOUT HOLOGRAPHIC SYSTEM EXTRACTED</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
         body {
-            margin: 0;
-            background: #000;
-            overflow: hidden;
+            margin: 0; 
+            background: #000; 
+            overflow: hidden; 
             font-family: 'Orbitron', 'Courier New', monospace;
             height: 100vh;
             cursor: crosshair;
             background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
         }
         
-        /* HOLOGRAPHIC VARIATIONS GRID */
-        .variations-grid {
+        canvas { 
+            display: block; 
+            width: 100vw; 
+            height: 100vh; 
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            grid-template-rows: repeat(5, 1fr);
-            gap: 20px;
-            padding: 40px;
-            z-index: 10;
         }
         
-        /* VARIATION CARD SYSTEM */
-        .variation-card {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform-style: preserve-3d;
-            
-            /* Neoskeuomorphic shadow system */
-            box-shadow: 
-                0 8px 16px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1),
-                0 0 0 1px rgba(0, 255, 255, 0.1);
-        }
-        
-        .variation-card:hover {
-            transform: scale(1.05) translateZ(20px);
-            box-shadow: 
-                0 15px 30px rgba(0, 0, 0, 0.5),
-                inset 0 2px 2px rgba(255, 255, 255, 0.15),
-                0 0 0 2px rgba(0, 255, 255, 0.3),
-                0 0 20px rgba(0, 255, 255, 0.2);
-        }
-        
-        /* HOLOGRAPHIC CANVAS LAYERS */
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* EXPANDED VIEW */
-        .expanded-view {
+        /* STATE INDICATOR */
+        .state-indicator {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            display: none;
-            backdrop-filter: blur(10px);
-        }
-        
-        .expanded-view.active {
-            display: block;
-        }
-        
-        .expanded-card {
-            position: absolute;
-            top: 10%;
-            left: 10%;
-            width: 80%;
-            height: 80%;
-            border-radius: 25px;
-            overflow: hidden;
-            box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.8),
-                inset 0 2px 4px rgba(255, 255, 255, 0.1),
-                0 0 0 2px rgba(0, 255, 255, 0.4),
-                0 0 40px rgba(0, 255, 255, 0.3);
-        }
-        
-        .close-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 255, 255, 0.2);
+            top: 25px;
+            left: 25px;
+            background: linear-gradient(135deg,
+                rgba(0, 0, 0, 0.9) 0%,
+                rgba(25, 0, 50, 0.8) 100%
+            );
+            padding: 16px;
+            border-radius: 18px;
             border: 1px solid #00ffff;
-            color: #00ffff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
             font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            z-index: 1001;
-            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            z-index: 2000;
+            min-width: 200px;
+            backdrop-filter: blur(25px);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 0 0 1px rgba(0, 255, 255, 0.2);
         }
         
-        .close-button:hover {
-            background: rgba(0, 255, 255, 0.4);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        .state-row {
+            margin: 4px 0;
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
         }
         
+        .state-value {
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
         /* GRID OVERLAY SYSTEM */
         .grid-overlay {
             position: absolute;
@@ -132,15 +73,42 @@
             opacity: 0.1;
             transition: opacity 0.3s ease;
             background: 
-                repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(0, 255, 255, 0.1) 20px, rgba(0, 255, 255, 0.1) 21px),
-                repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(0, 255, 255, 0.1) 20px, rgba(0, 255, 255, 0.1) 21px);
+                /* Primary grid */
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(0, 255, 255, 0.1) 20px,
+                    rgba(0, 255, 255, 0.1) 21px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(0, 255, 255, 0.1) 20px,
+                    rgba(0, 255, 255, 0.1) 21px
+                ),
+                /* Secondary grid */
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(255, 0, 255, 0.05) 40px,
+                    rgba(255, 0, 255, 0.05) 41px
+                );
         }
         
         .grid-overlay.active {
             opacity: 0.3;
+            animation: gridPulse 2s ease-in-out infinite;
         }
         
-        /* INTERACTION RIPPLE */
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+        }
+
+        /* INTERACTION FEEDBACK */
         .interaction-ripple {
             position: absolute;
             border-radius: 50%;
@@ -151,8 +119,16 @@
         }
         
         @keyframes rippleExpand {
-            0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 100px; height: 100px; opacity: 0; }
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -160,38 +136,44 @@
     <!-- GRID OVERLAY -->
     <div class="grid-overlay" id="gridOverlay"></div>
     
-    <!-- VARIATIONS GRID -->
-    <div class="variations-grid" id="variationsGrid">
-        <!-- 30 variation cards will be generated here -->
-    </div>
-    
-    <!-- EXPANDED VIEW -->
-    <div class="expanded-view" id="expandedView">
-        <button class="close-button" onclick="closeExpanded()">✕ Close</button>
-        <div class="expanded-card" id="expandedCard">
-            <!-- Expanded holographic system will be rendered here -->
-        </div>
+    <!-- STATE INDICATOR -->
+    <div class="state-indicator">
+        <div class="state-row">Layout: <span class="state-value">TECH</span></div>
+        <div class="state-row">4D Math: <span class="state-value">Active</span></div>
+        <div class="state-row">Mouse: <span class="state-value" id="mouse-reactive">Tracking</span></div>
+        <div class="state-row">Density: <span class="state-value" id="density-display">1.0</span></div>
     </div>
 
+    <!-- Background layer -->
+    <canvas id="background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1; opacity: 0.2;"></canvas>
+    
+    <!-- Shadow layer - EXACT workspace card shadow -->
+    <canvas id="shadow-canvas" style="position: absolute; top: 0; left: 0; z-index: 3; opacity: 0.6; filter: blur(2px) brightness(0.7); mix-blend-mode: multiply; transform: translate(4px, 4px);"></canvas>
+    
+    <!-- Main content layer - EXACT workspace card content -->
+    <canvas id="content-canvas" style="position: absolute; top: 0; left: 0; z-index: 5; opacity: 0.8; mix-blend-mode: normal;"></canvas>
+    
+    <!-- Highlight layer - EXACT workspace card highlight -->
+    <canvas id="highlight-canvas" style="position: absolute; top: 0; left: 0; z-index: 7; opacity: 0.4; filter: blur(1px) brightness(1.5); mix-blend-mode: screen; transform: translate(-2px, -2px);"></canvas>
+    
+    <!-- Essential accent overlay - EXACT workspace card accent -->
+    <canvas id="accent-overlay" style="position: absolute; top: 0; left: 0; z-index: 15; opacity: 0.3; filter: blur(3px); mix-blend-mode: color-dodge; transform: scale(1.02);"></canvas>
+
     <script>
-        console.log('🌌 Active Holographic Systems - 30 Variations Mega Demo');
+        console.log('🌌 COMPLETE TECH LAYOUT HOLOGRAPHIC SYSTEM EXTRACTED');
         
         // COMPLETE HOLOGRAPHIC VISUALIZER WITH FULL REACTIVITY
         class CompleteHolographicVisualizer {
-            constructor(canvasId, role = 'content', reactivity = 1.0, variant = 0) {
+            constructor(canvasId, role = 'content', reactivity = 1.0) {
                 this.canvas = document.getElementById(canvasId);
                 this.role = role;
                 this.reactivity = reactivity;
-                this.variant = variant;
                 this.gl = this.canvas.getContext('webgl');
                 
                 if (!this.gl) {
                     console.error(`WebGL not supported for ${canvasId}`);
                     return;
                 }
-                
-                // VARIATION-SPECIFIC PARAMETERS
-                this.variantParams = this.generateVariantParams(variant);
                 
                 // EXACT role-specific parameters from tech-layout
                 this.roleParams = {
@@ -204,8 +186,8 @@
                         mouseReactivity: 0.5, clickReactivity: 0.3 
                     },
                     'content': { 
-                        densityMult: this.variantParams.density, speedMult: this.variantParams.speed, 
-                        colorShift: this.variantParams.hue, intensity: this.variantParams.intensity,
+                        densityMult: 1.0 + Math.random() * 0.5, speedMult: 0.6 + Math.random() * 0.3, 
+                        colorShift: Math.random() * 360, intensity: 0.7 + Math.random() * 0.2,
                         mouseReactivity: 1.0, clickReactivity: 0.8 
                     },
                     'highlight': { 
@@ -236,24 +218,21 @@
                 this.densityVariation = 0.0;
                 this.densityTarget = 0.0;
                 
+                // EXACT TECH state definition
+                this.states = [
+                    { // TECH
+                        geometry: 1.0, density: this.baseDensity * 0.7, speed: 0.3,
+                        color: [0.0, 1.0, 1.0], dimension: 3.2,
+                        name: 'TECH', geometryName: 'Tetrahedron'
+                    }
+                ];
+                
                 this.startTime = Date.now();
                 this.initShaders();
                 this.initBuffers();
                 this.resize();
-            }
-            
-            generateVariantParams(variant) {
-                // Generate unique parameters for each of 30 variations
-                const base = {
-                    density: 0.5 + (variant * 0.05) % 1.5,
-                    speed: 0.3 + (variant * 0.03) % 0.8,
-                    hue: (variant * 12) % 360,
-                    intensity: 0.5 + (variant * 0.02) % 0.4,
-                    chaos: (variant * 0.1) % 0.3,
-                    morph: (variant * 0.15) % 1.0
-                };
                 
-                return base;
+                console.log(`✅ Complete Holographic Visualizer (${role}) - Reactivity: ${reactivity}x`);
             }
             
             initShaders() {
@@ -483,13 +462,16 @@
                 this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
             }
             
+            // EXACT user interaction methods from tech-layout
             updateInteraction(mouseX, mouseY, intensity) {
+                // Apply role-specific reactivity
                 this.mouseX = mouseX;
                 this.mouseY = mouseY;
                 this.mouseIntensity = intensity * this.roleParams.mouseReactivity * this.reactivity;
             }
             
             triggerClick(x, y) {
+                // Apply role-specific click reactivity
                 this.clickIntensity = Math.min(1.0, this.clickIntensity + this.roleParams.clickReactivity * this.reactivity);
             }
             
@@ -503,19 +485,23 @@
                 this.resize();
                 this.gl.useProgram(this.program);
                 
+                // EXACT smooth density variation from tech-layout
                 this.densityVariation += (this.densityTarget - this.densityVariation) * 0.05;
+                
+                // EXACT click intensity decay from tech-layout
                 this.clickIntensity *= this.clickDecay;
                 
+                const currentState = this.states[0]; // TECH state
                 const time = Date.now() - this.startTime;
                 
-                // Set uniforms
+                // Set EXACT uniforms from tech-layout
                 this.gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
                 this.gl.uniform1f(this.uniforms.time, time);
                 this.gl.uniform2f(this.uniforms.mouse, this.mouseX, this.mouseY);
-                this.gl.uniform1f(this.uniforms.geometry, 1.0);
-                this.gl.uniform1f(this.uniforms.density, 4.2);
-                this.gl.uniform1f(this.uniforms.speed, 0.3);
-                this.gl.uniform3fv(this.uniforms.color, new Float32Array([0.0, 1.0, 1.0]));
+                this.gl.uniform1f(this.uniforms.geometry, currentState.geometry);
+                this.gl.uniform1f(this.uniforms.density, currentState.density);
+                this.gl.uniform1f(this.uniforms.speed, currentState.speed);
+                this.gl.uniform3fv(this.uniforms.color, new Float32Array(currentState.color));
                 this.gl.uniform1f(this.uniforms.intensity, this.roleParams.intensity);
                 this.gl.uniform1f(this.uniforms.roleDensity, this.roleParams.densityMult);
                 this.gl.uniform1f(this.uniforms.roleSpeed, this.roleParams.speedMult);
@@ -529,11 +515,10 @@
             }
         }
         
-        // HOLOGRAPHIC VARIATION SYSTEM
-        class HolographicVariationSystem {
+        // COMPLETE HOLOGRAPHIC SYSTEM with EXACT interaction system from tech-layout
+        class CompleteHolographicSystem {
             constructor() {
-                this.variations = [];
-                this.currentExpanded = null;
+                this.visualizers = [];
                 this.mouseX = 0.5;
                 this.mouseY = 0.5;
                 this.mouseIntensity = 0.0;
@@ -542,100 +527,41 @@
             }
             
             initialize() {
-                console.log('🎨 Initializing 30 Holographic Variations...');
+                console.log('🎨 Initializing Complete Holographic System...');
                 
-                this.createVariations();
-                this.setupInteractions();
-                this.startRenderLoop();
-            }
-            
-            createVariations() {
-                const grid = document.getElementById('variationsGrid');
-                
-                for (let i = 0; i < 30; i++) {
-                    const card = document.createElement('div');
-                    card.className = 'variation-card';
-                    card.setAttribute('data-variation', i);
-                    
-                    // Create 5 canvas layers for each variation (matching workspace card)
-                    const layers = [
-                        { id: `bg-${i}`, role: 'background', reactivity: 0.5, style: 'z-index: 1; opacity: 0.2;' },
-                        { id: `shadow-${i}`, role: 'shadow', reactivity: 0.7, style: 'z-index: 3; opacity: 0.6; filter: blur(2px) brightness(0.7); mix-blend-mode: multiply; transform: translate(2px, 2px);' },
-                        { id: `content-${i}`, role: 'content', reactivity: 0.9, style: 'z-index: 5; opacity: 0.8; mix-blend-mode: normal;' },
-                        { id: `highlight-${i}`, role: 'highlight', reactivity: 1.1, style: 'z-index: 7; opacity: 0.4; filter: blur(1px) brightness(1.5); mix-blend-mode: screen; transform: translate(-1px, -1px);' },
-                        { id: `accent-${i}`, role: 'accent', reactivity: 1.5, style: 'z-index: 15; opacity: 0.3; filter: blur(2px); mix-blend-mode: color-dodge; transform: scale(1.01);' }
-                    ];
-                    
-                    layers.forEach(layer => {
-                        const canvas = document.createElement('canvas');
-                        canvas.id = layer.id;
-                        canvas.style.cssText = layer.style;
-                        card.appendChild(canvas);
-                        
-                        const visualizer = new CompleteHolographicVisualizer(layer.id, layer.role, layer.reactivity, i);
-                        this.variations.push({ visualizer, card, variant: i });
-                    });
-                    
-                    // Add click handler for expansion
-                    card.addEventListener('click', () => this.expandVariation(i));
-                    
-                    grid.appendChild(card);
-                }
-                
-                console.log(`✅ Created ${this.variations.length} holographic visualizers across 30 variations`);
-            }
-            
-            expandVariation(variant) {
-                const expandedView = document.getElementById('expandedView');
-                const expandedCard = document.getElementById('expandedCard');
-                
-                // Clear previous content
-                expandedCard.innerHTML = '';
-                
-                // Create expanded version with same 5-layer system
-                const layers = [
-                    { id: `exp-bg-${variant}`, role: 'background', reactivity: 0.5, style: 'z-index: 1; opacity: 0.2;' },
-                    { id: `exp-shadow-${variant}`, role: 'shadow', reactivity: 0.7, style: 'z-index: 3; opacity: 0.6; filter: blur(4px) brightness(0.7); mix-blend-mode: multiply; transform: translate(4px, 4px);' },
-                    { id: `exp-content-${variant}`, role: 'content', reactivity: 0.9, style: 'z-index: 5; opacity: 0.8; mix-blend-mode: normal;' },
-                    { id: `exp-highlight-${variant}`, role: 'highlight', reactivity: 1.1, style: 'z-index: 7; opacity: 0.4; filter: blur(2px) brightness(1.5); mix-blend-mode: screen; transform: translate(-2px, -2px);' },
-                    { id: `exp-accent-${variant}`, role: 'accent', reactivity: 1.5, style: 'z-index: 15; opacity: 0.3; filter: blur(3px); mix-blend-mode: color-dodge; transform: scale(1.02);' }
+                // Create multiple visualizers with EXACT workspace card parameters
+                const configs = [
+                    { id: 'background-canvas', role: 'background', reactivity: 0.5 },
+                    { id: 'shadow-canvas', role: 'shadow', reactivity: 0.7 },
+                    { id: 'content-canvas', role: 'content', reactivity: 0.9 }, // EXACT workspace card content
+                    { id: 'highlight-canvas', role: 'highlight', reactivity: 1.1 }, // EXACT workspace card highlight  
+                    { id: 'accent-overlay', role: 'accent', reactivity: 1.5 } // ESSENTIAL translucent overlay
                 ];
                 
-                layers.forEach(layer => {
-                    const canvas = document.createElement('canvas');
-                    canvas.id = layer.id;
-                    canvas.style.cssText = layer.style;
-                    expandedCard.appendChild(canvas);
-                    
-                    const visualizer = new CompleteHolographicVisualizer(layer.id, layer.role, layer.reactivity, variant);
-                    this.currentExpanded = { visualizers: (this.currentExpanded?.visualizers || []), variant };
-                    this.currentExpanded.visualizers.push(visualizer);
+                configs.forEach(config => {
+                    const visualizer = new CompleteHolographicVisualizer(config.id, config.role, config.reactivity);
+                    this.visualizers.push(visualizer);
                 });
                 
-                expandedView.classList.add('active');
-                console.log(`🔍 Expanded variation ${variant} with full holographic system`);
+                this.setupInteractions();
+                this.startRenderLoop();
+                
+                console.log('✅ Complete Holographic System ready with 5 layers matching EXACT workspace card configuration');
             }
             
             setupInteractions() {
-                // Mouse tracking system
+                // EXACT mouse tracking system from tech-layout
                 document.addEventListener('mousemove', (e) => {
                     this.mouseX = e.clientX / window.innerWidth;
                     this.mouseY = 1.0 - (e.clientY / window.innerHeight);
                     this.mouseIntensity = Math.min(1.0, Math.sqrt(e.movementX*e.movementX + e.movementY*e.movementY) / 40);
                     
-                    // Update all visualizers
-                    this.variations.forEach(({ visualizer }) => {
-                        visualizer.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
+                    // Update all visualizers with mouse data
+                    this.visualizers.forEach(viz => {
+                        viz.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
                     });
                     
-                    // Update expanded visualizers
-                    if (this.currentExpanded) {
-                        this.currentExpanded.visualizers.forEach(visualizer => {
-                            visualizer.updateInteraction(this.mouseX, this.mouseY, this.mouseIntensity);
-                        });
-                    }
-                    
-                    // Grid overlay activation
+                    // EXACT grid overlay activation from tech-layout
                     const gridOverlay = document.getElementById('gridOverlay');
                     if (this.mouseIntensity > 0.3) {
                         gridOverlay.classList.add('active');
@@ -643,41 +569,36 @@
                         gridOverlay.classList.remove('active');
                     }
                     
-                    // Density variation
+                    // EXACT density variation based on mouse position from tech-layout
                     const densityVar = Math.sin(this.mouseX * Math.PI) * Math.sin(this.mouseY * Math.PI) * 2.0;
-                    this.variations.forEach(({ visualizer }) => {
-                        visualizer.updateDensity(densityVar);
+                    this.visualizers.forEach(viz => {
+                        viz.updateDensity(densityVar);
                     });
                     
-                    if (this.currentExpanded) {
-                        this.currentExpanded.visualizers.forEach(visualizer => {
-                            visualizer.updateDensity(densityVar);
-                        });
-                    }
+                    // Update density display
+                    document.getElementById('density-display').textContent = (1.0 + densityVar).toFixed(2);
+                    
+                    // Update mouse status
+                    document.getElementById('mouse-reactive').textContent = this.mouseIntensity > 0.1 ? 'Reactive' : 'Tracking';
                 });
                 
-                // Click interactions
+                // EXACT click interactions from tech-layout
                 document.addEventListener('click', (e) => {
                     const rect = document.body.getBoundingClientRect();
                     const clickX = (e.clientX - rect.left) / rect.width;
                     const clickY = 1.0 - ((e.clientY - rect.top) / rect.height);
                     
                     // Trigger click effect on all visualizers
-                    this.variations.forEach(({ visualizer }) => {
-                        visualizer.triggerClick(clickX, clickY);
+                    this.visualizers.forEach(viz => {
+                        viz.triggerClick(clickX, clickY);
                     });
                     
-                    if (this.currentExpanded) {
-                        this.currentExpanded.visualizers.forEach(visualizer => {
-                            visualizer.triggerClick(clickX, clickY);
-                        });
-                    }
-                    
-                    // Create ripple effect
+                    // EXACT ripple effect from tech-layout
                     this.createRipple(e.clientX, e.clientY);
                 });
             }
             
+            // EXACT ripple creation from tech-layout
             createRipple(x, y) {
                 const ripple = document.createElement('div');
                 ripple.className = 'interaction-ripple';
@@ -692,41 +613,23 @@
             
             startRenderLoop() {
                 const render = () => {
-                    // Render all variation visualizers
-                    this.variations.forEach(({ visualizer }) => {
-                        visualizer.render();
+                    // Render all visualizers in order: background -> content -> accent overlay
+                    this.visualizers.forEach(viz => {
+                        viz.render();
                     });
-                    
-                    // Render expanded visualizers
-                    if (this.currentExpanded) {
-                        this.currentExpanded.visualizers.forEach(visualizer => {
-                            visualizer.render();
-                        });
-                    }
-                    
                     requestAnimationFrame(render);
                 };
                 
                 render();
-                console.log('🎬 Holographic variation render loop started');
-            }
-        }
-        
-        // Close expanded view
-        function closeExpanded() {
-            const expandedView = document.getElementById('expandedView');
-            expandedView.classList.remove('active');
-            
-            if (window.holographicSystem.currentExpanded) {
-                window.holographicSystem.currentExpanded = null;
+                console.log('🎬 Complete holographic render loop started with all layers');
             }
         }
         
         // Initialize when page loads
         window.addEventListener('load', () => {
-            console.log('🚀 Initializing Active Holographic Systems - 30 Variations...');
-            const system = new HolographicVariationSystem();
-            window.holographicSystem = system;
+            console.log('🚀 Initializing Complete Tech Layout Holographic System...');
+            const system = new CompleteHolographicSystem();
+            window.completeHolographicSystem = system;
         });
         
     </script>
