@@ -270,7 +270,7 @@
                 // VARIATION-SPECIFIC PARAMETERS
                 this.variantParams = this.generateVariantParams(variant);
                 
-                // EXACT role-specific parameters from tech-layout
+                // EXACT role-specific parameters from tech-layout with variant customization
                 this.roleParams = {
                     'background': { 
                         densityMult: 0.4, speedMult: 0.2, colorShift: 0.0, intensity: 0.2,
@@ -286,11 +286,13 @@
                         mouseReactivity: 1.0, clickReactivity: 0.8 
                     },
                     'highlight': { 
-                        densityMult: 1.5, speedMult: 0.8, colorShift: 60.0, intensity: 0.6,
+                        densityMult: 1.5 + (this.variantParams.density * 0.3), speedMult: 0.8 + (this.variantParams.speed * 0.2), 
+                        colorShift: this.variantParams.hue + 60.0, intensity: 0.6 + (this.variantParams.intensity * 0.2),
                         mouseReactivity: 1.2, clickReactivity: 1.0 
                     },
                     'accent': { 
-                        densityMult: 2.5, speedMult: 0.4, colorShift: 300.0, intensity: 0.3,
+                        densityMult: 2.5 + (this.variantParams.density * 0.5), speedMult: 0.4 + (this.variantParams.speed * 0.1), 
+                        colorShift: this.variantParams.hue + 300.0, intensity: 0.3 + (this.variantParams.intensity * 0.1),
                         mouseReactivity: 1.5, clickReactivity: 1.2 
                     }
                 }[role] || { densityMult: 1.0, speedMult: 0.5, colorShift: 0.0, intensity: 0.5, mouseReactivity: 1.0, clickReactivity: 0.5 };
@@ -320,14 +322,25 @@
             }
             
             generateVariantParams(variant) {
-                // Generate unique parameters for each of 30 variations
+                // Generate dramatically different parameters for each of 30 variations
+                const seed = variant / 30.0;
+                const sin1 = Math.sin(variant * 0.5);
+                const sin2 = Math.sin(variant * 0.7);
+                const sin3 = Math.sin(variant * 1.1);
+                
                 const base = {
-                    density: 0.5 + (variant * 0.05) % 1.5,
-                    speed: 0.3 + (variant * 0.03) % 0.8,
-                    hue: (variant * 12) % 360,
-                    intensity: 0.5 + (variant * 0.02) % 0.4,
-                    chaos: (variant * 0.1) % 0.3,
-                    morph: (variant * 0.15) % 1.0
+                    density: 0.3 + (sin1 * sin1) * 2.0,           // Range: 0.3 - 2.3
+                    speed: 0.2 + Math.abs(sin2) * 1.2,            // Range: 0.2 - 1.4
+                    hue: (variant * 12.27) % 360,                 // Full hue spectrum
+                    intensity: 0.4 + Math.abs(sin3) * 0.6,       // Range: 0.4 - 1.0
+                    chaos: Math.abs(sin1 * sin2) * 0.4,          // Range: 0.0 - 0.4
+                    morph: Math.abs(sin2 * sin3),                // Range: 0.0 - 1.0
+                    
+                    // Additional variation parameters for extreme differentiation
+                    geometryShift: variant * 0.1,                // Geometry variation
+                    timeScale: 0.5 + Math.abs(sin1) * 1.5,      // Time scaling
+                    depthMod: Math.sin(variant * 0.3) * 0.5,     // Depth modulation
+                    colorBlend: Math.abs(sin2 * sin3)            // Color blending factor
                 };
                 
                 return base;
@@ -641,21 +654,22 @@
             }
             
             createVisualizers() {
-                // Create the 5 visualizers for the single display
+                // Create the 5 visualizers using EXACT tech-layout configuration
                 const layers = [
                     { id: 'background-canvas', role: 'background', reactivity: 0.5 },
                     { id: 'shadow-canvas', role: 'shadow', reactivity: 0.7 },
-                    { id: 'content-canvas', role: 'content', reactivity: 0.9 },
-                    { id: 'highlight-canvas', role: 'highlight', reactivity: 1.1 },
-                    { id: 'accent-canvas', role: 'accent', reactivity: 1.5 }
+                    { id: 'content-canvas', role: 'content', reactivity: 0.9 }, // EXACT workspace card content
+                    { id: 'highlight-canvas', role: 'highlight', reactivity: 1.1 }, // EXACT workspace card highlight
+                    { id: 'accent-canvas', role: 'accent', reactivity: 1.5 } // ESSENTIAL translucent overlay
                 ];
                 
                 layers.forEach(layer => {
+                    // Use the COMPLETE holographic visualizer from our extracted system
                     const visualizer = new CompleteHolographicVisualizer(layer.id, layer.role, layer.reactivity, this.currentVariant);
                     this.visualizers.push(visualizer);
                 });
                 
-                console.log(`✅ Created 5-layer holographic system ready for 30 variations`);
+                console.log(`✅ Created 5-layer COMPLETE holographic system with tech-layout extraction ready for 30 variations`);
             }
             
             updateVariant(newVariant) {
@@ -669,17 +683,40 @@
                     visualizer.variant = this.currentVariant;
                     visualizer.variantParams = visualizer.generateVariantParams(this.currentVariant);
                     
-                    // Update role parameters for content layer with variant-specific values
-                    if (visualizer.role === 'content') {
-                        visualizer.roleParams.densityMult = visualizer.variantParams.density;
-                        visualizer.roleParams.speedMult = visualizer.variantParams.speed;
-                        visualizer.roleParams.colorShift = visualizer.variantParams.hue;
-                        visualizer.roleParams.intensity = visualizer.variantParams.intensity;
-                    }
+                    // Completely regenerate role parameters with new variant values
+                    const role = visualizer.role;
+                    const vp = visualizer.variantParams;
+                    
+                    visualizer.roleParams = {
+                        'background': { 
+                            densityMult: 0.4, speedMult: 0.2, colorShift: 0.0, intensity: 0.2,
+                            mouseReactivity: 0.3, clickReactivity: 0.1 
+                        },
+                        'shadow': { 
+                            densityMult: 0.8, speedMult: 0.3, colorShift: 180.0, intensity: 0.4,
+                            mouseReactivity: 0.5, clickReactivity: 0.3 
+                        },
+                        'content': { 
+                            densityMult: vp.density, speedMult: vp.speed, 
+                            colorShift: vp.hue, intensity: vp.intensity,
+                            mouseReactivity: 1.0, clickReactivity: 0.8 
+                        },
+                        'highlight': { 
+                            densityMult: 1.5 + (vp.density * 0.3), speedMult: 0.8 + (vp.speed * 0.2), 
+                            colorShift: vp.hue + 60.0, intensity: 0.6 + (vp.intensity * 0.2),
+                            mouseReactivity: 1.2, clickReactivity: 1.0 
+                        },
+                        'accent': { 
+                            densityMult: 2.5 + (vp.density * 0.5), speedMult: 0.4 + (vp.speed * 0.1), 
+                            colorShift: vp.hue + 300.0, intensity: 0.3 + (vp.intensity * 0.1),
+                            mouseReactivity: 1.5, clickReactivity: 1.2 
+                        }
+                    }[role] || { densityMult: 1.0, speedMult: 0.5, colorShift: 0.0, intensity: 0.5, mouseReactivity: 1.0, clickReactivity: 0.5 };
                 });
                 
                 this.updateVariantDisplay();
                 console.log(`🔄 Switched to variant ${this.currentVariant + 1}: ${this.variantNames[this.currentVariant]}`);
+                console.log(`📊 Variant params:`, this.visualizers[2].variantParams); // Log content layer params
             }
             
             updateVariantDisplay() {
