@@ -52,6 +52,9 @@
             scroll-snap-type: y mandatory;
             scroll-behavior: smooth;
             position: relative;
+            /* Enhanced touch scroll support */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         
         /* Each snap section shows exactly 6 cards */
@@ -78,12 +81,24 @@
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: var(--glow-intensity) var(--neon-cyan);
+            /* Touch optimization */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 255, 255, 0.1);
         }
         
         .snap-card:hover {
             transform: scale(1.05) translateZ(20px);
             box-shadow: 0 0 40px var(--neon-magenta);
             border-color: var(--neon-magenta);
+        }
+        
+        /* Mobile-friendly hover alternative */
+        @media (hover: none) {
+            .snap-card:active {
+                transform: scale(1.02) translateZ(10px);
+                box-shadow: 0 0 20px var(--neon-magenta);
+                border-color: var(--neon-magenta);
+            }
         }
         
         .snap-card h3 {
@@ -342,10 +357,24 @@
             gap: 5px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: 10; /* Ensure buttons are above other elements */
+            pointer-events: auto; /* Ensure buttons are clickable */
         }
         
-        .effect-card:hover .controls {
+        .effect-card:hover .controls,
+        .snap-card:hover .controls {
             opacity: 1;
+        }
+        
+        /* Show controls on mobile touch */
+        @media (hover: none) {
+            .controls {
+                opacity: 0.7; /* Always slightly visible on mobile */
+            }
+            .effect-card:active .controls,
+            .snap-card:active .controls {
+                opacity: 1;
+            }
         }
         
         .control-btn {
@@ -360,6 +389,12 @@
             justify-content: center;
             font-size: 0.8rem;
             transition: all 0.2s ease;
+            /* Enhanced touch support */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(0, 255, 255, 0.3);
+            min-width: 44px; /* iOS touch target requirement */
+            min-height: 44px;
+            border-radius: 5px;
         }
         
         .control-btn:hover {
@@ -984,9 +1019,9 @@
                         ${previewContent}
                         ${badge}
                         <div class="controls">
-                            <button class="control-btn" title="Fullscreen" onclick="event.stopPropagation(); openFullscreen('${effect.file || ''}')">⛶</button>
-                            <button class="control-btn" title="Code">{ }</button>
-                            <button class="control-btn" title="Settings">⚙</button>
+                            <button class="control-btn" title="Fullscreen" onclick="handleControlClick(event, 'fullscreen', '${effect.file || ''}')">⛶</button>
+                            <button class="control-btn" title="Code" onclick="handleControlClick(event, 'code', '${effect.file || ''}')'>{ }</button>
+                            <button class="control-btn" title="Settings" onclick="handleControlClick(event, 'settings', '${effect.file || ''}')">⚙</button>
                         </div>
                     </div>
                     <div class="effect-info">
@@ -1064,6 +1099,39 @@
         function openFullscreen(file) {
             if (file) {
                 window.open(file, '_blank');
+            }
+        }
+        
+        // Enhanced control click handler with touch support
+        function handleControlClick(event, action, file) {
+            // Prevent event from bubbling to card click
+            event.stopPropagation();
+            event.preventDefault();
+            
+            // Add visual feedback for touch
+            const button = event.target;
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Handle different actions
+            switch(action) {
+                case 'fullscreen':
+                    if (file) {
+                        window.open(file, '_blank');
+                    }
+                    break;
+                case 'code':
+                    // Future: Show code view
+                    console.log('Code view for:', file);
+                    break;
+                case 'settings':
+                    // Future: Show settings panel
+                    console.log('Settings for:', file);
+                    break;
+                default:
+                    console.log('Unknown action:', action);
             }
         }
         
