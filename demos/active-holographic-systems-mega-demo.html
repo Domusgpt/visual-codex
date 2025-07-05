@@ -15,7 +15,6 @@
             height: 100vh;
             cursor: crosshair;
             background: radial-gradient(ellipse at center, #1a0033 0%, #000000 70%);
-            touch-action: none; /* Prevent default touch behaviors */
             user-select: none; /* Prevent text selection */
         }
         
@@ -30,7 +29,8 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform-style: preserve-3d;
-            /* Enable infinite scroll capture */
+            z-index: 10; /* Below control panel */
+            /* Enable selective touch capture */
             touch-action: none;
             overscroll-behavior: none;
             
@@ -74,6 +74,9 @@
                 0 10px 30px rgba(0, 0, 0, 0.6),
                 inset 0 1px 1px rgba(255, 255, 255, 0.1),
                 0 0 0 1px rgba(0, 255, 255, 0.2);
+            /* Ensure UI controls work normally */
+            touch-action: manipulation;
+            pointer-events: auto;
         }
         
         .variant-display {
@@ -103,6 +106,11 @@
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
+            /* Ensure buttons work on touch devices */
+            touch-action: manipulation;
+            pointer-events: auto;
+            min-height: 44px; /* iOS touch target requirement */
+            min-width: 44px;
             font-family: 'Orbitron', monospace;
             font-size: 0.8rem;
             transition: all 0.3s ease;
@@ -1045,12 +1053,21 @@
                     this.createRipple(e.clientX, e.clientY);
                 });
                 
-                // TOUCH INTERACTION SYSTEM
+                // SELECTIVE TOUCH INTERACTION SYSTEM
                 let currentTouch = null;
                 
+                // Only apply touch effects to the holographic display area, not UI controls
+                const holographicDisplay = document.getElementById('holographicDisplay');
+                
+                const isOverHolographicArea = (e) => {
+                    const touch = e.touches[0] || e.changedTouches[0];
+                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                    return holographicDisplay.contains(element) || element.tagName === 'CANVAS';
+                };
+                
                 document.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    if (e.touches.length > 0) {
+                    if (isOverHolographicArea(e) && e.touches.length > 0) {
+                        e.preventDefault(); // Only prevent default for holographic area
                         currentTouch = e.touches[0];
                         const touchX = currentTouch.clientX / window.innerWidth;
                         const touchY = 1.0 - (currentTouch.clientY / window.innerHeight);
@@ -1062,8 +1079,8 @@
                 }, { passive: false });
                 
                 document.addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    if (e.touches.length > 0 && currentTouch) {
+                    if (isOverHolographicArea(e) && e.touches.length > 0 && currentTouch) {
+                        e.preventDefault(); // Only prevent default for holographic area
                         const touch = e.touches[0];
                         const touchX = touch.clientX / window.innerWidth;
                         const touchY = 1.0 - (touch.clientY / window.innerHeight);
@@ -1077,29 +1094,38 @@
                 }, { passive: false });
                 
                 document.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    this.visualizers.forEach(visualizer => {
-                        visualizer.updateTouch(0.5, 0.5, false);
-                    });
-                    currentTouch = null;
+                    if (currentTouch) {
+                        // Only prevent default if we were tracking a touch in the holographic area
+                        e.preventDefault();
+                        this.visualizers.forEach(visualizer => {
+                            visualizer.updateTouch(0.5, 0.5, false);
+                        });
+                        currentTouch = null;
+                    }
                 }, { passive: false });
                 
-                // SCROLL PARALLAX SYSTEM
+                // SELECTIVE SCROLL PARALLAX SYSTEM
                 document.addEventListener('wheel', (e) => {
-                    e.preventDefault();
+                    // Only capture scroll when over the holographic display area
+                    const element = document.elementFromPoint(e.clientX, e.clientY);
+                    const isOverHolographic = holographicDisplay.contains(element) || element.tagName === 'CANVAS';
                     
-                    // Update scroll on all visualizers
-                    this.visualizers.forEach(visualizer => {
-                        visualizer.updateScroll(e.deltaY);
-                    });
-                    
-                    // Subtle grid overlay response to scroll
-                    const gridOverlay = document.getElementById('gridOverlay');
-                    gridOverlay.style.transform = `translateY(${e.deltaY * 0.1}px)`;
-                    setTimeout(() => {
-                        gridOverlay.style.transform = 'translateY(0px)';
-                    }, 100);
-                    
+                    if (isOverHolographic) {
+                        e.preventDefault(); // Only prevent default for holographic area
+                        
+                        // Update scroll on all visualizers
+                        this.visualizers.forEach(visualizer => {
+                            visualizer.updateScroll(e.deltaY);
+                        });
+                        
+                        // Subtle grid overlay response to scroll
+                        const gridOverlay = document.getElementById('gridOverlay');
+                        gridOverlay.style.transform = `translateY(${e.deltaY * 0.1}px)`;
+                        setTimeout(() => {
+                            gridOverlay.style.transform = 'translateY(0px)';
+                        }, 100);
+                    }
+                    // Allow normal scrolling behavior for UI controls
                 }, { passive: false });
                 
                 // Keyboard shortcuts
