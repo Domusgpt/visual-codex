@@ -98,18 +98,22 @@
             transition: all 0.3s ease-out;
             overflow: hidden;
         }
+        .controls.collapsed {
+            width: 40px !important;
+            height: 40px !important;
+            padding: 8px !important;
+            overflow: hidden;
+        }
         .controls.collapsed .controls-content {
-            max-height: 0;
-            opacity: 0;
-            padding-top: 0;
-            padding-bottom: 0;
+            display: none;
+        }
+        .controls.collapsed .controls-header h3 {
+            display: none;
         }
         .controls.collapsed .controls-toggle {
-            transform: rotate(180deg);
-        }
-        .controls.collapsed {
-            padding: 10px;
-            height: auto;
+            margin: 0;
+            padding: 8px;
+            font-size: 12px;
         }
         .controls-header {
             display: flex;
@@ -133,19 +137,6 @@
         .controls-content {
             transition: all 0.3s ease-out;
             overflow: hidden;
-        }
-        .controls.collapsed .controls-content {
-            max-height: 0;
-            opacity: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        .controls.collapsed .controls-toggle {
-            transform: rotate(180deg);
-        }
-        .controls.collapsed {
-            padding: 10px;
-            height: auto;
         }
     </style>
 </head>
