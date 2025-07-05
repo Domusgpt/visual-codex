@@ -551,32 +551,31 @@
                     console.log(`🎛️ Parameter scroll: ${(this.scrollParameter * 100).toFixed(1)}% → Grid: ${this.params.gridDensity.toFixed(1)}, Color: ${this.params.colorShift.toFixed(2)} (no page movement)`);
                 }, { passive: false });
                 
-                // Parameter controls
-                const params = ['dimension', 'morphFactor', 'glitchIntensity', 'rotationSpeed', 'gridDensity', 'moireScale', 'colorShift'];
-                params.forEach(param => {
+                // Parameter controls - bind to instance
+                const paramMappings = {
+                    'dimension': 'dimension',
+                    'morphFactor': 'morphFactor', 
+                    'glitchIntensity': 'glitchIntensity',
+                    'rotationSpeed': 'rotationSpeed',
+                    'gridDensity': 'gridDensity',
+                    'moireScale': 'moireScale',
+                    'colorShift': 'colorShift'
+                };
+                
+                Object.keys(paramMappings).forEach(param => {
                     const slider = document.getElementById(param);
                     const display = document.getElementById(param + 'Value');
                     if (slider && display) {
                         slider.addEventListener('input', (e) => {
-                            this.params[param] = parseFloat(e.target.value);
-                            display.textContent = e.target.value;
-                        });
-                        slider.addEventListener('change', (e) => {
-                            this.params[param] = parseFloat(e.target.value);
+                            this.params[paramMappings[param]] = parseFloat(e.target.value);
                             display.textContent = e.target.value;
                         });
                     }
                 });
 
-                document.getElementById('audioBtn').addEventListener('click', () => this.toggleAudio());
-                
-                // Add touch event listeners for better mobile support
-                const toggleBtn = document.querySelector('.controls-toggle');
-                if (toggleBtn) {
-                    toggleBtn.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        window.toggleMVEPControls();
-                    }, { passive: false });
+                const audioBtn = document.getElementById('audioBtn');
+                if (audioBtn) {
+                    audioBtn.addEventListener('click', () => this.toggleAudio());
                 }
             }
             
