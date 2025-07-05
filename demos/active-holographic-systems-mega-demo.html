@@ -322,26 +322,159 @@
             }
             
             generateVariantParams(variant) {
-                // Generate dramatically different parameters for each of 30 variations
-                const seed = variant / 30.0;
-                const sin1 = Math.sin(variant * 0.5);
-                const sin2 = Math.sin(variant * 0.7);
-                const sin3 = Math.sin(variant * 1.1);
-                
-                const base = {
-                    density: 0.3 + (sin1 * sin1) * 2.0,           // Range: 0.3 - 2.3
-                    speed: 0.2 + Math.abs(sin2) * 1.2,            // Range: 0.2 - 1.4
-                    hue: (variant * 12.27) % 360,                 // Full hue spectrum
-                    intensity: 0.4 + Math.abs(sin3) * 0.6,       // Range: 0.4 - 1.0
-                    chaos: Math.abs(sin1 * sin2) * 0.4,          // Range: 0.0 - 0.4
-                    morph: Math.abs(sin2 * sin3),                // Range: 0.0 - 1.0
+                // Define 30 distinct 4D geometric systems and behaviors
+                const geometryTypes = [
+                    // 0-4: Lattice Systems
+                    { type: 'tetrahedron', name: 'HYPERCUBE LATTICE' },
+                    { type: 'octahedron', name: 'PLASMA FIELD' },
+                    { type: 'icosahedron', name: 'CRYSTAL MATRIX' },
+                    { type: 'dodecahedron', name: 'NEURAL NETWORK' },
+                    { type: 'hexagonal', name: 'QUANTUM FOAM' },
                     
-                    // Additional variation parameters for extreme differentiation
-                    geometryShift: variant * 0.1,                // Geometry variation
-                    timeScale: 0.5 + Math.abs(sin1) * 1.5,      // Time scaling
-                    depthMod: Math.sin(variant * 0.3) * 0.5,     // Depth modulation
-                    colorBlend: Math.abs(sin2 * sin3)            // Color blending factor
+                    // 5-9: Wave Systems
+                    { type: 'sinewave', name: 'FRACTAL DIMENSION' },
+                    { type: 'spiralwave', name: 'HOLOGRAPHIC CORE' },
+                    { type: 'shockwave', name: 'ENERGY VORTEX' },
+                    { type: 'interference', name: 'PARTICLE STORM' },
+                    { type: 'standing', name: 'WAVE FUNCTION' },
+                    
+                    // 10-14: Organic Systems
+                    { type: 'voronoi', name: 'TESSELLATION GRID' },
+                    { type: 'perlin', name: 'COSMIC WEB' },
+                    { type: 'cellular', name: 'DIGITAL RAIN' },
+                    { type: 'fractal', name: 'PHOTON STREAM' },
+                    { type: 'mandelbrot', name: 'REALITY MESH' },
+                    
+                    // 15-19: Physics Systems
+                    { type: 'spacetime', name: 'SPACETIME FABRIC' },
+                    { type: 'blackhole', name: 'QUANTUM TUNNEL' },
+                    { type: 'pulsar', name: 'STELLAR NURSERY' },
+                    { type: 'gravity', name: 'GRAVITATIONAL LENS' },
+                    { type: 'antimatter', name: 'DARK MATTER' },
+                    
+                    // 20-24: Quantum Systems
+                    { type: 'superposition', name: 'TEMPORAL FLUX' },
+                    { type: 'entanglement', name: 'DIMENSIONAL RIFT' },
+                    { type: 'uncertainty', name: 'EXOTIC MATTER' },
+                    { type: 'collapse', name: 'VACUUM DECAY' },
+                    { type: 'field', name: 'FIELD EQUATIONS' },
+                    
+                    // 25-29: Advanced Systems
+                    { type: 'higgs', name: 'HIGGS FIELD' },
+                    { type: 'string', name: 'STRING THEORY' },
+                    { type: 'brane', name: 'MULTIVERSE' },
+                    { type: 'consciousness', name: 'CONSCIOUSNESS' },
+                    { type: 'emergence', name: 'EMERGENCE' }
+                ];
+                
+                const currentGeometry = geometryTypes[variant % 30];
+                const seed = variant / 30.0;
+                
+                // Base parameters that vary per geometry type
+                let base = {
+                    geometryType: currentGeometry.type,
+                    name: currentGeometry.name,
+                    density: 1.0,
+                    speed: 0.5,
+                    hue: (variant * 12.27) % 360,
+                    intensity: 0.7,
+                    chaos: 0.0,
+                    morph: 0.0
                 };
+                
+                // Customize parameters based on geometry type
+                switch(currentGeometry.type) {
+                    case 'tetrahedron':
+                        base = { ...base, density: 0.8, speed: 0.3, chaos: 0.0, morph: 0.0 };
+                        break;
+                    case 'octahedron':
+                        base = { ...base, density: 1.2, speed: 0.4, chaos: 0.1, morph: 0.3 };
+                        break;
+                    case 'icosahedron':
+                        base = { ...base, density: 1.6, speed: 0.2, chaos: 0.0, morph: 0.8 };
+                        break;
+                    case 'dodecahedron':
+                        base = { ...base, density: 2.0, speed: 0.6, chaos: 0.2, morph: 0.5 };
+                        break;
+                    case 'hexagonal':
+                        base = { ...base, density: 1.4, speed: 0.8, chaos: 0.3, morph: 0.2 };
+                        break;
+                    case 'sinewave':
+                        base = { ...base, density: 0.6, speed: 1.0, chaos: 0.4, morph: 0.9 };
+                        break;
+                    case 'spiralwave':
+                        base = { ...base, density: 0.9, speed: 1.2, chaos: 0.1, morph: 1.0 };
+                        break;
+                    case 'shockwave':
+                        base = { ...base, density: 0.4, speed: 1.8, chaos: 0.6, morph: 0.3 };
+                        break;
+                    case 'interference':
+                        base = { ...base, density: 1.8, speed: 0.7, chaos: 0.8, morph: 0.4 };
+                        break;
+                    case 'standing':
+                        base = { ...base, density: 1.0, speed: 0.1, chaos: 0.0, morph: 0.7 };
+                        break;
+                    case 'voronoi':
+                        base = { ...base, density: 1.3, speed: 0.4, chaos: 0.3, morph: 0.6 };
+                        break;
+                    case 'perlin':
+                        base = { ...base, density: 0.7, speed: 0.3, chaos: 0.5, morph: 0.8 };
+                        break;
+                    case 'cellular':
+                        base = { ...base, density: 2.2, speed: 0.9, chaos: 0.2, morph: 0.1 };
+                        break;
+                    case 'fractal':
+                        base = { ...base, density: 1.5, speed: 0.5, chaos: 0.7, morph: 0.9 };
+                        break;
+                    case 'mandelbrot':
+                        base = { ...base, density: 0.8, speed: 0.2, chaos: 0.9, morph: 0.5 };
+                        break;
+                    case 'spacetime':
+                        base = { ...base, density: 0.5, speed: 0.6, chaos: 0.4, morph: 0.8 };
+                        break;
+                    case 'blackhole':
+                        base = { ...base, density: 3.0, speed: 0.1, chaos: 0.1, morph: 0.2 };
+                        break;
+                    case 'pulsar':
+                        base = { ...base, density: 0.3, speed: 2.0, chaos: 0.0, morph: 0.1 };
+                        break;
+                    case 'gravity':
+                        base = { ...base, density: 1.1, speed: 0.4, chaos: 0.2, morph: 0.6 };
+                        break;
+                    case 'antimatter':
+                        base = { ...base, density: 0.9, speed: 0.8, chaos: 0.6, morph: 0.4 };
+                        break;
+                    case 'superposition':
+                        base = { ...base, density: 1.7, speed: 1.1, chaos: 0.9, morph: 0.7 };
+                        break;
+                    case 'entanglement':
+                        base = { ...base, density: 2.1, speed: 0.7, chaos: 0.3, morph: 0.8 };
+                        break;
+                    case 'uncertainty':
+                        base = { ...base, density: 0.6, speed: 1.5, chaos: 1.0, morph: 0.9 };
+                        break;
+                    case 'collapse':
+                        base = { ...base, density: 2.5, speed: 0.3, chaos: 0.1, morph: 0.0 };
+                        break;
+                    case 'field':
+                        base = { ...base, density: 1.2, speed: 0.9, chaos: 0.2, morph: 0.5 };
+                        break;
+                    case 'higgs':
+                        base = { ...base, density: 0.4, speed: 0.5, chaos: 0.4, morph: 0.6 };
+                        break;
+                    case 'string':
+                        base = { ...base, density: 0.2, speed: 1.3, chaos: 0.1, morph: 1.0 };
+                        break;
+                    case 'brane':
+                        base = { ...base, density: 1.6, speed: 0.6, chaos: 0.5, morph: 0.3 };
+                        break;
+                    case 'consciousness':
+                        base = { ...base, density: 0.8, speed: 1.4, chaos: 0.8, morph: 0.7 };
+                        break;
+                    case 'emergence':
+                        base = { ...base, density: 1.9, speed: 0.8, chaos: 0.6, morph: 0.8 };
+                        break;
+                }
                 
                 return base;
             }
@@ -372,6 +505,9 @@
                     uniform float u_mouseIntensity;
                     uniform float u_clickIntensity;
                     uniform float u_densityVariation;
+                    uniform float u_geometryType;
+                    uniform float u_chaos;
+                    uniform float u_morph;
                     
                     // EXACT 4D rotation matrices from tech-layout
                     mat4 rotateXW(float theta) {
@@ -417,6 +553,241 @@
                         edges = max(edges, 1.0 - smoothstep(0.0, 0.02, abs(length(q.xz) - 0.2)));
                         
                         return max(vertices, edges * 0.5);
+                    }
+                    
+                    // OCTAHEDRON LATTICE - 8 faces, more angular
+                    float octahedronLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float d = abs(q.x) + abs(q.y) + abs(q.z);
+                        return 1.0 - smoothstep(0.3, 0.35, d);
+                    }
+                    
+                    // ICOSAHEDRON LATTICE - 20 faces, complex geometry
+                    float icosahedronLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float phi = (1.0 + sqrt(5.0)) / 2.0; // Golden ratio
+                        vec3 ice1 = vec3(1.0, phi, 0.0) / 2.0;
+                        vec3 ice2 = vec3(0.0, 1.0, phi) / 2.0;
+                        vec3 ice3 = vec3(phi, 0.0, 1.0) / 2.0;
+                        
+                        float d1 = min(length(q - ice1), length(q + ice1));
+                        float d2 = min(length(q - ice2), length(q + ice2));
+                        float d3 = min(length(q - ice3), length(q + ice3));
+                        
+                        return 1.0 - smoothstep(0.0, 0.06, min(min(d1, d2), d3));
+                    }
+                    
+                    // DODECAHEDRON LATTICE - 12 pentagonal faces
+                    float dodecahedronLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        float phi = (1.0 + sqrt(5.0)) / 2.0;
+                        
+                        // Pentagon-based structure
+                        float angle = atan(q.y, q.x);
+                        float r = length(q.xy);
+                        float pentagon = cos(angle * 5.0) * 0.1;
+                        
+                        return 1.0 - smoothstep(0.15 + pentagon, 0.25 + pentagon, r + abs(q.z) * 0.5);
+                    }
+                    
+                    // HEXAGONAL LATTICE - honeycomb structure
+                    float hexagonalLattice(vec3 p, float gridSize) {
+                        vec3 q = fract(p * gridSize) - 0.5;
+                        
+                        // Hexagonal tiling
+                        float angle = atan(q.y, q.x);
+                        float r = length(q.xy);
+                        float hex = cos(angle * 6.0) * 0.05;
+                        
+                        return 1.0 - smoothstep(0.2 + hex, 0.25 + hex, r);
+                    }
+                    
+                    // SINE WAVE PATTERNS - undulating fields
+                    float sinewaveLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float wave1 = sin(q.x * 2.0) * sin(q.y * 2.0) * sin(q.z * 2.0);
+                        float wave2 = sin(q.x * 3.0 + u_time * 0.001) * 0.5;
+                        return (wave1 + wave2 + 1.0) * 0.5;
+                    }
+                    
+                    // SPIRAL WAVE - rotating helical structure
+                    float spiralwaveLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float r = length(q.xy);
+                        float angle = atan(q.y, q.x);
+                        float spiral = sin(r * 8.0 - angle * 4.0 + u_time * 0.002);
+                        float height = sin(q.z * 4.0 + u_time * 0.001);
+                        return (spiral * height + 1.0) * 0.5;
+                    }
+                    
+                    // SHOCK WAVE - expanding rings
+                    float shockwaveLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float dist = length(q);
+                        float shock = sin(dist * 6.0 - u_time * 0.003) * exp(-dist * 0.5);
+                        return (shock + 1.0) * 0.5;
+                    }
+                    
+                    // INTERFERENCE PATTERN - wave interference
+                    float interferenceLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float wave1 = sin(length(q - vec3(1.0, 0.0, 0.0)) * 8.0 - u_time * 0.002);
+                        float wave2 = sin(length(q - vec3(-1.0, 0.0, 0.0)) * 8.0 - u_time * 0.002);
+                        float wave3 = sin(length(q - vec3(0.0, 1.0, 0.0)) * 8.0 - u_time * 0.002);
+                        return (wave1 + wave2 + wave3 + 3.0) * 0.25;
+                    }
+                    
+                    // STANDING WAVE - stationary oscillation
+                    float standingLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float standing = sin(q.x * 4.0) * sin(q.y * 4.0) * sin(q.z * 4.0) * cos(u_time * 0.001);
+                        return (standing + 1.0) * 0.5;
+                    }
+                    
+                    // VORONOI NOISE - cellular structure
+                    float voronoiLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        vec3 i = floor(q);
+                        vec3 f = fract(q);
+                        
+                        float minDist = 1.0;
+                        for(int x = -1; x <= 1; x++) {
+                            for(int y = -1; y <= 1; y++) {
+                                for(int z = -1; z <= 1; z++) {
+                                    vec3 neighbor = vec3(float(x), float(y), float(z));
+                                    vec3 point = 0.5 + 0.5 * sin(6.2831 * (i + neighbor + u_time * 0.0005));
+                                    vec3 diff = neighbor + point - f;
+                                    float dist = length(diff);
+                                    minDist = min(minDist, dist);
+                                }
+                            }
+                        }
+                        return 1.0 - minDist;
+                    }
+                    
+                    // PERLIN NOISE - organic flowing patterns
+                    float perlinLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        // Simplified Perlin-like noise
+                        float noise = sin(q.x) * sin(q.y) * sin(q.z);
+                        noise += sin(q.x * 2.0) * sin(q.y * 2.0) * sin(q.z * 2.0) * 0.5;
+                        noise += sin(q.x * 4.0) * sin(q.y * 4.0) * sin(q.z * 4.0) * 0.25;
+                        return (noise + 1.0) * 0.5;
+                    }
+                    
+                    // CELLULAR AUTOMATA - digital life patterns
+                    float cellularLattice(vec3 p, float gridSize) {
+                        vec3 q = floor(p * gridSize) / gridSize;
+                        float cell = step(0.5, sin(q.x * 100.0) * sin(q.y * 100.0) * sin(q.z * 100.0 + u_time * 0.001));
+                        return cell;
+                    }
+                    
+                    // FRACTAL GEOMETRY - self-similar patterns
+                    float fractalLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float fractal = 0.0;
+                        float amplitude = 1.0;
+                        
+                        for(int i = 0; i < 4; i++) {
+                            fractal += sin(length(q) * amplitude + u_time * 0.001) / amplitude;
+                            q *= 2.0;
+                            amplitude *= 2.0;
+                        }
+                        
+                        return (fractal + 1.0) * 0.5;
+                    }
+                    
+                    // MANDELBROT-INSPIRED - complex number iteration
+                    float mandelbrotLattice(vec3 p, float gridSize) {
+                        vec2 c = p.xy * gridSize;
+                        vec2 z = vec2(0.0);
+                        
+                        for(int i = 0; i < 8; i++) {
+                            z = vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
+                            if(length(z) > 2.0) break;
+                        }
+                        
+                        return 1.0 - smoothstep(1.5, 2.0, length(z));
+                    }
+                    
+                    // SPACETIME CURVATURE - gravitational field visualization
+                    float spacetimeLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float curvature = 1.0 / (1.0 + length(q) * 2.0);
+                        float ripple = sin(length(q) * 4.0 - u_time * 0.002) * curvature;
+                        return (ripple + curvature) * 0.5;
+                    }
+                    
+                    // BLACK HOLE - event horizon distortion
+                    float blackholeLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float dist = length(q);
+                        float schwarzschild = 1.0 / sqrt(max(0.1, 1.0 - 0.5/dist));
+                        float accretion = sin(atan(q.y, q.x) * 8.0 + u_time * 0.004) * exp(-dist);
+                        return schwarzschild * accretion;
+                    }
+                    
+                    // PULSAR - rotating neutron star emissions
+                    float pulsarLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float angle = atan(q.y, q.x);
+                        float pulse = step(0.8, sin(angle * 2.0 + u_time * 0.01));
+                        float beam = exp(-length(q.xy) * 2.0) * pulse;
+                        return beam;
+                    }
+                    
+                    // GRAVITATIONAL LENSING - light bending
+                    float gravityLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        vec3 lens_pos = vec3(sin(u_time * 0.001), cos(u_time * 0.001), 0.0);
+                        float lens_strength = 1.0 / (0.1 + length(q - lens_pos));
+                        vec3 deflected = q + (lens_pos - q) * lens_strength * 0.1;
+                        return sin(length(deflected) * 6.0) * 0.5 + 0.5;
+                    }
+                    
+                    // ANTIMATTER - particle/antiparticle annihilation
+                    float antimatterLattice(vec3 p, float gridSize) {
+                        vec3 q = p * gridSize;
+                        float matter = sin(length(q + vec3(0.5)) * 8.0);
+                        float antimatter = sin(length(q - vec3(0.5)) * 8.0);
+                        float annihilation = exp(-abs(matter + antimatter) * 4.0);
+                        return annihilation;
+                    }
+                    
+                    // DYNAMIC GEOMETRY SELECTOR
+                    float getDynamicGeometry(vec3 p, float gridSize, float geometryType) {
+                        if(geometryType < 1.0) return tetrahedronLattice(p, gridSize);
+                        else if(geometryType < 2.0) return octahedronLattice(p, gridSize);
+                        else if(geometryType < 3.0) return icosahedronLattice(p, gridSize);
+                        else if(geometryType < 4.0) return dodecahedronLattice(p, gridSize);
+                        else if(geometryType < 5.0) return hexagonalLattice(p, gridSize);
+                        else if(geometryType < 6.0) return sinewaveLattice(p, gridSize);
+                        else if(geometryType < 7.0) return spiralwaveLattice(p, gridSize);
+                        else if(geometryType < 8.0) return shockwaveLattice(p, gridSize);
+                        else if(geometryType < 9.0) return interferenceLattice(p, gridSize);
+                        else if(geometryType < 10.0) return standingLattice(p, gridSize);
+                        else if(geometryType < 11.0) return voronoiLattice(p, gridSize);
+                        else if(geometryType < 12.0) return perlinLattice(p, gridSize);
+                        else if(geometryType < 13.0) return cellularLattice(p, gridSize);
+                        else if(geometryType < 14.0) return fractalLattice(p, gridSize);
+                        else if(geometryType < 15.0) return mandelbrotLattice(p, gridSize);
+                        else if(geometryType < 16.0) return spacetimeLattice(p, gridSize);
+                        else if(geometryType < 17.0) return blackholeLattice(p, gridSize);
+                        else if(geometryType < 18.0) return pulsarLattice(p, gridSize);
+                        else if(geometryType < 19.0) return gravityLattice(p, gridSize);
+                        else if(geometryType < 20.0) return antimatterLattice(p, gridSize);
+                        // Quantum systems (20-24) use combinations
+                        else if(geometryType < 21.0) return mix(voronoiLattice(p, gridSize), interferenceLattice(p, gridSize), u_morph);
+                        else if(geometryType < 22.0) return mix(tetrahedronLattice(p, gridSize * 0.5), tetrahedronLattice(p, gridSize * 2.0), sin(u_time * 0.001));
+                        else if(geometryType < 23.0) return fractalLattice(p, gridSize) * (0.5 + 0.5 * sin(u_time * 0.002));
+                        else if(geometryType < 24.0) return max(blackholeLattice(p, gridSize), 1.0 - blackholeLattice(p, gridSize));
+                        else if(geometryType < 25.0) return perlinLattice(p, gridSize) * sinewaveLattice(p, gridSize);
+                        // Advanced systems (25-29) use complex combinations
+                        else if(geometryType < 26.0) return mix(spacetimeLattice(p, gridSize), voronoiLattice(p, gridSize), 0.5);
+                        else if(geometryType < 27.0) return spiralwaveLattice(p, gridSize * 0.1) * fractalLattice(p, gridSize);
+                        else if(geometryType < 28.0) return mix(icosahedronLattice(p, gridSize), dodecahedronLattice(p, gridSize), u_morph);
+                        else if(geometryType < 29.0) return perlinLattice(p, gridSize) * interferenceLattice(p, gridSize);
+                        else return mix(mix(tetrahedronLattice(p, gridSize), voronoiLattice(p, gridSize), 0.5), fractalLattice(p, gridSize), u_morph);
                     }
                     
                     vec3 hsv2rgb(vec3 c) {
@@ -477,8 +848,8 @@
                         // EXACT dynamic density with variation from tech-layout
                         float roleDensity = (u_density + u_densityVariation) * u_roleDensity;
                         
-                        // Get tetrahedron geometry for TECH layout
-                        float lattice = tetrahedronLattice(p, roleDensity);
+                        // Get dynamic geometry based on variant type
+                        float lattice = getDynamicGeometry(p, roleDensity, u_geometryType);
                         
                         // EXACT coloring with mouse reactivity from tech-layout
                         float hue = atan(u_color.r, u_color.g) + u_colorShift * 0.017453 + u_mouseIntensity * 0.2;
@@ -521,7 +892,10 @@
                     chaosIntensity: this.gl.getUniformLocation(this.program, 'u_chaosIntensity'),
                     mouseIntensity: this.gl.getUniformLocation(this.program, 'u_mouseIntensity'),
                     clickIntensity: this.gl.getUniformLocation(this.program, 'u_clickIntensity'),
-                    densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation')
+                    densityVariation: this.gl.getUniformLocation(this.program, 'u_densityVariation'),
+                    geometryType: this.gl.getUniformLocation(this.program, 'u_geometryType'),
+                    chaos: this.gl.getUniformLocation(this.program, 'u_chaos'),
+                    morph: this.gl.getUniformLocation(this.program, 'u_morph')
                 };
             }
             
@@ -610,10 +984,13 @@
                 this.gl.uniform1f(this.uniforms.roleDensity, this.roleParams.densityMult);
                 this.gl.uniform1f(this.uniforms.roleSpeed, this.roleParams.speedMult);
                 this.gl.uniform1f(this.uniforms.colorShift, this.roleParams.colorShift);
-                this.gl.uniform1f(this.uniforms.chaosIntensity, this.chaosIntensity);
+                this.gl.uniform1f(this.uniforms.chaosIntensity, this.variantParams.chaos || 0.0);
                 this.gl.uniform1f(this.uniforms.mouseIntensity, this.mouseIntensity);
                 this.gl.uniform1f(this.uniforms.clickIntensity, this.clickIntensity);
                 this.gl.uniform1f(this.uniforms.densityVariation, this.densityVariation);
+                this.gl.uniform1f(this.uniforms.geometryType, this.variant);
+                this.gl.uniform1f(this.uniforms.chaos, this.variantParams.chaos || 0.0);
+                this.gl.uniform1f(this.uniforms.morph, this.variantParams.morph || 0.0);
                 
                 this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
             }
@@ -724,7 +1101,10 @@
                 const variantName = document.getElementById('variantName');
                 
                 variantNumber.textContent = String(this.currentVariant + 1).padStart(2, '0');
-                variantName.textContent = this.variantNames[this.currentVariant];
+                
+                // Get the geometry name from the variant parameters
+                const geometryName = this.visualizers[0]?.variantParams?.name || this.variantNames[this.currentVariant];
+                variantName.textContent = geometryName;
             }
             
             nextVariant() {
